@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Waka Shots Photography — Stories, Beautifully Captured</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Manrope:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/js/tailwind-config.js"></script>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="bg-black text-ivory font-sans leading-relaxed overflow-x-hidden">
+
+<div class="grain"></div>
+
+<div class="page-loader" id="pageLoader"><div class="loader-mark"></div></div>
+
+<header id="siteHeader" class="fixed top-0 left-0 right-0 z-[500] flex items-center justify-between px-[6vw] py-6 transition-all duration-500 border-b border-transparent">
+  <a href="index.html" class="font-serif text-xl tracking-wide flex items-center gap-2.5">
+    <span class="relative w-[9px] h-[9px] rounded-full border border-gold inline-block"><span class="absolute inset-[2.5px] rounded-full bg-gold"></span></span>
+    WAKA SHOTS
+  </a>
+  <nav class="hidden md:flex gap-9 items-center">
+    <a href="portfolio.html" class="text-sm tracking-wide uppercase text-ivory-dim hover:text-ivory transition-colors relative group">Portfolio<span class="absolute left-0 -bottom-1 w-0 h-px bg-gold transition-all duration-300 group-hover:w-full"></span></a>
+    <a href="services.html" class="text-sm tracking-wide uppercase text-ivory-dim hover:text-ivory transition-colors relative group">Services<span class="absolute left-0 -bottom-1 w-0 h-px bg-gold transition-all duration-300 group-hover:w-full"></span></a>
+    <a href="about.html" class="text-sm tracking-wide uppercase text-ivory-dim hover:text-ivory transition-colors relative group">About<span class="absolute left-0 -bottom-1 w-0 h-px bg-gold transition-all duration-300 group-hover:w-full"></span></a>
+    <a href="journal.html" class="text-sm tracking-wide uppercase text-ivory-dim hover:text-ivory transition-colors relative group">Journal<span class="absolute left-0 -bottom-1 w-0 h-px bg-gold transition-all duration-300 group-hover:w-full"></span></a>
+    <a href="contact.html" class="text-sm tracking-wide uppercase text-ivory-dim hover:text-ivory transition-colors relative group">Contact<span class="absolute left-0 -bottom-1 w-0 h-px bg-gold transition-all duration-300 group-hover:w-full"></span></a>
+    <a href="contact.html" class="text-sm tracking-wide uppercase border border-line-strong px-5 py-2.5 rounded-sm text-gold-bright hover:bg-gold hover:text-black hover:border-gold transition-all">Book Now</a>
+  </nav>
+  <button class="md:hidden flex flex-col gap-1.5 z-[600]" id="burgerBtn" aria-label="Open menu">
+    <span class="w-6 h-px bg-ivory"></span><span class="w-6 h-px bg-ivory"></span><span class="w-6 h-px bg-ivory"></span>
+  </button>
+</header>
+
+<div class="mobile-menu fixed inset-0 bg-black z-[550] flex flex-col items-center justify-center gap-8" id="mobileMenu">
+  <a href="portfolio.html" class="font-serif text-2xl">Portfolio</a>
+  <a href="services.html" class="font-serif text-2xl">Services</a>
+  <a href="about.html" class="font-serif text-2xl">About</a>
+  <a href="journal.html" class="font-serif text-2xl">Journal</a>
+  <a href="contact.html" class="font-serif text-2xl">Book Now</a>
+</div>
+
+<!-- HERO -->
+<section class="relative h-[100svh] min-h-[640px] flex items-end overflow-hidden">
+  <div class="hero-bg absolute inset-0 bg-cover" style="background-image:url('https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1800&q=80'); background-position:center 30%;">
+    <div class="absolute inset-0" style="background:linear-gradient(180deg, rgba(10,9,8,0.35) 0%, rgba(10,9,8,0.25) 40%, rgba(10,9,8,0.92) 100%), linear-gradient(90deg, rgba(10,9,8,0.55) 0%, rgba(10,9,8,0) 40%);"></div>
+  </div>
+  <div class="relative z-[2] w-full px-[6vw] pb-[7vw] flex flex-col md:flex-row justify-between items-start md:items-end gap-10">
+    <div class="max-w-[760px]">
+      <span class="eyebrow anim-fadeup font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center gap-2.5" style="animation-delay:.4s;">Waka Shots Photography — Kampala, Uganda</span>
+      <h1 class="anim-fadeup font-serif font-normal text-[clamp(2.6rem,7vw,6rem)] leading-[1.08] my-4" style="animation-delay:.6s;">Stories,<br><em class="italic text-gold-bright font-light">beautifully</em> captured.</h1>
+      <p class="anim-fadeup text-ivory-dim max-w-[440px] font-light" style="animation-delay:.85s;">We make timeless, intentional imagery for weddings, portraits and brands across East Africa — one honest frame at a time.</p>
+    </div>
+    <div class="anim-fadeup flex flex-row md:flex-col gap-3.5" style="animation-delay:1.05s;">
+      <a href="portfolio.html" class="text-xs tracking-[0.14em] uppercase px-7 py-4 rounded-sm text-center bg-gold text-black border border-gold hover:bg-gold-bright hover:-translate-y-0.5 transition-all duration-400 whitespace-nowrap">View Portfolio</a>
+      <a href="contact.html" class="text-xs tracking-[0.14em] uppercase px-7 py-4 rounded-sm text-center border border-line-strong text-ivory hover:border-gold hover:text-gold-bright hover:-translate-y-0.5 transition-all duration-400 whitespace-nowrap">Book a Session</a>
+    </div>
+  </div>
+  <div class="hidden md:flex absolute bottom-6 left-[6vw] z-[2] items-center gap-3 font-mono text-[0.68rem] tracking-[0.2em] uppercase text-silver-dim">
+    <span>Scroll</span><span class="scroll-line relative w-px h-[34px] bg-line-strong overflow-hidden"></span>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="border-t border-b border-line bg-charcoal overflow-hidden py-5">
+  <div class="marquee-track flex whitespace-nowrap">
+    <span class="font-serif italic text-2xl text-silver-dim px-8 flex items-center gap-8 after:content-['◆'] after:not-italic after:text-[0.6rem] after:text-gold-dim">Weddings</span>
+    <span class="font-serif italic text-2xl text-silver-dim px-8 flex items-center gap-8 after:content-['◆'] after:not-italic after:text-[0.6rem] after:text-gold-dim">Portraits</span>
+    <span class="font-serif italic text-2xl text-silver-dim px-8 flex items-center gap-8 after:content-['◆'] after:not-italic after:text-[0.6rem] after:text-gold-dim">Events</span>
+    <span class="font-serif italic text-2xl text-silver-dim px-8 flex items-center gap-8 after:content-['◆'] after:not-italic after:text-[0.6rem] after:text-gold-dim">Corporate</span>
+    <span class="font-serif italic text-2xl text-silver-dim px-8 flex items-center gap-8 after:content-['◆'] after:not-italic after:text-[0.6rem] after:text-gold-dim">Fashion</span>
+    <span class="font-serif italic text-2xl text-silver-dim px-8 flex items-center gap-8 after:content-['◆'] after:not-italic after:text-[0.6rem] after:text-gold-dim">Lifestyle</span>
+    <span class="font-serif italic text-2xl text-silver-dim px-8 flex items-center gap-8 after:content-['◆'] after:not-italic after:text-[0.6rem] after:text-gold-dim">Commercial</span>
+    <span class="font-serif italic text-2xl text-silver-dim px-8 flex items-center gap-8 after:content-['◆'] after:not-italic after:text-[0.6rem] after:text-gold-dim">Weddings</span>
+    <span class="font-serif italic text-2xl text-silver-dim px-8 flex items-center gap-8 after:content-['◆'] after:not-italic after:text-[0.6rem] after:text-gold-dim">Portraits</span>
+    <span class="font-serif italic text-2xl text-silver-dim px-8 flex items-center gap-8 after:content-['◆'] after:not-italic after:text-[0.6rem] after:text-gold-dim">Events</span>
+    <span class="font-serif italic text-2xl text-silver-dim px-8 flex items-center gap-8 after:content-['◆'] after:not-italic after:text-[0.6rem] after:text-gold-dim">Corporate</span>
+    <span class="font-serif italic text-2xl text-silver-dim px-8 flex items-center gap-8 after:content-['◆'] after:not-italic after:text-[0.6rem] after:text-gold-dim">Fashion</span>
+    <span class="font-serif italic text-2xl text-silver-dim px-8 flex items-center gap-8 after:content-['◆'] after:not-italic after:text-[0.6rem] after:text-gold-dim">Lifestyle</span>
+    <span class="font-serif italic text-2xl text-silver-dim px-8 flex items-center gap-8 after:content-['◆'] after:not-italic after:text-[0.6rem] after:text-gold-dim">Commercial</span>
+  </div>
+</div>
+
+<!-- PORTFOLIO TEASER -->
+<section class="py-32">
+  <div class="max-w-[1320px] mx-auto px-[6vw]">
+    <div class="reveal flex justify-between items-end gap-10 flex-wrap mb-16">
+      <div>
+        <span class="eyebrow font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center gap-2.5">Selected Work</span>
+        <h2 class="font-serif text-[clamp(2rem,3.6vw,3.1rem)] mt-3.5 max-w-[640px]">A curated look at moments we've been trusted to keep.</h2>
+      </div>
+      <p class="max-w-[320px] text-ivory-dim text-sm font-light pb-1.5">Every frame carries its own light, lens and location — hover to see the details behind the shot.</p>
+    </div>
+
+    <div class="reveal grid grid-cols-2 md:grid-cols-6 gap-4.5">
+      <div class="group relative overflow-hidden rounded-sm bg-panel cursor-pointer col-span-2 md:col-span-3 md:row-span-2 aspect-[4/3] md:aspect-auto md:h-[42vw] md:max-h-[600px]">
+        <img src="https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=1200&q=80" alt="Kampala wedding couple" class="w-full h-full object-cover saturate-[.92] brightness-[.92] transition-transform duration-[1100ms] group-hover:scale-[1.06] group-hover:saturate-100 group-hover:brightness-100">
+        <div class="absolute inset-0 flex flex-col justify-end p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style="background:linear-gradient(0deg, rgba(10,9,8,0.92) 0%, rgba(10,9,8,0) 55%);">
+          <span class="font-mono text-[0.68rem] tracking-[0.16em] uppercase text-gold-bright mb-1.5">Wedding · Kampala</span>
+          <div class="font-serif text-xl mb-2.5">A Kampala Wedding</div>
+          <div class="font-mono text-[0.68rem] text-silver flex gap-3.5 border-t border-gold/25 pt-2.5"><span>85mm</span><span>f/1.8</span><span>Golden hour</span></div>
+        </div>
+      </div>
+      <div class="group relative overflow-hidden rounded-sm bg-panel cursor-pointer col-span-2 md:col-span-3 aspect-[4/3] md:aspect-auto md:h-[42vw] md:max-h-[290px]">
+        <img src="https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=1000&q=80" alt="Editorial portrait" class="w-full h-full object-cover saturate-[.92] brightness-[.92] transition-transform duration-[1100ms] group-hover:scale-[1.06] group-hover:saturate-100 group-hover:brightness-100">
+        <div class="absolute inset-0 flex flex-col justify-end p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style="background:linear-gradient(0deg, rgba(10,9,8,0.92) 0%, rgba(10,9,8,0) 55%);">
+          <span class="font-mono text-[0.68rem] tracking-[0.16em] uppercase text-gold-bright mb-1.5">Portrait · Studio</span>
+          <div class="font-serif text-xl mb-2.5">The Modern Gentleman</div>
+          <div class="font-mono text-[0.68rem] text-silver flex gap-3.5 border-t border-gold/25 pt-2.5"><span>50mm</span><span>f/2</span><span>Studio strobe</span></div>
+        </div>
+      </div>
+      <div class="group relative overflow-hidden rounded-sm bg-panel cursor-pointer col-span-1 md:col-span-2 aspect-square md:aspect-auto md:h-[42vw] md:max-h-[290px]">
+        <img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=800&q=80" alt="Brand campaign shoot" class="w-full h-full object-cover saturate-[.92] brightness-[.92] transition-transform duration-[1100ms] group-hover:scale-[1.06] group-hover:saturate-100 group-hover:brightness-100">
+        <div class="absolute inset-0 flex flex-col justify-end p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style="background:linear-gradient(0deg, rgba(10,9,8,0.92) 0%, rgba(10,9,8,0) 55%);">
+          <span class="font-mono text-[0.68rem] tracking-[0.16em] uppercase text-gold-bright mb-1.5">Commercial</span>
+          <div class="font-serif text-xl mb-2.5">Brand Story — Amara</div>
+          <div class="font-mono text-[0.68rem] text-silver flex gap-3.5 border-t border-gold/25 pt-2.5"><span>35mm</span><span>f/4</span><span>Overcast</span></div>
+        </div>
+      </div>
+      <div class="group relative overflow-hidden rounded-sm bg-panel cursor-pointer col-span-1 md:col-span-2 aspect-square md:aspect-auto md:h-[42vw] md:max-h-[290px]">
+        <img src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?auto=format&fit=crop&w=800&q=80" alt="Corporate portrait" class="w-full h-full object-cover saturate-[.92] brightness-[.92] transition-transform duration-[1100ms] group-hover:scale-[1.06] group-hover:saturate-100 group-hover:brightness-100">
+        <div class="absolute inset-0 flex flex-col justify-end p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style="background:linear-gradient(0deg, rgba(10,9,8,0.92) 0%, rgba(10,9,8,0) 55%);">
+          <span class="font-mono text-[0.68rem] tracking-[0.16em] uppercase text-gold-bright mb-1.5">Corporate</span>
+          <div class="font-serif text-xl mb-2.5">Leadership Series</div>
+          <div class="font-mono text-[0.68rem] text-silver flex gap-3.5 border-t border-gold/25 pt-2.5"><span>70mm</span><span>f/2.8</span><span>Window light</span></div>
+        </div>
+      </div>
+      <div class="group relative overflow-hidden rounded-sm bg-panel cursor-pointer col-span-2 md:col-span-3 aspect-[4/3] md:aspect-auto md:h-[42vw] md:max-h-[290px]">
+        <img src="https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=1000&q=80" alt="Fashion editorial" class="w-full h-full object-cover saturate-[.92] brightness-[.92] transition-transform duration-[1100ms] group-hover:scale-[1.06] group-hover:saturate-100 group-hover:brightness-100">
+        <div class="absolute inset-0 flex flex-col justify-end p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style="background:linear-gradient(0deg, rgba(10,9,8,0.92) 0%, rgba(10,9,8,0) 55%);">
+          <span class="font-mono text-[0.68rem] tracking-[0.16em] uppercase text-gold-bright mb-1.5">Fashion · Editorial</span>
+          <div class="font-serif text-xl mb-2.5">Kitenge Reimagined</div>
+          <div class="font-mono text-[0.68rem] text-silver flex gap-3.5 border-t border-gold/25 pt-2.5"><span>135mm</span><span>f/2</span><span>Late afternoon</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reveal flex justify-center mt-14">
+      <a href="portfolio.html" class="text-xs tracking-[0.14em] uppercase px-7 py-4 rounded-sm border border-line-strong text-ivory hover:border-gold hover:text-gold-bright hover:-translate-y-0.5 transition-all duration-400">View Full Portfolio →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT TEASER -->
+<section class="bg-charcoal py-32">
+  <div class="max-w-[1320px] mx-auto px-[6vw] grid grid-cols-1 md:grid-cols-[0.85fr_1.15fr] gap-12 md:gap-20 items-center">
+    <div class="reveal relative aspect-[4/5] overflow-hidden rounded-sm">
+      <div class="absolute -top-3.5 -left-3.5 w-[70px] h-[70px] border-t border-l border-gold z-[2]"></div>
+      <div class="absolute -bottom-3.5 -right-3.5 w-[70px] h-[70px] border-b border-r border-gold z-[2]"></div>
+      <img src="https://images.unsplash.com/photo-1554048612-b6a482bc67e5?auto=format&fit=crop&w=900&q=80" alt="Waka Shots photographer at work" class="w-full h-full object-cover saturate-90 brightness-95">
+    </div>
+    <div class="reveal">
+      <span class="eyebrow font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center gap-2.5">About Waka Shots</span>
+      <h2 class="font-serif text-[clamp(1.9rem,3.2vw,2.7rem)] my-4 mb-6">More than photographs.<br>Moments with meaning.</h2>
+      <p class="text-ivory-dim font-light max-w-[520px] mb-6">Waka Shots is a Kampala-based photography studio built around one idea: that the best images come from patience, not performance. We spend more time watching than directing, so what we deliver feels like memory, not a photoshoot.</p>
+      <a href="about.html" class="inline-block text-xs tracking-[0.14em] uppercase px-7 py-4 rounded-sm border border-line-strong text-ivory hover:border-gold hover:text-gold-bright hover:-translate-y-0.5 transition-all duration-400">Our Story →</a>
+      <div class="flex gap-12 mt-10 pt-8 border-t border-line">
+        <div><strong class="block font-serif text-3xl text-gold-bright font-normal">120+</strong><span class="text-xs tracking-wide uppercase text-silver-dim">Stories Told</span></div>
+        <div><strong class="block font-serif text-3xl text-gold-bright font-normal">7</strong><span class="text-xs tracking-wide uppercase text-silver-dim">Years Behind the Lens</span></div>
+        <div><strong class="block font-serif text-3xl text-gold-bright font-normal">5</strong><span class="text-xs tracking-wide uppercase text-silver-dim">Countries Shot In</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES TEASER -->
+<section class="py-32">
+  <div class="max-w-[1320px] mx-auto px-[6vw]">
+    <div class="reveal flex justify-between items-end gap-10 flex-wrap mb-16">
+      <div>
+        <span class="eyebrow font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center gap-2.5">Services</span>
+        <h2 class="font-serif text-[clamp(2rem,3.6vw,3.1rem)] mt-3.5 max-w-[640px]">Three ways to work with us.</h2>
+      </div>
+      <a href="services.html" class="text-xs tracking-[0.14em] uppercase text-gold hover:text-gold-bright transition-colors pb-1.5">See All Services →</a>
+    </div>
+    <div class="reveal grid grid-cols-1 md:grid-cols-3 gap-px bg-line border border-line">
+      <a href="services.html" class="group bg-black hover:bg-panel transition-colors duration-500 p-10 flex flex-col min-h-[320px]">
+        <div class="font-mono text-gold-dim text-sm tracking-wide mb-8">f/1.8 — Intimate</div>
+        <h3 class="font-serif text-2xl mb-4 max-w-[220px]">The Wedding Experience</h3>
+        <p class="text-ivory-dim font-light text-sm flex-grow">For couples who want their day documented with emotion, elegance and intention.</p>
+        <span class="mt-7 text-xs tracking-[0.14em] uppercase text-gold inline-flex items-center gap-2 w-fit border-b border-transparent group-hover:border-gold group-hover:gap-3.5 transition-all">Learn More →</span>
+      </a>
+      <a href="services.html" class="group bg-black hover:bg-panel transition-colors duration-500 p-10 flex flex-col min-h-[320px]">
+        <div class="font-mono text-gold-dim text-sm tracking-wide mb-8">f/2.8 — Considered</div>
+        <h3 class="font-serif text-2xl mb-4 max-w-[220px]">The Portrait Experience</h3>
+        <p class="text-ivory-dim font-light text-sm flex-grow">Personal branding, editorial portraits and timeless imagery for people who want to be seen.</p>
+        <span class="mt-7 text-xs tracking-[0.14em] uppercase text-gold inline-flex items-center gap-2 w-fit border-b border-transparent group-hover:border-gold group-hover:gap-3.5 transition-all">Learn More →</span>
+      </a>
+      <a href="services.html" class="group bg-black hover:bg-panel transition-colors duration-500 p-10 flex flex-col min-h-[320px]">
+        <div class="font-mono text-gold-dim text-sm tracking-wide mb-8">f/5.6 — Structured</div>
+        <h3 class="font-serif text-2xl mb-4 max-w-[220px]">The Brand Experience</h3>
+        <p class="text-ivory-dim font-light text-sm flex-grow">Photography built to elevate businesses, campaigns and digital presence.</p>
+        <span class="mt-7 text-xs tracking-[0.14em] uppercase text-gold inline-flex items-center gap-2 w-fit border-b border-transparent group-hover:border-gold group-hover:gap-3.5 transition-all">Learn More →</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="py-32" style="background:radial-gradient(ellipse at top right, rgba(198,161,91,0.08), transparent 55%), #0a0908;">
+  <div class="max-w-[1320px] mx-auto px-[6vw]">
+    <div class="reveal mb-16">
+      <span class="eyebrow font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center gap-2.5">Client Stories</span>
+      <h2 class="font-serif text-[clamp(2rem,3.6vw,3.1rem)] mt-3.5 max-w-[640px]">Told in their own words.</h2>
+    </div>
+    <div class="reveal grid grid-cols-1 md:grid-cols-3 gap-px bg-line border border-line">
+      <div class="bg-black p-9 flex flex-col gap-5">
+        <div class="text-gold text-sm tracking-widest">★★★★★</div>
+        <blockquote class="font-serif italic text-lg leading-snug text-ivory">Waka Shots captured our day in a way we never imagined. Every photograph tells a story.</blockquote>
+        <div class="flex items-center gap-3 mt-auto pt-4">
+          <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=100&q=80" alt="Sarah" class="w-[42px] h-[42px] rounded-full object-cover saturate-90">
+          <div><div class="text-sm text-ivory">Sarah &amp; Daniel</div><div class="text-xs text-silver-dim tracking-wide">Wedding, Kampala</div></div>
+        </div>
+      </div>
+      <div class="bg-black p-9 flex flex-col gap-5">
+        <div class="text-gold text-sm tracking-widest">★★★★★</div>
+        <blockquote class="font-serif italic text-lg leading-snug text-ivory">Professional, patient and quietly brilliant. Our brand shoot looked better than we'd hoped for.</blockquote>
+        <div class="flex items-center gap-3 mt-auto pt-4">
+          <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&q=80" alt="Grace" class="w-[42px] h-[42px] rounded-full object-cover saturate-90">
+          <div><div class="text-sm text-ivory">Grace N.</div><div class="text-xs text-silver-dim tracking-wide">Founder, Amara Foods</div></div>
+        </div>
+      </div>
+      <div class="bg-black p-9 flex flex-col gap-5">
+        <div class="text-gold text-sm tracking-widest">★★★★★</div>
+        <blockquote class="font-serif italic text-lg leading-snug text-ivory">My portrait session felt effortless. The final images actually look like me, just more confident.</blockquote>
+        <div class="flex items-center gap-3 mt-auto pt-4">
+          <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=100&q=80" alt="Michael" class="w-[42px] h-[42px] rounded-full object-cover saturate-90">
+          <div><div class="text-sm text-ivory">Michael K.</div><div class="text-xs text-silver-dim tracking-wide">Personal Branding</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- JOURNAL TEASER -->
+<section class="bg-charcoal py-32">
+  <div class="max-w-[1320px] mx-auto px-[6vw]">
+    <div class="reveal flex justify-between items-end gap-10 flex-wrap mb-16">
+      <div>
+        <span class="eyebrow font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center gap-2.5">Journal</span>
+        <h2 class="font-serif text-[clamp(2rem,3.6vw,3.1rem)] mt-3.5 max-w-[640px]">Notes from behind the lens.</h2>
+      </div>
+      <a href="journal.html" class="text-xs tracking-[0.14em] uppercase text-gold hover:text-gold-bright transition-colors pb-1.5">Read the Journal →</a>
+    </div>
+    <div class="reveal grid grid-cols-1 md:grid-cols-3 gap-9">
+      <a href="journal.html" class="group block">
+        <div class="overflow-hidden mb-5"><img src="https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=700&q=80" alt="Kampala wedding" class="w-full aspect-[4/3] object-cover saturate-90 brightness-95 transition-transform duration-700 group-hover:scale-105"></div>
+        <span class="font-mono text-[0.68rem] tracking-[0.14em] uppercase text-gold mb-3 block">Weddings</span>
+        <h4 class="font-serif text-xl mb-2.5 leading-snug">Behind the Lens: A Kampala Wedding</h4>
+        <span class="text-xs text-silver-dim">6 min read</span>
+      </a>
+      <a href="journal.html" class="group block">
+        <div class="overflow-hidden mb-5"><img src="https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=700&q=80" alt="Portrait session tips" class="w-full aspect-[4/3] object-cover saturate-90 brightness-95 transition-transform duration-700 group-hover:scale-105"></div>
+        <span class="font-mono text-[0.68rem] tracking-[0.14em] uppercase text-gold mb-3 block">Portraits</span>
+        <h4 class="font-serif text-xl mb-2.5 leading-snug">5 Things to Know Before Your Portrait Session</h4>
+        <span class="text-xs text-silver-dim">4 min read</span>
+      </a>
+      <a href="journal.html" class="group block">
+        <div class="overflow-hidden mb-5"><img src="https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=700&q=80" alt="Brand campaign" class="w-full aspect-[4/3] object-cover saturate-90 brightness-95 transition-transform duration-700 group-hover:scale-105"></div>
+        <span class="font-mono text-[0.68rem] tracking-[0.14em] uppercase text-gold mb-3 block">Commercial</span>
+        <h4 class="font-serif text-xl mb-2.5 leading-snug">The Story Behind Our Latest Campaign</h4>
+        <span class="text-xs text-silver-dim">5 min read</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="text-center py-[150px] border-t border-b border-line" style="background:linear-gradient(180deg, rgba(198,161,91,0.06), transparent), #151316;">
+  <div class="max-w-[1320px] mx-auto px-[6vw]">
+    <span class="eyebrow font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center justify-center gap-2.5">Let's Talk</span>
+    <h2 class="font-serif text-[clamp(2rem,3.6vw,3.1rem)] mt-4 mb-10 mx-auto text-center">Ready to create something unforgettable?</h2>
+    <div class="flex gap-4.5 justify-center flex-wrap">
+      <a href="contact.html" class="text-xs tracking-[0.14em] uppercase px-7 py-4 rounded-sm bg-gold text-black border border-gold hover:bg-gold-bright hover:-translate-y-0.5 transition-all duration-400">Start Your Enquiry</a>
+      <a href="tel:+256000000000" class="text-xs tracking-[0.14em] uppercase px-7 py-4 rounded-sm border border-line-strong text-ivory hover:border-gold hover:text-gold-bright hover:-translate-y-0.5 transition-all duration-400">Call the Studio</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="pt-24 pb-8">
+  <div class="max-w-[1320px] mx-auto px-[6vw]">
+    <div class="grid grid-cols-1 md:grid-cols-[1.4fr_0.8fr_0.8fr_0.8fr] gap-10 pb-16 border-b border-line">
+      <div>
+        <a href="index.html" class="font-serif text-xl tracking-wide flex items-center gap-2.5 mb-4.5">
+          <span class="relative w-[9px] h-[9px] rounded-full border border-gold inline-block"><span class="absolute inset-[2.5px] rounded-full bg-gold"></span></span>
+          WAKA SHOTS
+        </a>
+        <p class="text-ivory-dim font-light text-sm max-w-[280px]">Capturing moments. Creating stories. A photography studio based in Kampala, working across Uganda and East Africa.</p>
+      </div>
+      <div>
+        <h5 class="font-mono text-[0.7rem] tracking-[0.16em] uppercase text-silver-dim mb-5">Studio</h5>
+        <a href="portfolio.html" class="block text-ivory-dim text-sm font-light mb-3 hover:text-gold-bright transition-colors">Portfolio</a>
+        <a href="services.html" class="block text-ivory-dim text-sm font-light mb-3 hover:text-gold-bright transition-colors">Services</a>
+        <a href="about.html" class="block text-ivory-dim text-sm font-light mb-3 hover:text-gold-bright transition-colors">About</a>
+        <a href="journal.html" class="block text-ivory-dim text-sm font-light mb-3 hover:text-gold-bright transition-colors">Journal</a>
+      </div>
+      <div>
+        <h5 class="font-mono text-[0.7rem] tracking-[0.16em] uppercase text-silver-dim mb-5">Contact</h5>
+        <p class="text-ivory-dim text-sm font-light mb-3">hello@wakashots.com</p>
+        <p class="text-ivory-dim text-sm font-light mb-3">+256 000 000 000</p>
+        <p class="text-ivory-dim text-sm font-light mb-3">Kampala, Uganda</p>
+      </div>
+      <div>
+        <h5 class="font-mono text-[0.7rem] tracking-[0.16em] uppercase text-silver-dim mb-5">Follow</h5>
+        <a href="#" class="block text-ivory-dim text-sm font-light mb-3 hover:text-gold-bright transition-colors">Instagram</a>
+        <a href="#" class="block text-ivory-dim text-sm font-light mb-3 hover:text-gold-bright transition-colors">Facebook</a>
+        <a href="#" class="block text-ivory-dim text-sm font-light mb-3 hover:text-gold-bright transition-colors">TikTok</a>
+        <a href="#" class="block text-ivory-dim text-sm font-light mb-3 hover:text-gold-bright transition-colors">WhatsApp</a>
+      </div>
+    </div>
+    <div class="flex justify-between items-center pt-7 text-xs text-silver-dim flex-wrap gap-3.5">
+      <span>© 2026 Waka Shots Photography. All rights reserved.</span>
+      <span>Photography · Weddings · Portraits · Events · Brands</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/main.js"></script>
+</body>
+</html>

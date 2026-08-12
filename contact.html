@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact — Waka Shots Photography</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Manrope:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="assets/js/tailwind-config.js"></script>
+<link rel="stylesheet" href="assets/css/style.css">
+<style>
+  .field label{ font-family:'Space Mono', monospace; font-size:0.68rem; letter-spacing:0.12em; text-transform:uppercase; color:#aab0b6; display:block; margin-bottom:10px; }
+  .field input, .field select, .field textarea{
+    width:100%; background:transparent; border:1px solid rgba(236,231,219,0.16);
+    color:#ece7db; padding:14px 16px; font-family:'Manrope', sans-serif; font-size:0.94rem;
+    border-radius:2px; transition:border-color .3s;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus{
+    outline:none; border-color:#c6a15b;
+  }
+  .field select{ appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23c6a15b' stroke-width='1.4' fill='none'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 16px center; }
+  .field select option{ background:#151316; color:#ece7db; }
+</style>
+</head>
+<body class="bg-black text-ivory font-sans leading-relaxed overflow-x-hidden">
+
+<div class="grain"></div>
+
+<header id="siteHeader" class="fixed top-0 left-0 right-0 z-[500] flex items-center justify-between px-[6vw] py-6 transition-all duration-500 border-b border-transparent">
+  <a href="index.html" class="font-serif text-xl tracking-wide flex items-center gap-2.5">
+    <span class="relative w-[9px] h-[9px] rounded-full border border-gold inline-block"><span class="absolute inset-[2.5px] rounded-full bg-gold"></span></span>
+    WAKA SHOTS
+  </a>
+  <nav class="hidden md:flex gap-9 items-center">
+    <a href="portfolio.html" class="text-sm tracking-wide uppercase text-ivory-dim hover:text-ivory transition-colors relative group">Portfolio<span class="absolute left-0 -bottom-1 w-0 h-px bg-gold transition-all duration-300 group-hover:w-full"></span></a>
+    <a href="services.html" class="text-sm tracking-wide uppercase text-ivory-dim hover:text-ivory transition-colors relative group">Services<span class="absolute left-0 -bottom-1 w-0 h-px bg-gold transition-all duration-300 group-hover:w-full"></span></a>
+    <a href="about.html" class="text-sm tracking-wide uppercase text-ivory-dim hover:text-ivory transition-colors relative group">About<span class="absolute left-0 -bottom-1 w-0 h-px bg-gold transition-all duration-300 group-hover:w-full"></span></a>
+    <a href="journal.html" class="text-sm tracking-wide uppercase text-ivory-dim hover:text-ivory transition-colors relative group">Journal<span class="absolute left-0 -bottom-1 w-0 h-px bg-gold transition-all duration-300 group-hover:w-full"></span></a>
+    <a href="contact.html" class="text-sm tracking-wide uppercase text-gold-bright relative">Contact</a>
+    <a href="contact.html" class="text-sm tracking-wide uppercase border border-line-strong px-5 py-2.5 rounded-sm text-gold-bright hover:bg-gold hover:text-black hover:border-gold transition-all">Book Now</a>
+  </nav>
+  <button class="md:hidden flex flex-col gap-1.5 z-[600]" id="burgerBtn" aria-label="Open menu">
+    <span class="w-6 h-px bg-ivory"></span><span class="w-6 h-px bg-ivory"></span><span class="w-6 h-px bg-ivory"></span>
+  </button>
+</header>
+
+<div class="mobile-menu fixed inset-0 bg-black z-[550] flex flex-col items-center justify-center gap-8" id="mobileMenu">
+  <a href="portfolio.html" class="font-serif text-2xl">Portfolio</a>
+  <a href="services.html" class="font-serif text-2xl">Services</a>
+  <a href="about.html" class="font-serif text-2xl">About</a>
+  <a href="journal.html" class="font-serif text-2xl">Journal</a>
+  <a href="contact.html" class="font-serif text-2xl text-gold-bright">Book Now</a>
+</div>
+
+<!-- PAGE HEADER -->
+<section class="relative h-[46vh] min-h-[320px] flex items-end overflow-hidden">
+  <div class="hero-bg absolute inset-0 bg-cover" style="background-image:url('https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=1800&q=80'); background-position:center 30%;">
+    <div class="absolute inset-0" style="background:linear-gradient(180deg, rgba(10,9,8,0.5) 0%, rgba(10,9,8,0.4) 40%, rgba(10,9,8,0.96) 100%);"></div>
+  </div>
+  <div class="relative z-[2] w-full px-[6vw] pb-16">
+    <span class="eyebrow anim-fadeup font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center gap-2.5">Let's Talk</span>
+    <h1 class="anim-fadeup font-serif font-normal text-[clamp(2.4rem,6vw,4.6rem)] leading-[1.08] mt-4" style="animation-delay:.15s;">Let's create something unforgettable.</h1>
+  </div>
+</section>
+
+<!-- FORM + INFO -->
+<section class="py-28">
+  <div class="max-w-[1320px] mx-auto px-[6vw] grid grid-cols-1 md:grid-cols-[1.3fr_0.7fr] gap-16">
+
+    <form class="reveal space-y-7" onsubmit="event.preventDefault(); document.getElementById('formNote').classList.remove('hidden');">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="field"><label for="name">Name</label><input type="text" id="name" name="name" required></div>
+        <div class="field"><label for="email">Email</label><input type="email" id="email" name="email" required></div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="field"><label for="phone">Phone</label><input type="tel" id="phone" name="phone"></div>
+        <div class="field">
+          <label for="type">Type of Photography</label>
+          <select id="type" name="type">
+            <option>Wedding</option>
+            <option>Portrait</option>
+            <option>Event</option>
+            <option>Corporate</option>
+            <option>Fashion</option>
+            <option>Commercial / Brand</option>
+            <option>Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="field"><label for="date">Preferred Date</label><input type="date" id="date" name="date"></div>
+        <div class="field"><label for="location">Location</label><input type="text" id="location" name="location" placeholder="e.g. Kampala, Entebbe"></div>
+      </div>
+      <div class="field">
+        <label for="budget">Budget Range</label>
+        <select id="budget" name="budget">
+          <option>Under UGX 1,000,000</option>
+          <option>UGX 1,000,000 – 3,000,000</option>
+          <option>UGX 3,000,000 – 6,000,000</option>
+          <option>UGX 6,000,000+</option>
+          <option>Not sure yet</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="details">Tell Us About Your Project</label>
+        <textarea id="details" name="details" rows="5" placeholder="Share a bit about your day, your brand, or what you have in mind..."></textarea>
+      </div>
+      <button type="submit" class="text-xs tracking-[0.14em] uppercase px-8 py-4 rounded-sm bg-gold text-black border border-gold hover:bg-gold-bright hover:-translate-y-0.5 transition-all duration-400">Send Enquiry</button>
+      <p id="formNote" class="hidden text-sm text-ivory-dim font-light pt-2">Thank you — this form isn't connected yet, but once the backend is wired up your enquiry will come straight to our inbox.</p>
+    </form>
+
+    <div class="reveal">
+      <div class="border border-line rounded-sm p-9 mb-8">
+        <h3 class="font-serif text-xl mb-6">Studio Details</h3>
+        <div class="space-y-4 text-sm">
+          <div>
+            <span class="font-mono text-[0.65rem] tracking-[0.14em] uppercase text-gold block mb-1">Email</span>
+            <span class="text-ivory-dim font-light">hello@wakashots.com</span>
+          </div>
+          <div>
+            <span class="font-mono text-[0.65rem] tracking-[0.14em] uppercase text-gold block mb-1">Phone</span>
+            <span class="text-ivory-dim font-light">+256 000 000 000</span>
+          </div>
+          <div>
+            <span class="font-mono text-[0.65rem] tracking-[0.14em] uppercase text-gold block mb-1">Studio</span>
+            <span class="text-ivory-dim font-light">Kampala, Uganda</span>
+          </div>
+          <div>
+            <span class="font-mono text-[0.65rem] tracking-[0.14em] uppercase text-gold block mb-1">Response Time</span>
+            <span class="text-ivory-dim font-light">Within 24–48 hours</span>
+          </div>
+        </div>
+      </div>
+      <div class="relative aspect-[4/5] overflow-hidden rounded-sm">
+        <img src="https://images.unsplash.com/photo-1554048612-b6a482bc67e5?auto=format&fit=crop&w=700&q=80" alt="Waka Shots studio" class="w-full h-full object-cover saturate-90 brightness-95">
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="pt-4 pb-8">
+  <div class="max-w-[1320px] mx-auto px-[6vw]">
+    <div class="grid grid-cols-1 md:grid-cols-[1.4fr_0.8fr_0.8fr_0.8fr] gap-10 pb-16 border-t border-line pt-16">
+      <div>
+        <a href="index.html" class="font-serif text-xl tracking-wide flex items-center gap-2.5 mb-4.5">
+          <span class="relative w-[9px] h-[9px] rounded-full border border-gold inline-block"><span class="absolute inset-[2.5px] rounded-full bg-gold"></span></span>
+          WAKA SHOTS
+        </a>
+        <p class="text-ivory-dim font-light text-sm max-w-[280px]">Capturing moments. Creating stories. A photography studio based in Kampala, working across Uganda and East Africa.</p>
+      </div>
+      <div>
+        <h5 class="font-mono text-[0.7rem] tracking-[0.16em] uppercase text-silver-dim mb-5">Studio</h5>
+        <a href="portfolio.html" class="block text-ivory-dim text-sm font-light mb-3 hover:text-gold-bright transition-colors">Portfolio</a>
+        <a href="services.html" class="block text-ivory-dim text-sm font-light mb-3 hover:text-gold-bright transition-colors">Services</a>
+        <a href="about.html" class="block text-ivory-dim text-sm font-light mb-3 hover:text-gold-bright transition-colors">About</a>
+        <a href="journal.html" class="block text-ivory-dim text-sm font-light mb-3 hover:text-gold-bright transition-colors">Journal</a>
+      </div>
+      <div>
+        <h5 class="font-mono text-[0.7rem] tracking-[0.16em] uppercase text-silver-dim mb-5">Contact</h5>
+        <p class="text-ivory-dim text-sm font-light mb-3">hello@wakashots.com</p>
+        <p class="text-ivory-dim text-sm font-light mb-3">+256 000 000 000</p>
+        <p class="text-ivory-dim text-sm font-light mb-3">Kampala, Uganda</p>
+      </div>
+      <div>
+        <h5 class="font-mono text-[0.7rem] tracking-[0.16em] uppercase text-silver-dim mb-5">Follow</h5>
+        <a href="#" class="block text-ivory-dim text-sm font-light mb-3 hover:text-gold-bright transition-colors">Instagram</a>
+        <a href="#" class="block text-ivory-dim text-sm font-light mb-3 hover:text-gold-bright transition-colors">Facebook</a>
+        <a href="#" class="block text-ivory-dim text-sm font-light mb-3 hover:text-gold-bright transition-colors">TikTok</a>
+        <a href="#" class="block text-ivory-dim text-sm font-light mb-3 hover:text-gold-bright transition-colors">WhatsApp</a>
+      </div>
+    </div>
+    <div class="flex justify-between items-center pt-7 text-xs text-silver-dim flex-wrap gap-3.5">
+      <span>© 2026 Waka Shots Photography. All rights reserved.</span>
+      <span>Photography · Weddings · Portraits · Events · Brands</span>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/js/main.js"></script>
+</body>
+</html>
