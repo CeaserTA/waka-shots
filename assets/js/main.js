@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const burger = document.getElementById('burgerBtn');
   const mobileMenu = document.getElementById('mobileMenu');
-  const mobileMenuClose = document.getElementById('mobileMenuClose');
   if (burger && mobileMenu) {
     const closeMenu = () => {
       mobileMenu.classList.remove('open');
@@ -18,7 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const isOpen = mobileMenu.classList.toggle('open');
       burger.classList.toggle('is-open', isOpen);
     });
-    mobileMenuClose.addEventListener('click', closeMenu);
     mobileMenu.querySelectorAll('a').forEach(a =>
       a.addEventListener('click', closeMenu)
     );
@@ -37,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
     el.style.transitionDelay = Math.min(i * 70, 560) + 'ms';
   });
 
-  const revealEls = document.querySelectorAll('.reveal');
+  const revealEls = document.querySelectorAll('.reveal, .mask-reveal');
   const io = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -158,5 +156,64 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => loader.remove(), 800);
       }, 400);
     });
+  }
+
+  // ============ THE CONTACT SHEET — scroll parallax on scattered photos ============
+  // (Awwwards "Parallax collage"-inspired: each photo drifts at its own depth)
+  const scatterSection = document.getElementById('contactSheet');
+  if (scatterSection) {
+    const scatterPhotos = scatterSection.querySelectorAll('.scatter-photo');
+    const parallaxTick = () => {
+      const rect = scatterSection.getBoundingClientRect();
+      const progress = (window.innerHeight - rect.top) / (window.innerHeight + rect.height);
+      scatterPhotos.forEach((el) => {
+        const depth = parseFloat(el.dataset.depth) || 0.12;
+        const rot = el.dataset.rot || '0';
+        const shift = (progress - 0.5) * depth * 340;
+        el.style.transform = `translateY(${shift}px) rotate(${rot}deg)`;
+      });
+      requestAnimationFrame(parallaxTick);
+    };
+    requestAnimationFrame(parallaxTick);
+
+    // Cursor image trail — leaves a trail of small floating photos while
+    // the mouse moves across the section (Awwwards "cursor trail"-inspired).
+    const trailSources = Array.from(scatterPhotos).map(el => el.dataset.trailSrc || el.querySelector('img')?.src).filter(Boolean);
+    let lastSpawn = 0;
+    scatterSection.addEventListener('mousemove', (e) => {
+      const now = performance.now();
+      if (now - lastSpawn < 110 || !trailSources.length) return;
+      lastSpawn = now;
+      const img = document.createElement('img');
+      img.src = trailSources[Math.floor(Math.random() * trailSources.length)];
+      img.className = 'trail-thumb';
+      img.style.setProperty('--rot', (Math.random() * 16 - 8).toFixed(1) + 'deg');
+      img.style.left = e.clientX + 'px';
+      img.style.top = e.clientY + 'px';
+      document.body.appendChild(img);
+      requestAnimationFrame(() => img.classList.add('trail-show'));
+      setTimeout(() => {
+        img.classList.remove('trail-show');
+        img.classList.add('trail-hide');
+        setTimeout(() => img.remove(), 550);
+      }, 500);
+    });
+  }
+
+  // ============ FRAMES IN MOTION — vertical scroll drives horizontal filmstrip ============
+  // (Awwwards "horizontal scroll gallery"-inspired)
+  const filmstripWrapper = document.getElementById('filmstripWrapper');
+  const filmstripTrack = document.getElementById('filmstripTrack');
+  if (filmstripWrapper && filmstripTrack) {
+    const filmstripTick = () => {
+      const rect = filmstripWrapper.getBoundingClientRect();
+      const total = rect.height - window.innerHeight;
+      let progress = total > 0 ? -rect.top / total : 0;
+      progress = Math.max(0, Math.min(1, progress));
+      const maxTranslate = Math.max(filmstripTrack.scrollWidth - window.innerWidth, 0);
+      filmstripTrack.style.transform = `translateX(${-progress * maxTranslate}px)`;
+      requestAnimationFrame(filmstripTick);
+    };
+    requestAnimationFrame(filmstripTick);
   }
 });
