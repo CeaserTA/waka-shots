@@ -9,10 +9,20 @@ document.addEventListener('DOMContentLoaded', () => {
   const burger = document.getElementById('burgerBtn');
   const mobileMenu = document.getElementById('mobileMenu');
   if (burger && mobileMenu) {
-    burger.addEventListener('click', () => mobileMenu.classList.toggle('open'));
+    const closeMenu = () => {
+      mobileMenu.classList.remove('open');
+      burger.classList.remove('is-open');
+    };
+    burger.addEventListener('click', () => {
+      const isOpen = mobileMenu.classList.toggle('open');
+      burger.classList.toggle('is-open', isOpen);
+    });
     mobileMenu.querySelectorAll('a').forEach(a =>
-      a.addEventListener('click', () => mobileMenu.classList.remove('open'))
+      a.addEventListener('click', closeMenu)
     );
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeMenu();
+    });
   }
 
   // Scattered grid settle-in: give each work/gallery item a random tilt + offset
