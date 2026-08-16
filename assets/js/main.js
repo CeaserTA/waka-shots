@@ -216,4 +216,41 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     requestAnimationFrame(filmstripTick);
   }
+
+  // ============ SPOTLIGHT HOVER — cursor-tracking glow on cards (React Bits "SpotlightCard"-inspired) ============
+  document.querySelectorAll('.spotlight-card').forEach((card) => {
+    card.addEventListener('mousemove', (e) => {
+      const r = card.getBoundingClientRect();
+      card.style.setProperty('--sx', ((e.clientX - r.left) / r.width) * 100 + '%');
+      card.style.setProperty('--sy', ((e.clientY - r.top) / r.height) * 100 + '%');
+    });
+  });
+
+  // ============ ROTATING TAGLINE (lewahouse.com-inspired) ============
+  const rotator = document.querySelector('.tagline-rotator');
+  if (rotator) {
+    const lines = rotator.querySelectorAll('span');
+    let idx = 0;
+    setInterval(() => {
+      lines[idx].classList.remove('tagline-active');
+      idx = (idx + 1) % lines.length;
+      lines[idx].classList.add('tagline-active');
+    }, 2600);
+  }
+
+  // ============ VIDEO EMBEDS — click to load & play inline (greenlensug.org-inspired) ============
+  document.querySelectorAll('.video-card').forEach((card) => {
+    card.addEventListener('click', () => {
+      if (card.querySelector('iframe')) return;
+      const id = card.dataset.videoId;
+      if (!id) return;
+      const iframe = document.createElement('iframe');
+      iframe.src = `https://www.youtube.com/embed/${id}?autoplay=1&rel=0`;
+      iframe.title = 'YouTube video player';
+      iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+      iframe.allowFullscreen = true;
+      card.querySelectorAll('img, .play-btn, .video-label').forEach(el => el.remove());
+      card.appendChild(iframe);
+    });
+  });
 });

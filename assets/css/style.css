@@ -171,3 +171,97 @@ body.custom-cursor-active input, body.custom-cursor-active textarea, body.custom
   opacity:.7;
 }
 .partner-card:hover{ opacity:1; }
+
+/* ============ BRUSH-STROKE NAV UNDERLINE (lewahouse.com-inspired) ============ */
+/* Replaces the plain straight-line hover underline with a hand-drawn wavy stroke */
+.nav-underline.bg-gold{
+  background:transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 8' preserveAspectRatio='none'%3E%3Cpath d='M1 5 Q 8 1, 15 5 T 30 5 T 45 5 T 59 5' stroke='%23c6a15b' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") repeat-x left center;
+  background-size:auto 100%;
+  height:7px !important;
+  bottom:-4px !important;
+}
+
+/* ============ FLOATING METADATA TAGS (timeframe-app.webflow.io-inspired) ============ */
+/* Small camera-metadata chips drifting gently behind the hero headline */
+.float-tag{
+  position:absolute; font-family:'Space Mono', monospace; font-size:0.68rem;
+  letter-spacing:0.12em; text-transform:uppercase; color:rgba(230,200,135,0.55);
+  border:1px solid rgba(198,161,91,0.3); border-radius:2px; padding:5px 10px;
+  pointer-events:none; z-index:2; animation:floatDrift 7s ease-in-out infinite;
+  backdrop-filter:blur(2px);
+}
+@keyframes floatDrift{
+  0%, 100%{ transform:translateY(0) rotate(0deg); }
+  50%{ transform:translateY(-16px) rotate(-1.5deg); }
+}
+@media (max-width: 767px){ .float-tag{ display:none; } }
+
+/* ============ ROTATING TAGLINE (lewahouse.com-inspired) ============ */
+.tagline-rotator{ position:relative; display:inline-block; min-height:1.4em; }
+.tagline-rotator span{
+  position:absolute; left:0; top:0; opacity:0; white-space:nowrap;
+  transition:opacity .8s ease, transform .8s cubic-bezier(.22,.61,.36,1);
+  transform:translateY(8px);
+}
+.tagline-rotator span.tagline-active{ opacity:1; position:relative; transform:translateY(0); }
+
+/* ============ MARQUEE FADE EDGES (React Bits "Marquee"-inspired) ============ */
+.marquee-fade{ position:relative; }
+.marquee-fade::before, .marquee-fade::after{
+  content:""; position:absolute; top:0; bottom:0; width:80px; z-index:3; pointer-events:none;
+}
+.marquee-fade::before{ left:0; background:linear-gradient(90deg, var(--fade-color,#0a0908), transparent); }
+.marquee-fade::after{ right:0; background:linear-gradient(270deg, var(--fade-color,#0a0908), transparent); }
+
+/* ============ SPOTLIGHT HOVER (React Bits "SpotlightCard"-inspired) ============ */
+.spotlight-card{ position:relative; overflow:hidden; }
+.spotlight-card::before{
+  content:""; position:absolute; inset:0; z-index:1; opacity:0; pointer-events:none;
+  background:radial-gradient(240px circle at var(--sx,50%) var(--sy,50%), rgba(198,161,91,0.16), transparent 70%);
+  transition:opacity .4s ease;
+}
+.spotlight-card:hover::before{ opacity:1; }
+.spotlight-card > *{ position:relative; z-index:2; }
+
+/* ============ CINEMATIC PARTNERS BAND (bonjour.paris-inspired) ============ */
+.partners-band{
+  position:relative; overflow:hidden; min-height:52vh;
+  display:flex; align-items:center; justify-content:center;
+}
+.partners-band-bg{
+  position:absolute; inset:0; background-size:cover; background-position:center;
+  animation:partnersZoom 18s ease-in-out infinite alternate;
+}
+@keyframes partnersZoom{ from{ transform:scale(1); } to{ transform:scale(1.12); } }
+.partners-band-overlay{
+  position:absolute; inset:0;
+  background:linear-gradient(180deg, rgba(10,9,8,0.75) 0%, rgba(10,9,8,0.55) 50%, rgba(10,9,8,0.85) 100%);
+}
+
+/* ============ VIDEO EMBEDS (greenlensug.org-inspired: plays inline on the page) ============ */
+.video-card{ position:relative; aspect-ratio:16/9; overflow:hidden; border-radius:2px; background:#151316; cursor:pointer; border:1px solid rgba(236,231,219,0.12); }
+.video-card img{ width:100%; height:100%; object-fit:cover; filter:saturate(.85) brightness(.75); transition:filter .5s ease, transform .8s cubic-bezier(.22,.61,.36,1); }
+.video-card:hover img{ filter:saturate(1) brightness(.85); transform:scale(1.04); }
+.video-card .play-btn{
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:64px; height:64px; border-radius:50%; background:rgba(10,9,8,0.55);
+  border:1px solid rgba(198,161,91,0.6); display:flex; align-items:center; justify-content:center;
+  transition:background .3s ease, transform .3s ease;
+}
+.video-card:hover .play-btn{ background:#c6a15b; transform:translate(-50%,-50%) scale(1.08); }
+.video-card .play-btn svg{ width:20px; height:20px; fill:#e6c887; margin-left:3px; }
+.video-card:hover .play-btn svg{ fill:#0a0908; }
+.video-card iframe{ position:absolute; inset:0; width:100%; height:100%; border:0; }
+.video-card .video-label{
+  position:absolute; bottom:0; left:0; right:0; padding:14px 16px;
+  font-family:'Space Mono', monospace; font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase;
+  color:#e6c887; background:linear-gradient(0deg, rgba(10,9,8,0.85), transparent);
+}
+
+/* ============ PACKAGE PRICING TAG (cranephotography.co.ug-benchmarked) ============ */
+.price-tag{
+  display:inline-flex; align-items:baseline; gap:6px; font-family:'Space Mono', monospace;
+  font-size:0.72rem; letter-spacing:0.06em; color:#e6c887;
+  border:1px solid rgba(198,161,91,0.4); border-radius:2px; padding:4px 10px; margin-top:10px;
+}
+.price-tag .price-from{ color:#8a7140; text-transform:uppercase; font-size:0.62rem; letter-spacing:0.1em; }
