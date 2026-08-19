@@ -265,3 +265,41 @@ body.custom-cursor-active input, body.custom-cursor-active textarea, body.custom
   border:1px solid rgba(198,161,91,0.4); border-radius:2px; padding:4px 10px; margin-top:10px;
 }
 .price-tag .price-from{ color:#8a7140; text-transform:uppercase; font-size:0.62rem; letter-spacing:0.1em; }
+
+/* ============ LIGHTBOX — full-size view for gallery items ============ */
+/* Makes the custom cursor's "View" promise real: click opens the full image. */
+.lightbox{
+  position:fixed; inset:0; z-index:9990; background:rgba(10,9,8,0.96);
+  display:flex; align-items:center; justify-content:center; padding:8vh 6vw;
+  opacity:0; visibility:hidden; transition:opacity .4s ease, visibility .4s ease;
+}
+.lightbox.is-open{ opacity:1; visibility:visible; }
+.lightbox-content{ max-width:1100px; width:100%; text-align:center; }
+.lightbox-content img{
+  max-width:100%; max-height:74vh; margin:0 auto; display:block;
+  border:1px solid rgba(198,161,91,0.35); border-radius:2px;
+  box-shadow:0 40px 80px -20px rgba(0,0,0,0.7);
+  opacity:0; transform:scale(.96);
+  transition:opacity .5s ease, transform .5s cubic-bezier(.22,.61,.36,1);
+}
+.lightbox.is-open .lightbox-content img{ opacity:1; transform:scale(1); }
+.lightbox-caption{ margin-top:20px; }
+.lightbox-cat{ font-family:'Space Mono', monospace; font-size:0.7rem; letter-spacing:0.16em; text-transform:uppercase; color:#c6a15b; }
+.lightbox-title{ font-family:'Fraunces', serif; font-size:1.4rem; color:#ece7db; margin-top:8px; }
+.lightbox-exif{ font-family:'Space Mono', monospace; font-size:0.7rem; color:#aab0b6; display:flex; gap:16px; justify-content:center; margin-top:10px; }
+.lightbox-close, .lightbox-nav{
+  position:fixed; border:1px solid rgba(198,161,91,0.4); border-radius:50%;
+  color:#ece7db; line-height:1; display:flex; align-items:center; justify-content:center;
+  background:transparent; cursor:pointer; transition:border-color .3s ease, color .3s ease, background .3s ease;
+  z-index:9991;
+}
+.lightbox-close:hover, .lightbox-nav:hover{ border-color:#c6a15b; background:#c6a15b; color:#0a0908; }
+.lightbox-close{ top:28px; right:6vw; width:44px; height:44px; font-size:1.6rem; }
+.lightbox-nav{ top:50%; transform:translateY(-50%); width:52px; height:52px; font-size:2rem; }
+.lightbox-prev{ left:24px; }
+.lightbox-next{ right:24px; }
+@media (max-width: 640px){
+  .lightbox-nav{ width:40px; height:40px; font-size:1.5rem; }
+  .lightbox-prev{ left:10px; } .lightbox-next{ right:10px; }
+  .lightbox-close{ top:16px; right:16px; }
+}
