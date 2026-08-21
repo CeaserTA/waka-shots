@@ -65,12 +65,15 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!mobileMenu.classList.contains('open')) return;
       mobileMenu.classList.remove('open');
       burger.classList.remove('is-open');
+      document.body.classList.remove('menu-open');
       document.body.style.overflow = '';
       runWipe(false);
     };
     burger.addEventListener('click', () => {
       const isOpen = mobileMenu.classList.toggle('open');
       burger.classList.toggle('is-open', isOpen);
+      // lift the header (and its burger) above the open menu overlay
+      document.body.classList.toggle('menu-open', isOpen);
       document.body.style.overflow = isOpen ? 'hidden' : '';
       runWipe(isOpen);
     });

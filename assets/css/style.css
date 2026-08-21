@@ -75,6 +75,16 @@ body{ -webkit-font-smoothing:antialiased; }
 .mobile-menu.open a:nth-child(6){ transition-delay:.9s; }
 .mobile-menu.open a:nth-child(7){ transition-delay:.85s; }
 
+/* While the menu is open, the header (which owns the burger) must sit above
+   the wipe/menu overlays — the burger's own z-index is trapped inside the
+   header's stacking context. Logo fades out so only the X remains. */
+body.menu-open #siteHeader{
+  z-index:560; background:transparent !important;
+  backdrop-filter:none !important; border-color:transparent !important;
+}
+body.menu-open #siteHeader > a{ opacity:0; pointer-events:none; }
+#siteHeader > a{ transition:opacity .3s ease; }
+
 /* Burger: conveyor-belt morph — lines slide out right, X slides in
    (zeustheagency.com-inspired) */
 .burger{ position:relative; }
