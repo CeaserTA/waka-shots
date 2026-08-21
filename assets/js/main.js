@@ -9,13 +9,70 @@ document.addEventListener('DOMContentLoaded', () => {
   const burger = document.getElementById('burgerBtn');
   const mobileMenu = document.getElementById('mobileMenu');
   if (burger && mobileMenu) {
+    // ---- LIQUID MENU WIPE (zeustheagency.com-inspired) ----
+    // Four stacked SVG layers cascade down like liquid to cover the screen
+    // (bright gold leads, black lands last). On close the wipe keeps moving
+    // the same direction and exits off the bottom — a wipe-through, not a rewind.
+    const ns = 'http://www.w3.org/2000/svg';
+    const wipe = document.createElementNS(ns, 'svg');
+    wipe.setAttribute('viewBox', '0 0 100 100');
+    wipe.setAttribute('preserveAspectRatio', 'none');
+    wipe.setAttribute('aria-hidden', 'true');
+    wipe.classList.add('menu-wipe');
+    const layers = ['#e6c887', '#c6a15b', '#8a7140', '#0a0908'].map((c) => {
+      const p = document.createElementNS(ns, 'path');
+      p.setAttribute('fill', c);
+      wipe.appendChild(p);
+      return p;
+    });
+    document.body.appendChild(wipe);
+
+    const XS = [0, 25, 50, 75, 100];
+    const cubicInOut = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+    // Wavy edge through 5 points; shape anchored to top (open) or bottom (close)
+    const edgePath = (ys, open) => {
+      let d = `M 0 ${open ? 0 : 100} L 0 ${ys[0]}`;
+      for (let i = 1; i < ys.length; i++) {
+        const mx = (XS[i - 1] + XS[i]) / 2;
+        d += ` C ${mx} ${ys[i - 1]} ${mx} ${ys[i]} ${XS[i]} ${ys[i]}`;
+      }
+      return d + ` L 100 ${ys[4]} L 100 ${open ? 0 : 100} Z`;
+    };
+    layers.forEach((p) => p.setAttribute('d', edgePath([0, 0, 0, 0, 0], true))); // flat = invisible
+
+    let wipeRAF = 0;
+    const runWipe = (open) => {
+      cancelAnimationFrame(wipeRAF);
+      const jitter = XS.map(() => Math.random() * 180); // liquid wobble, fresh each toggle
+      const start = performance.now();
+      const tick = (now) => {
+        const t = now - start;
+        let done = true;
+        layers.forEach((p, li) => {
+          const delay = open ? li * 70 : (3 - li) * 70; // black leads on exit
+          if (t < delay + 1380) done = false;
+          const ys = XS.map((x, i) =>
+            cubicInOut(Math.max(0, Math.min(1, (t - delay - jitter[i]) / 1200))) * 100
+          );
+          p.setAttribute('d', edgePath(ys, open));
+        });
+        if (!done) wipeRAF = requestAnimationFrame(tick);
+      };
+      wipeRAF = requestAnimationFrame(tick);
+    };
+
     const closeMenu = () => {
+      if (!mobileMenu.classList.contains('open')) return;
       mobileMenu.classList.remove('open');
       burger.classList.remove('is-open');
+      document.body.style.overflow = '';
+      runWipe(false);
     };
     burger.addEventListener('click', () => {
       const isOpen = mobileMenu.classList.toggle('open');
       burger.classList.toggle('is-open', isOpen);
+      document.body.style.overflow = isOpen ? 'hidden' : '';
+      runWipe(isOpen);
     });
     mobileMenu.querySelectorAll('a').forEach(a =>
       a.addEventListener('click', closeMenu)
@@ -221,8 +278,11 @@ document.addEventListener('DOMContentLoaded', () => {
       // Rotating orbit: each item tilts on the wheel according to its
       // distance from center stage (computed from layout, not live rects,
       // so there's no feedback loop with the transforms we set).
+      // Mobile gets a plain flat strip — the drum curve is desktop-only.
       const vw = window.innerWidth;
+      const flat = vw < 768;
       orbitItems.forEach((item) => {
+        if (flat) { item.style.transform = ''; return; }
         const center = item.offsetLeft + item.offsetWidth / 2 - shift;
         const t = Math.max(-1, Math.min(1, (center - vw / 2) / (vw / 2)));
         const tilt = -t * MAX_TILT;
