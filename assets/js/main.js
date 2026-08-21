@@ -201,17 +201,34 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ============ FRAMES IN MOTION — vertical scroll drives horizontal filmstrip ============
-  // (Awwwards "horizontal scroll gallery"-inspired)
+  // (Awwwards "horizontal scroll gallery"-inspired, with a zeustheagency.com-style
+  //  rotating-wheel orbit: items sit on a drum, tilting away from center stage)
   const filmstripWrapper = document.getElementById('filmstripWrapper');
   const filmstripTrack = document.getElementById('filmstripTrack');
   if (filmstripWrapper && filmstripTrack) {
+    const orbitItems = filmstripTrack.querySelectorAll('.filmstrip-item');
+    const MAX_TILT = 38;   // deg of rotateY at the screen edges
+    const MAX_DEPTH = 140; // px an edge item recedes into the drum
     const filmstripTick = () => {
       const rect = filmstripWrapper.getBoundingClientRect();
       const total = rect.height - window.innerHeight;
       let progress = total > 0 ? -rect.top / total : 0;
       progress = Math.max(0, Math.min(1, progress));
       const maxTranslate = Math.max(filmstripTrack.scrollWidth - window.innerWidth, 0);
-      filmstripTrack.style.transform = `translateX(${-progress * maxTranslate}px)`;
+      const shift = progress * maxTranslate;
+      filmstripTrack.style.transform = `translateX(${-shift}px)`;
+
+      // Rotating orbit: each item tilts on the wheel according to its
+      // distance from center stage (computed from layout, not live rects,
+      // so there's no feedback loop with the transforms we set).
+      const vw = window.innerWidth;
+      orbitItems.forEach((item) => {
+        const center = item.offsetLeft + item.offsetWidth / 2 - shift;
+        const t = Math.max(-1, Math.min(1, (center - vw / 2) / (vw / 2)));
+        const tilt = -t * MAX_TILT;
+        const depth = -Math.abs(t) * MAX_DEPTH;
+        item.style.transform = `rotateY(${tilt}deg) translateZ(${depth}px)`;
+      });
       requestAnimationFrame(filmstripTick);
     };
     requestAnimationFrame(filmstripTick);
@@ -319,4 +336,18 @@ document.addEventListener('DOMContentLoaded', () => {
       if (e.key === 'ArrowRight') openLightbox(currentIndex + 1);
     });
   }
+
+  // ============ BACK TO TOP ============
+  // Injected on every page so no HTML edits are needed anywhere.
+  const backToTop = document.createElement('button');
+  backToTop.className = 'back-to-top';
+  backToTop.setAttribute('aria-label', 'Back to top');
+  backToTop.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>';
+  document.body.appendChild(backToTop);
+  window.addEventListener('scroll', () => {
+    backToTop.classList.toggle('is-visible', window.scrollY > 600);
+  });
+  backToTop.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
 });

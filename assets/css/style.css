@@ -149,8 +149,14 @@ body.custom-cursor-active input, body.custom-cursor-active textarea, body.custom
 .trail-thumb.trail-hide{ opacity:0; transform:translate(-50%,-50%) scale(.82) rotate(var(--rot,0deg)) translateY(-104px); }
 
 /* ============ FRAMES IN MOTION — horizontal scroll-driven filmstrip ============ */
-.filmstrip-track{ display:flex; gap:1.5rem; will-change:transform; }
-.filmstrip-item{ flex:none; }
+/* perspective lives on the viewport-sized stage (.orbit-stage) so the vanishing
+   point is the screen center — putting it on the wide track made receding items
+   slide sideways into their neighbours. preserve-3d keeps every item in one
+   shared 3D space so they tilt on the drum without overlapping
+   (zeustheagency.com-inspired) */
+.orbit-stage{ perspective:1200px; }
+.filmstrip-track{ display:flex; gap:1.5rem; will-change:transform; transform-style:preserve-3d; }
+.filmstrip-item{ flex:none; will-change:transform; }
 .filmstrip-item img{
   width:100%; height:100%; object-fit:cover; display:block;
   filter:saturate(.9) brightness(.93); transition:filter .5s ease;
@@ -303,3 +309,60 @@ body.custom-cursor-active input, body.custom-cursor-active textarea, body.custom
   .lightbox-prev{ left:10px; } .lightbox-next{ right:10px; }
   .lightbox-close{ top:16px; right:16px; }
 }
+
+/* ============ BACK TO TOP ============ */
+.back-to-top{
+  position:fixed; bottom:28px; right:28px; z-index:400;
+  width:46px; height:46px; border-radius:50%;
+  background:rgba(10,9,8,0.75); backdrop-filter:blur(6px);
+  border:1px solid rgba(198,161,91,0.4);
+  color:#e6c887; display:flex; align-items:center; justify-content:center;
+  cursor:pointer; opacity:0; visibility:hidden; transform:translateY(10px);
+  transition:opacity .4s ease, visibility .4s ease, transform .4s ease, border-color .3s ease, background .3s ease;
+}
+.back-to-top.is-visible{ opacity:1; visibility:visible; transform:translateY(0); }
+.back-to-top:hover{ border-color:#c6a15b; background:#c6a15b; color:#0a0908; }
+.back-to-top svg{ width:18px; height:18px; }
+@media (max-width: 640px){ .back-to-top{ bottom:20px; right:20px; width:42px; height:42px; } }
+
+/* ============ SERVICES SUB-NAV PILLS ============ */
+.pkg-nav-link{
+  font-family:'Space Mono', monospace; font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase;
+  padding:10px 20px; border:1px solid rgba(236,231,219,0.16); border-radius:20px;
+  color:#c9c3b4; white-space:nowrap; transition:border-color .3s ease, color .3s ease, background .3s ease;
+}
+.pkg-nav-link:hover{ border-color:#c6a15b; color:#e6c887; background:rgba(198,161,91,0.08); }
+
+/* ============ TIERED PACKAGE PRICING CARDS (timelessweddingz.com Bronze/Silver/Gold-benchmarked) ============ */
+.package-card{
+  background:#0a0908; border:1px solid rgba(236,231,219,0.12); border-radius:2px;
+  padding:36px 30px; display:flex; flex-direction:column; position:relative;
+  transition:border-color .4s ease, transform .4s ease;
+}
+.package-card:hover{ border-color:rgba(198,161,91,0.4); transform:translateY(-4px); }
+.package-card.is-featured{ border-color:#c6a15b; }
+.package-card .pkg-badge{
+  position:absolute; top:-13px; left:50%; transform:translateX(-50%);
+  background:#c6a15b; color:#0a0908; font-family:'Space Mono', monospace; font-size:0.62rem;
+  letter-spacing:0.12em; text-transform:uppercase; padding:5px 14px; border-radius:20px; white-space:nowrap;
+}
+.package-card .pkg-tier{ font-family:'Fraunces', serif; font-size:1.6rem; color:#ece7db; margin-bottom:4px; }
+.package-card .pkg-tier-sub{
+  font-family:'Space Mono', monospace; font-size:0.65rem; letter-spacing:0.1em;
+  text-transform:uppercase; color:#8a7140; margin-bottom:18px; display:block;
+}
+.package-card .pkg-price{
+  font-family:'Fraunces', serif; font-size:1.9rem; color:#e6c887;
+  margin-bottom:22px; padding-bottom:22px; border-bottom:1px solid rgba(236,231,219,0.12);
+}
+.package-card .pkg-price span{
+  font-family:'Space Mono', monospace; font-size:0.68rem; color:#6f7479;
+  text-transform:uppercase; letter-spacing:0.08em; display:block; margin-bottom:4px;
+}
+.package-card ul{ flex-grow:1; margin-bottom:26px; }
+.package-card li{
+  display:flex; gap:10px; align-items:flex-start; font-size:0.85rem; color:#c9c3b4;
+  font-weight:300; padding:8px 0; border-bottom:1px dashed rgba(236,231,219,0.08);
+}
+.package-card li:last-child{ border-bottom:none; }
+.package-card li::before{ content:"✓"; color:#c6a15b; flex-shrink:0; font-size:0.8rem; margin-top:1px; }

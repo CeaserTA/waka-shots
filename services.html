@@ -30,7 +30,7 @@
     <a href="contact.html" class="text-sm tracking-wide uppercase text-ivory-dim hover:text-ivory transition-colors relative group">Contact<span class="absolute left-0 -bottom-1 w-0 h-px bg-gold nav-underline transition-all duration-300 group-hover:w-full"></span></a>
     <a href="contact.html" class="text-sm tracking-wide uppercase border border-line-strong px-5 py-2.5 rounded-sm text-gold-bright hover:bg-gold hover:text-black hover:border-gold transition-all">Book Now</a>
   </nav>
-  <button class="md:hidden flex flex-col gap-1.5 z-[600]" id="burgerBtn" aria-label="Open menu">
+  <button class="burger md:hidden flex flex-col gap-1.5 z-[600]" id="burgerBtn" aria-label="Open menu">
     <span class="w-6 h-px bg-ivory"></span><span class="w-6 h-px bg-ivory"></span><span class="w-6 h-px bg-ivory"></span>
   </button>
 </header>
@@ -59,34 +59,134 @@
 <!-- INTRO -->
 <section class="pt-24 pb-10">
   <div class="max-w-[1320px] mx-auto px-[6vw]">
-    <p class="reveal text-ivory-dim font-light text-lg max-w-[640px]">Every project starts as a conversation, not a package. These three experiences are starting points — the scope, timeline and pricing are always shaped around what your story actually needs.</p>
+    <p class="reveal text-ivory-dim font-light text-lg max-w-[640px]">Every project starts as a conversation, not a package. The tiers below are starting points — the scope, timeline and pricing are always shaped around what your story actually needs.</p>
   </div>
 </section>
 
-<!-- WEDDING EXPERIENCE -->
-<section class="py-24">
-  <div class="max-w-[1320px] mx-auto px-[6vw] grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">
-    <div class="reveal order-2 md:order-1">
-      <div class="font-mono text-gold-dim text-sm tracking-wide mb-6">f/1.8 — Intimate</div>
-      <h2 class="font-serif text-[clamp(1.9rem,3vw,2.6rem)] mb-4">The Wedding Experience</h2>
-      <span class="price-tag mb-6"><span class="price-from">From</span> UGX 2,000,000</span>
-      <p class="text-ivory-dim font-light mb-6 max-w-[480px] mt-6">For couples who want their day documented with emotion, elegance and intention — from first light to the last dance. We move quietly through the day, catching what actually happens rather than staging what should.</p>
-      <ul class="space-y-3 mb-8">
-        <li class="flex items-start gap-3 text-sm text-ivory-dim font-light"><span class="text-gold mt-0.5">—</span> Full-day or multi-day coverage</li>
-        <li class="flex items-start gap-3 text-sm text-ivory-dim font-light"><span class="text-gold mt-0.5">—</span> Engagement session included</li>
-        <li class="flex items-start gap-3 text-sm text-ivory-dim font-light"><span class="text-gold mt-0.5">—</span> Curated, retouched online gallery</li>
-        <li class="flex items-start gap-3 text-sm text-ivory-dim font-light"><span class="text-gold mt-0.5">—</span> Optional second photographer &amp; album</li>
-      </ul>
-      <a href="contact.html" class="inline-block text-xs tracking-[0.14em] uppercase px-7 py-4 rounded-sm bg-gold text-black border border-gold hover:bg-gold-bright hover:-translate-y-0.5 transition-all duration-400">Enquire Now</a>
+<!-- SUB-NAV -->
+<section class="pb-4">
+  <div class="max-w-[1320px] mx-auto px-[6vw]">
+    <div class="reveal flex flex-wrap gap-3">
+      <a href="#weddings" class="pkg-nav-link">Weddings</a>
+      <a href="#introduction" class="pkg-nav-link">Introduction</a>
+      <a href="#portraits" class="pkg-nav-link">Portraits</a>
+      <a href="#graduation" class="pkg-nav-link">Graduation</a>
+      <a href="#brand" class="pkg-nav-link">Brand</a>
     </div>
-    <div class="reveal order-1 md:order-2 relative aspect-[4/5] overflow-hidden rounded-sm">
-      <img src="https://images.unsplash.com/photo-1608009232260-9b527a5bb9bd?auto=format&fit=crop&w=900&q=80" alt="Wedding photography" class="w-full h-full object-cover saturate-90 brightness-95">
+  </div>
+</section>
+
+<!-- WEDDINGS -->
+<section id="weddings" class="py-24 scroll-mt-24">
+  <div class="max-w-[1320px] mx-auto px-[6vw]">
+    <div class="reveal mb-16 max-w-[640px]">
+      <span class="eyebrow font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center gap-2.5">Weddings</span>
+      <h2 class="font-serif text-[clamp(2rem,3.6vw,3.1rem)] mt-3.5 mb-5">Three ways to document your day.</h2>
+      <p class="text-ivory-dim font-light">For couples who want their day documented with emotion, elegance and intention — from first light to the last dance. Every tier can be adjusted to fit your venue, guest count and timeline.</p>
+    </div>
+    <div class="reveal grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 pt-4">
+      <div class="package-card">
+        <div class="pkg-tier">Silver</div>
+        <span class="pkg-tier-sub">Wedding Package</span>
+        <div class="pkg-price"><span>From</span>UGX 2,500,000</div>
+        <ul>
+          <li>1 lead photographer</li>
+          <li>Full-day coverage (up to 8 hours)</li>
+          <li>300+ professionally edited photos</li>
+          <li>Private online gallery</li>
+          <li>Print release for personal use</li>
+        </ul>
+        <a href="contact.html" class="text-center text-xs tracking-[0.14em] uppercase px-6 py-4 rounded-sm border border-line-strong text-ivory hover:border-gold hover:text-gold-bright transition-all duration-400">Choose Silver</a>
+      </div>
+      <div class="package-card is-featured">
+        <span class="pkg-badge">Most Popular</span>
+        <div class="pkg-tier">Gold</div>
+        <span class="pkg-tier-sub">Wedding Package</span>
+        <div class="pkg-price"><span>From</span>UGX 4,500,000</div>
+        <ul>
+          <li>Everything in Silver</li>
+          <li>2nd photographer</li>
+          <li>Pre-wedding engagement session</li>
+          <li>500+ professionally edited photos</li>
+          <li>Premium leather-bound album</li>
+          <li>Drone aerial coverage</li>
+        </ul>
+        <a href="contact.html" class="text-center text-xs tracking-[0.14em] uppercase px-6 py-4 rounded-sm bg-gold text-black border border-gold hover:bg-gold-bright transition-all duration-400">Choose Gold</a>
+      </div>
+      <div class="package-card">
+        <div class="pkg-tier">Platinum</div>
+        <span class="pkg-tier-sub">Wedding Package</span>
+        <div class="pkg-price"><span>From</span>UGX 7,500,000</div>
+        <ul>
+          <li>Everything in Gold</li>
+          <li>Multi-day coverage (traditional + white wedding)</li>
+          <li>Same-day edit highlight film</li>
+          <li>Unlimited edited photos</li>
+          <li>Luxury fine-art album (2 copies)</li>
+          <li>Dedicated day-of coordinator liaison</li>
+        </ul>
+        <a href="contact.html" class="text-center text-xs tracking-[0.14em] uppercase px-6 py-4 rounded-sm border border-line-strong text-ivory hover:border-gold hover:text-gold-bright transition-all duration-400">Choose Platinum</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INTRODUCTION (KUHINGIRA / KWANJULA) -->
+<section id="introduction" class="py-24 bg-charcoal scroll-mt-24">
+  <div class="max-w-[1320px] mx-auto px-[6vw]">
+    <div class="reveal mb-16 max-w-[640px]">
+      <span class="eyebrow font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center gap-2.5">Introduction · Kuhingira / Kwanjula</span>
+      <h2 class="font-serif text-[clamp(2rem,3.6vw,3.1rem)] mt-3.5 mb-5">Honouring the traditional introduction.</h2>
+      <p class="text-ivory-dim font-light">The introduction ceremony — known as Kuhingira or Kwanjula depending on tradition — carries its own colour, ritual and rhythm. We shoot it with the same care as the wedding day, tuned to its pace and customs.</p>
+    </div>
+    <div class="reveal grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 pt-4">
+      <div class="package-card">
+        <div class="pkg-tier">Silver</div>
+        <span class="pkg-tier-sub">Introduction Package</span>
+        <div class="pkg-price"><span>From</span>UGX 1,800,000</div>
+        <ul>
+          <li>1 lead photographer</li>
+          <li>Half-day coverage (up to 5 hours)</li>
+          <li>250+ professionally edited photos</li>
+          <li>Private online gallery</li>
+        </ul>
+        <a href="contact.html" class="text-center text-xs tracking-[0.14em] uppercase px-6 py-4 rounded-sm border border-line-strong text-ivory hover:border-gold hover:text-gold-bright transition-all duration-400">Choose Silver</a>
+      </div>
+      <div class="package-card is-featured">
+        <span class="pkg-badge">Most Popular</span>
+        <div class="pkg-tier">Gold</div>
+        <span class="pkg-tier-sub">Introduction Package</span>
+        <div class="pkg-price"><span>From</span>UGX 3,200,000</div>
+        <ul>
+          <li>Everything in Silver</li>
+          <li>2nd photographer</li>
+          <li>Full-day coverage</li>
+          <li>400+ professionally edited photos</li>
+          <li>Printed photo album</li>
+          <li>Drone aerial coverage</li>
+        </ul>
+        <a href="contact.html" class="text-center text-xs tracking-[0.14em] uppercase px-6 py-4 rounded-sm bg-gold text-black border border-gold hover:bg-gold-bright transition-all duration-400">Choose Gold</a>
+      </div>
+      <div class="package-card">
+        <div class="pkg-tier">Platinum</div>
+        <span class="pkg-tier-sub">Introduction Package</span>
+        <div class="pkg-price"><span>From</span>UGX 5,000,000</div>
+        <ul>
+          <li>Everything in Gold</li>
+          <li>Preparation (kukyala) coverage included</li>
+          <li>Same-day highlight video</li>
+          <li>Unlimited edited photos</li>
+          <li>Luxury album (2 copies)</li>
+          <li>Extended family portrait session</li>
+        </ul>
+        <a href="contact.html" class="text-center text-xs tracking-[0.14em] uppercase px-6 py-4 rounded-sm border border-line-strong text-ivory hover:border-gold hover:text-gold-bright transition-all duration-400">Choose Platinum</a>
+      </div>
     </div>
   </div>
 </section>
 
 <!-- PORTRAIT EXPERIENCE -->
-<section class="py-24 bg-charcoal">
+<section id="portraits" class="py-24 scroll-mt-24">
   <div class="max-w-[1320px] mx-auto px-[6vw] grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">
     <div class="reveal relative aspect-[4/5] overflow-hidden rounded-sm">
       <img src="https://images.unsplash.com/photo-1568782517100-09bf22d88c2d?auto=format&fit=crop&w=900&q=80" alt="Portrait photography" class="w-full h-full object-cover saturate-90 brightness-95">
@@ -108,7 +208,7 @@
 </section>
 
 <!-- GRADUATION EXPERIENCE -->
-<section class="py-24">
+<section id="graduation" class="py-24 scroll-mt-24">
   <div class="max-w-[1320px] mx-auto px-[6vw] grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">
     <div class="reveal order-2 md:order-1">
       <div class="font-mono text-gold-dim text-sm tracking-wide mb-6">f/4 — Celebratory</div>
@@ -130,7 +230,7 @@
 </section>
 
 <!-- BRAND EXPERIENCE -->
-<section class="py-24 bg-charcoal">
+<section id="brand" class="py-24 bg-charcoal scroll-mt-24">
   <div class="max-w-[1320px] mx-auto px-[6vw] grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center">
     <div class="reveal relative aspect-[4/5] overflow-hidden rounded-sm">
       <img src="https://images.unsplash.com/photo-1578509566163-068acd11b8e7?auto=format&fit=crop&w=900&q=80" alt="Brand photography" class="w-full h-full object-cover saturate-90 brightness-95">
@@ -193,39 +293,39 @@
 </section>
 
 <!-- FOOTER -->
-<footer class="pt-24 pb-8">
+<footer class="pt-14 pb-6">
   <div class="max-w-[1320px] mx-auto px-[6vw]">
-    <div class="grid grid-cols-1 md:grid-cols-[1.4fr_0.8fr_0.8fr_0.8fr] gap-10 pb-16 border-b border-line">
+    <div class="grid grid-cols-1 md:grid-cols-[1.4fr_0.8fr_0.8fr_0.8fr] gap-8 pb-8 border-b border-line">
       <div>
-        <a href="index.html" class="font-serif text-xl tracking-wide flex items-center gap-2.5 mb-4.5">
+        <a href="index.html" class="font-serif text-xl tracking-wide flex items-center gap-2.5 mb-3">
           <span class="relative w-[9px] h-[9px] rounded-full border border-gold inline-block"><span class="absolute inset-[2.5px] rounded-full bg-gold"></span></span>
           WAKA SHOTS
         </a>
         <p class="text-ivory-dim font-light text-sm max-w-[280px]">Capturing moments. Creating stories. A photography studio based in Kampala, working across Uganda and East Africa.</p>
       </div>
       <div>
-        <h5 class="font-mono text-[0.7rem] tracking-[0.16em] uppercase text-silver-dim mb-5">Studio</h5>
-        <a href="portfolio.html" class="block text-ivory-dim text-sm font-light mb-3 hover:text-gold-bright transition-colors">Portfolio</a>
-        <a href="services.html" class="block text-ivory-dim text-sm font-light mb-3 hover:text-gold-bright transition-colors">Services</a>
-        <a href="about.html" class="block text-ivory-dim text-sm font-light mb-3 hover:text-gold-bright transition-colors">About</a>
-        <a href="journal.html" class="block text-ivory-dim text-sm font-light mb-3 hover:text-gold-bright transition-colors">Journal</a>
-        <a href="films.html" class="block text-ivory-dim text-sm font-light mb-3 hover:text-gold-bright transition-colors">Films</a>
+        <h5 class="font-mono text-[0.7rem] tracking-[0.16em] uppercase text-silver-dim mb-3">Studio</h5>
+        <a href="portfolio.html" class="block text-ivory-dim text-sm font-light mb-2 hover:text-gold-bright transition-colors">Portfolio</a>
+        <a href="services.html" class="block text-ivory-dim text-sm font-light mb-2 hover:text-gold-bright transition-colors">Services</a>
+        <a href="about.html" class="block text-ivory-dim text-sm font-light mb-2 hover:text-gold-bright transition-colors">About</a>
+        <a href="journal.html" class="block text-ivory-dim text-sm font-light mb-2 hover:text-gold-bright transition-colors">Journal</a>
+        <a href="films.html" class="block text-ivory-dim text-sm font-light mb-2 hover:text-gold-bright transition-colors">Films</a>
       </div>
       <div>
-        <h5 class="font-mono text-[0.7rem] tracking-[0.16em] uppercase text-silver-dim mb-5">Contact</h5>
+        <h5 class="font-mono text-[0.7rem] tracking-[0.16em] uppercase text-silver-dim mb-3">Contact</h5>
         <p class="text-ivory-dim text-sm font-light mb-3">hello@wakashots.com</p>
         <p class="text-ivory-dim text-sm font-light mb-3">+256 000 000 000</p>
         <p class="text-ivory-dim text-sm font-light mb-3">Kampala, Uganda</p>
       </div>
       <div>
-        <h5 class="font-mono text-[0.7rem] tracking-[0.16em] uppercase text-silver-dim mb-5">Follow</h5>
-        <a href="#" class="block text-ivory-dim text-sm font-light mb-3 hover:text-gold-bright transition-colors">Instagram</a>
-        <a href="#" class="block text-ivory-dim text-sm font-light mb-3 hover:text-gold-bright transition-colors">Facebook</a>
-        <a href="#" class="block text-ivory-dim text-sm font-light mb-3 hover:text-gold-bright transition-colors">TikTok</a>
-        <a href="#" class="block text-ivory-dim text-sm font-light mb-3 hover:text-gold-bright transition-colors">WhatsApp</a>
+        <h5 class="font-mono text-[0.7rem] tracking-[0.16em] uppercase text-silver-dim mb-3">Follow</h5>
+        <a href="#" class="block text-ivory-dim text-sm font-light mb-2 hover:text-gold-bright transition-colors">Instagram</a>
+        <a href="#" class="block text-ivory-dim text-sm font-light mb-2 hover:text-gold-bright transition-colors">Facebook</a>
+        <a href="#" class="block text-ivory-dim text-sm font-light mb-2 hover:text-gold-bright transition-colors">TikTok</a>
+        <a href="#" class="block text-ivory-dim text-sm font-light mb-2 hover:text-gold-bright transition-colors">WhatsApp</a>
       </div>
     </div>
-    <div class="flex justify-between items-center pt-7 text-xs text-silver-dim flex-wrap gap-3.5">
+    <div class="flex justify-between items-center text-xs text-silver-dim flex-wrap gap-3.5 pt-5">
       <span>© 2026 Waka Shots Photography. All rights reserved.</span>
       <span>Photography · Weddings · Portraits · Events · Brands</span>
     </div>

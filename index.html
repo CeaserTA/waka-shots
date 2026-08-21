@@ -32,7 +32,7 @@
     <a href="contact.html" class="text-sm tracking-wide uppercase text-ivory-dim hover:text-ivory transition-colors relative group">Contact<span class="absolute left-0 -bottom-1 w-0 h-px bg-gold nav-underline transition-all duration-300 group-hover:w-full"></span></a>
     <a href="contact.html" class="text-sm tracking-wide uppercase border border-line-strong px-5 py-2.5 rounded-sm text-gold-bright hover:bg-gold hover:text-black hover:border-gold transition-all">Book Now</a>
   </nav>
-  <button class="md:hidden flex flex-col gap-1.5 z-[600]" id="burgerBtn" aria-label="Open menu">
+  <button class="burger md:hidden flex flex-col gap-1.5 z-[600]" id="burgerBtn" aria-label="Open menu">
     <span class="w-6 h-px bg-ivory"></span><span class="w-6 h-px bg-ivory"></span><span class="w-6 h-px bg-ivory"></span>
   </button>
 </header>
@@ -49,7 +49,7 @@
 
 <!-- HERO -->
 <section class="relative h-[100svh] min-h-[640px] flex items-end overflow-hidden">
-  <div class="hero-bg absolute inset-0 bg-cover" style="background-image:url('https://images.unsplash.com/photo-1608009232260-9b527a5bb9bd?auto=format&fit=crop&w=1800&q=80'); background-position:center 25%;">
+  <div class="hero-bg absolute inset-0 bg-cover" style="background-image:url('https://images.unsplash.com/photo-1631131426242-0abfa7f209c2?auto=format&fit=crop&w=1800&q=80'); background-position:center 30%;">
     <div class="absolute inset-0" style="background:linear-gradient(180deg, rgba(10,9,8,0.35) 0%, rgba(10,9,8,0.25) 40%, rgba(10,9,8,0.92) 100%), linear-gradient(90deg, rgba(10,9,8,0.55) 0%, rgba(10,9,8,0) 40%);"></div>
   </div>
   <span class="float-tag" style="top:16%; left:8%; animation-delay:0s;">f/1.8</span>
@@ -145,9 +145,9 @@
 </section>  -->
 
 
-<!-- SELECTED WORK — horizontal scroll-driven filmstrip, not a grid -->
+<!-- SELECTED WORK — scroll-driven rotating-wheel orbit filmstrip (zeustheagency.com-inspired) -->
 <section id="filmstripWrapper" class="relative" style="height:280vh;">
-  <div class="sticky top-0 h-screen overflow-hidden flex flex-col justify-center">
+  <div class="orbit-stage sticky top-0 h-screen overflow-hidden flex flex-col justify-center">
     <div class="max-w-[1320px] mx-auto px-[6vw] w-full mb-8 md:mb-10 relative z-10">
       <span class="eyebrow font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center gap-2.5">Selected Work</span>
       <h2 class="mask-reveal font-serif text-[clamp(1.8rem,3.2vw,2.7rem)] mt-3.5"><span class="mask-inner"></span></h2>
@@ -210,35 +210,42 @@
     <div class="reveal flex justify-between items-end gap-10 flex-wrap mb-16">
       <div>
         <span class="eyebrow font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center gap-2.5">Services</span>
-        <h2 class="font-serif text-[clamp(2rem,3.6vw,3.1rem)] mt-3.5 max-w-[640px]">Ways to work with us.</h2>
+        <h2 class="font-serif text-[clamp(2rem,3.6vw,3.1rem)] mt-3.5 max-w-[640px]">Five ways to work with us.</h2>
       </div>
       <a href="services.html" class="text-xs tracking-[0.14em] uppercase text-gold hover:text-gold-bright transition-colors pb-1.5">See All Services →</a>
     </div>
-    <div class="reveal grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-line border border-line">
-      <a href="services.html" class="group spotlight-card bg-black hover:bg-panel transition-colors duration-500 p-10 flex flex-col min-h-[320px]">
+    <div class="reveal grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-line border border-line">
+      <a href="services.html#weddings" class="group spotlight-card bg-black hover:bg-panel transition-colors duration-500 p-10 flex flex-col min-h-[320px]">
         <div class="font-mono text-gold-dim text-sm tracking-wide mb-8">f/1.8 — Intimate</div>
-        <h3 class="font-serif text-2xl mb-4 max-w-[220px]">The Wedding Experience</h3>
+        <h3 class="font-serif text-2xl mb-4 max-w-[220px]">Weddings</h3>
         <p class="text-ivory-dim font-light text-sm flex-grow">For couples who want their day documented with emotion, elegance and intention.</p>
-        <span class="price-tag"><span class="price-from">From</span> UGX 2,000,000</span>
-        <span class="mt-4 text-xs tracking-[0.14em] uppercase text-gold inline-flex items-center gap-2 w-fit border-b border-transparent group-hover:border-gold group-hover:gap-3.5 transition-all">Learn More →</span>
+        <span class="price-tag"><span class="price-from">Silver · Gold · Platinum</span></span>
+        <span class="mt-4 text-xs tracking-[0.14em] uppercase text-gold inline-flex items-center gap-2 w-fit border-b border-transparent group-hover:border-gold group-hover:gap-3.5 transition-all">View Packages →</span>
       </a>
-      <a href="services.html" class="group spotlight-card bg-black hover:bg-panel transition-colors duration-500 p-10 flex flex-col min-h-[320px]">
+      <a href="services.html#introduction" class="group spotlight-card bg-black hover:bg-panel transition-colors duration-500 p-10 flex flex-col min-h-[320px]">
+        <div class="font-mono text-gold-dim text-sm tracking-wide mb-8">f/2 — Traditional</div>
+        <h3 class="font-serif text-2xl mb-4 max-w-[220px]">Introduction</h3>
+        <p class="text-ivory-dim font-light text-sm flex-grow">Kuhingira &amp; Kwanjula ceremonies, shot with the same care as the wedding day.</p>
+        <span class="price-tag"><span class="price-from">Silver · Gold · Platinum</span></span>
+        <span class="mt-4 text-xs tracking-[0.14em] uppercase text-gold inline-flex items-center gap-2 w-fit border-b border-transparent group-hover:border-gold group-hover:gap-3.5 transition-all">View Packages →</span>
+      </a>
+      <a href="services.html#portraits" class="group spotlight-card bg-black hover:bg-panel transition-colors duration-500 p-10 flex flex-col min-h-[320px]">
         <div class="font-mono text-gold-dim text-sm tracking-wide mb-8">f/2.8 — Considered</div>
-        <h3 class="font-serif text-2xl mb-4 max-w-[220px]">The Portrait Experience</h3>
+        <h3 class="font-serif text-2xl mb-4 max-w-[220px]">Portraits</h3>
         <p class="text-ivory-dim font-light text-sm flex-grow">Personal branding, editorial portraits and timeless imagery for people who want to be seen.</p>
         <span class="price-tag"><span class="price-from">From</span> UGX 600,000</span>
         <span class="mt-4 text-xs tracking-[0.14em] uppercase text-gold inline-flex items-center gap-2 w-fit border-b border-transparent group-hover:border-gold group-hover:gap-3.5 transition-all">Learn More →</span>
       </a>
-      <a href="services.html" class="group spotlight-card bg-black hover:bg-panel transition-colors duration-500 p-10 flex flex-col min-h-[320px]">
+      <a href="services.html#graduation" class="group spotlight-card bg-black hover:bg-panel transition-colors duration-500 p-10 flex flex-col min-h-[320px]">
         <div class="font-mono text-gold-dim text-sm tracking-wide mb-8">f/4 — Celebratory</div>
-        <h3 class="font-serif text-2xl mb-4 max-w-[220px]">The Graduation Experience</h3>
+        <h3 class="font-serif text-2xl mb-4 max-w-[220px]">Graduation</h3>
         <p class="text-ivory-dim font-light text-sm flex-grow">Marking academic milestones with portraits your family will keep for good.</p>
         <span class="price-tag"><span class="price-from">From</span> UGX 500,000</span>
         <span class="mt-4 text-xs tracking-[0.14em] uppercase text-gold inline-flex items-center gap-2 w-fit border-b border-transparent group-hover:border-gold group-hover:gap-3.5 transition-all">Learn More →</span>
       </a>
-      <a href="services.html" class="group spotlight-card bg-black hover:bg-panel transition-colors duration-500 p-10 flex flex-col min-h-[320px]">
+      <a href="services.html#brand" class="group spotlight-card bg-black hover:bg-panel transition-colors duration-500 p-10 flex flex-col min-h-[320px]">
         <div class="font-mono text-gold-dim text-sm tracking-wide mb-8">f/5.6 — Structured</div>
-        <h3 class="font-serif text-2xl mb-4 max-w-[220px]">The Brand Experience</h3>
+        <h3 class="font-serif text-2xl mb-4 max-w-[220px]">Brand</h3>
         <p class="text-ivory-dim font-light text-sm flex-grow">Photography built to elevate businesses, campaigns and digital presence.</p>
         <span class="price-tag"><span class="price-from">From</span> UGX 1,500,000</span>
         <span class="mt-4 text-xs tracking-[0.14em] uppercase text-gold inline-flex items-center gap-2 w-fit border-b border-transparent group-hover:border-gold group-hover:gap-3.5 transition-all">Learn More →</span>
@@ -358,39 +365,39 @@
 </section>
 
 <!-- FOOTER -->
-<footer class="pt-24 pb-8">
+<footer class="pt-14 pb-6">
   <div class="max-w-[1320px] mx-auto px-[6vw]">
-    <div class="grid grid-cols-1 md:grid-cols-[1.4fr_0.8fr_0.8fr_0.8fr] gap-10 pb-16 border-b border-line">
+    <div class="grid grid-cols-1 md:grid-cols-[1.4fr_0.8fr_0.8fr_0.8fr] gap-8 pb-8 border-b border-line">
       <div>
-        <a href="index.html" class="font-serif text-xl tracking-wide flex items-center gap-2.5 mb-4.5">
+        <a href="index.html" class="font-serif text-xl tracking-wide flex items-center gap-2.5 mb-3">
           <span class="relative w-[9px] h-[9px] rounded-full border border-gold inline-block"><span class="absolute inset-[2.5px] rounded-full bg-gold"></span></span>
           WAKA SHOTS
         </a>
         <p class="text-ivory-dim font-light text-sm max-w-[280px]">Capturing moments. Creating stories. A photography studio based in Kampala, working across Uganda and East Africa.</p>
       </div>
       <div>
-        <h5 class="font-mono text-[0.7rem] tracking-[0.16em] uppercase text-silver-dim mb-5">Studio</h5>
-        <a href="portfolio.html" class="block text-ivory-dim text-sm font-light mb-3 hover:text-gold-bright transition-colors">Portfolio</a>
-        <a href="services.html" class="block text-ivory-dim text-sm font-light mb-3 hover:text-gold-bright transition-colors">Services</a>
-        <a href="about.html" class="block text-ivory-dim text-sm font-light mb-3 hover:text-gold-bright transition-colors">About</a>
-        <a href="journal.html" class="block text-ivory-dim text-sm font-light mb-3 hover:text-gold-bright transition-colors">Journal</a>
-        <a href="films.html" class="block text-ivory-dim text-sm font-light mb-3 hover:text-gold-bright transition-colors">Films</a>
+        <h5 class="font-mono text-[0.7rem] tracking-[0.16em] uppercase text-silver-dim mb-3">Studio</h5>
+        <a href="portfolio.html" class="block text-ivory-dim text-sm font-light mb-2 hover:text-gold-bright transition-colors">Portfolio</a>
+        <a href="services.html" class="block text-ivory-dim text-sm font-light mb-2 hover:text-gold-bright transition-colors">Services</a>
+        <a href="about.html" class="block text-ivory-dim text-sm font-light mb-2 hover:text-gold-bright transition-colors">About</a>
+        <a href="journal.html" class="block text-ivory-dim text-sm font-light mb-2 hover:text-gold-bright transition-colors">Journal</a>
+        <a href="films.html" class="block text-ivory-dim text-sm font-light mb-2 hover:text-gold-bright transition-colors">Films</a>
       </div>
       <div>
-        <h5 class="font-mono text-[0.7rem] tracking-[0.16em] uppercase text-silver-dim mb-5">Contact</h5>
+        <h5 class="font-mono text-[0.7rem] tracking-[0.16em] uppercase text-silver-dim mb-3">Contact</h5>
         <p class="text-ivory-dim text-sm font-light mb-3">hello@wakashots.com</p>
         <p class="text-ivory-dim text-sm font-light mb-3">+256 000 000 000</p>
         <p class="text-ivory-dim text-sm font-light mb-3">Kampala, Uganda</p>
       </div>
       <div>
-        <h5 class="font-mono text-[0.7rem] tracking-[0.16em] uppercase text-silver-dim mb-5">Follow</h5>
-        <a href="#" class="block text-ivory-dim text-sm font-light mb-3 hover:text-gold-bright transition-colors">Instagram</a>
-        <a href="#" class="block text-ivory-dim text-sm font-light mb-3 hover:text-gold-bright transition-colors">Facebook</a>
-        <a href="#" class="block text-ivory-dim text-sm font-light mb-3 hover:text-gold-bright transition-colors">TikTok</a>
-        <a href="#" class="block text-ivory-dim text-sm font-light mb-3 hover:text-gold-bright transition-colors">WhatsApp</a>
+        <h5 class="font-mono text-[0.7rem] tracking-[0.16em] uppercase text-silver-dim mb-3">Follow</h5>
+        <a href="#" class="block text-ivory-dim text-sm font-light mb-2 hover:text-gold-bright transition-colors">Instagram</a>
+        <a href="#" class="block text-ivory-dim text-sm font-light mb-2 hover:text-gold-bright transition-colors">Facebook</a>
+        <a href="#" class="block text-ivory-dim text-sm font-light mb-2 hover:text-gold-bright transition-colors">TikTok</a>
+        <a href="#" class="block text-ivory-dim text-sm font-light mb-2 hover:text-gold-bright transition-colors">WhatsApp</a>
       </div>
     </div>
-    <div class="flex justify-between items-center pt-7 text-xs text-silver-dim flex-wrap gap-3.5">
+    <div class="flex justify-between items-center text-xs text-silver-dim flex-wrap gap-3.5 pt-5">
       <span>© 2026 Waka Shots Photography. All rights reserved.</span>
       <span>Photography · Weddings · Portraits · Events · Brands</span>
     </div>
