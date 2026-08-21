@@ -74,9 +74,8 @@ document.addEventListener('DOMContentLoaded', () => {
       document.body.style.overflow = isOpen ? 'hidden' : '';
       runWipe(isOpen);
     });
-    mobileMenu.querySelectorAll('a').forEach(a =>
-      a.addEventListener('click', closeMenu)
-    );
+    // Nav links navigate immediately on click — no close animation;
+    // the wipe/stagger choreography is reserved for the burger and Escape.
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') closeMenu();
     });
