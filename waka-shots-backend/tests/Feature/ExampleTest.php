@@ -55,4 +55,9 @@ class ExampleTest extends TestCase
         ]);
         $this->assertSame(1, Enquiry::count());
     }
+
+    public function test_logged_out_users_are_redirected_to_filament_login(): void
+    {
+        $this->get('/admin')->assertRedirect('/admin/login');
+    }
 }

@@ -1,6 +1,8 @@
 <?php
 
 use App\Models\Service;
+use App\Http\Controllers\GoogleDriveAuthController;
+use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\FilmController;
 use App\Http\Controllers\EnquiryController;
 use App\Http\Controllers\JournalController;
@@ -30,3 +32,19 @@ Route::post('/contact', function (Request $request) {
     return to_route('contact')->with('success', 'Thank you. We will be in touch soon.');
 })->name('contact.submit');
 Route::post('/enquiries', [EnquiryController::class, 'store'])->name('enquiries.store');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/auth/google/redirect', [GoogleDriveAuthController::class, 'redirect'])->name('google.redirect');
+    Route::get('/auth/google/callback', [GoogleDriveAuthController::class, 'callback'])->name('google.callback');
+});
+
+Route::get('/gallery/{token}', [GalleryController::class, 'show'])->name('gallery.show');
+Route::get('/gallery/{token}/preview/{imageId}', [GalleryController::class, 'preview'])
+    ->middleware('throttle:gallery-downloads')
+    ->name('gallery.preview');
+Route::get('/gallery/{token}/download/{imageId}', [GalleryController::class, 'download'])
+    ->middleware('throttle:gallery-downloads')
+    ->name('gallery.download');
+Route::get('/gallery/{token}/download-all', [GalleryController::class, 'downloadAll'])
+    ->middleware('throttle:gallery-download-all')
+    ->name('gallery.download-all');

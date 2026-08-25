@@ -7,6 +7,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class JournalPost extends Model
 {
+    protected $fillable = [
+        'category_id',
+        'title',
+        'is_published',
+        'content',
+    ];
+
     protected function casts(): array
     {
         return [
