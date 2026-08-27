@@ -19,6 +19,7 @@ class PortfolioItemsTable
                 ImageColumn::make('image_path')
                     ->label('Image')
                     ->disk('r2')
+                    ->checkFileExistence(false)
                     ->size(80),
                 TextColumn::make('title')
                     ->searchable()

@@ -139,7 +139,7 @@
       @foreach($categories as $category)
         @foreach($category->portfolioItems as $item)
           <div class="gallery-item group relative overflow-hidden rounded-sm bg-panel cursor-pointer break-inside-avoid mb-5 md:mb-9" data-category="{{ $category->slug }}">
-            <img src="{{ \Illuminate\Support\Str::startsWith($item->image_path, ['http://', 'https://']) ? $item->image_path : \Illuminate\Support\Facades\Storage::disk('r2')->url($item->image_path) }}" alt="{{ $item->title }}" class="w-full h-auto saturate-[.92] brightness-[.92] transition-transform duration-[1100ms] group-hover:scale-[1.06] group-hover:saturate-100 group-hover:brightness-100">
+            <img src="{{ \Illuminate\Support\Str::startsWith($item->image_path, ['http://', 'https://']) ? $item->image_path : \Illuminate\Support\Facades\Storage::disk('r2')->url($item->image_path) }}" alt="{{ $item->title }}" loading="lazy" decoding="async" class="w-full h-auto saturate-[.92] brightness-[.92] transition-transform duration-[1100ms] group-hover:scale-[1.06] group-hover:saturate-100 group-hover:brightness-100">
             <div class="absolute inset-0 flex flex-col justify-end p-5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style="background:linear-gradient(0deg, rgba(10,9,8,0.92) 0%, rgba(10,9,8,0) 55%);">
               <span class="font-mono text-[0.65rem] tracking-[0.16em] uppercase text-gold-bright mb-1">{{ $category->name }}</span>
               <div class="font-serif text-lg mb-2">{{ $item->title }}</div>

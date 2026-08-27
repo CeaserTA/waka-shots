@@ -40,9 +40,13 @@ class TestimonialForm
                 FileUpload::make('photo_path')
                     ->label('Photo')
                     ->disk('r2')
+                    ->fetchFileInformation(false)
                     ->directory('testimonials')
                     ->image()
-                    ->imageEditor(),
+                    ->imageEditor()
+                    ->automaticallyResizeImagesToWidth(1200)
+                    ->automaticallyResizeImagesMode('contain')
+                    ->imageResizeUpscale(false),
             ]);
     }
 }

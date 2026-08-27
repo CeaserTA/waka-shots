@@ -33,10 +33,14 @@ class ServiceForm
                 FileUpload::make('thumbnail_path')
                     ->label('Service Thumbnail')
                     ->disk('r2')
+                    ->fetchFileInformation(false)
                     ->directory('service-thumbnails')
                     ->acceptedFileTypes(['image/*'])
                     ->image()
-                    ->imageEditor(),
+                    ->imageEditor()
+                    ->automaticallyResizeImagesToWidth(1600)
+                    ->automaticallyResizeImagesMode('contain')
+                    ->imageResizeUpscale(false),
                 Toggle::make('has_packages')
                     ->label('Offers Packages')
                     ->default(true)
