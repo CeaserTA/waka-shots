@@ -6,7 +6,9 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class GalleriesTable
 {
@@ -29,6 +31,16 @@ class GalleriesTable
             EditAction::make(),
         ])->toolbarActions([
             BulkActionGroup::make([DeleteBulkAction::make()]),
+        ])->filters([
+            Filter::make('active')
+                ->label('Active Galleries')
+                ->query(fn (Builder $query): Builder => $query->where('is_active', true)),
+            Filter::make('expiring_soon')
+                ->label('Expiring Within 14 Days')
+                ->query(fn (Builder $query): Builder => $query
+                    ->where('is_active', true)
+                    ->whereNotNull('expires_at')
+                    ->where('expires_at', '<=', now()->addDays(14))),
         ])->defaultSort('created_at', 'desc');
     }
 }

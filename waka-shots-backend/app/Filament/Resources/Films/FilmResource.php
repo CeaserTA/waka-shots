@@ -2,9 +2,7 @@
 
 namespace App\Filament\Resources\Films;
 
-use App\Filament\Resources\Films\Pages\CreateFilm;
-use App\Filament\Resources\Films\Pages\EditFilm;
-use App\Filament\Resources\Films\Pages\ListFilms;
+use App\Filament\Resources\Films\Pages\ManageFilms;
 use App\Filament\Resources\Films\Schemas\FilmForm;
 use App\Filament\Resources\Films\Tables\FilmsTable;
 use App\Models\Film;
@@ -19,7 +17,7 @@ class FilmResource extends Resource
 {
     protected static ?string $model = Film::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedFilm;
 
     protected static string|UnitEnum|null $navigationGroup = 'Content';
 
@@ -45,9 +43,7 @@ class FilmResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListFilms::route('/'),
-            'create' => CreateFilm::route('/create'),
-            'edit' => EditFilm::route('/{record}/edit'),
+            'index' => ManageFilms::route('/'),
         ];
     }
 }

@@ -109,7 +109,7 @@
     <div id="filmstripTrack" class="filmstrip-track pl-[6vw]">
       @foreach($portfolioItems as $item)
         <div class="filmstrip-item w-[78vw] md:w-[34vw] aspect-[4/3] rounded-sm overflow-hidden border border-line-strong">
-          <img src="{{ $item->image_path }}" alt="{{ $item->title }}">
+          <img src="{{ \Illuminate\Support\Str::startsWith($item->image_path, ['http://', 'https://']) ? $item->image_path : \Illuminate\Support\Facades\Storage::disk('r2')->url($item->image_path) }}" alt="{{ $item->title }}">
         </div>
       @endforeach
     </div>
@@ -153,12 +153,27 @@
       <a href="{{ route('services') }}" class="text-xs tracking-[0.14em] uppercase text-gold hover:text-gold-bright transition-colors pb-1.5">See All Services →</a>
     </div>
     <div class="reveal grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-      @foreach($featuredCategories as $category)
-        <a href="{{ route('portfolio') }}?category={{ $category->slug }}" class="group spotlight-card bg-black hover:bg-panel transition-colors duration-500 p-10 flex flex-col min-h-[320px] border border-line -mt-px -ml-px">
+      @foreach($services as $service)
+        <a href="{{ route('services') }}#service-{{ $service->id }}" class="group spotlight-card bg-black hover:bg-panel transition-colors duration-500 p-10 flex flex-col min-h-[320px] border border-line -mt-px -ml-px">
           <div class="font-mono text-gold-dim text-sm tracking-wide mb-8">Waka Shots — {{ str_pad((string) ($loop->iteration), 2, '0', STR_PAD_LEFT) }}</div>
-          <h3 class="font-serif text-2xl mb-4 max-w-[220px]">{{ $category->name }}</h3>
-          <p class="text-ivory-dim font-light text-sm flex-grow">{{ $category->portfolioItems->count() }} stories in this collection.</p>
-          <span class="mt-4 text-xs tracking-[0.14em] uppercase text-gold inline-flex items-center gap-2 w-fit border-b border-transparent group-hover:border-gold transition-all">View Work &rarr;</span>
+          <h3 class="font-serif text-2xl mb-4 max-w-[220px]">{{ $service->name }}</h3>
+          <p class="text-ivory-dim font-light text-sm">{{ $service->description ?: 'A considered approach shaped around your story.' }}</p>
+          @if($service->has_packages)
+            <div class="mt-6">
+              <p class="font-mono text-[0.68rem] uppercase tracking-[0.14em] text-gold mb-3">Packages</p>
+              <ul class="space-y-1 text-xs text-silver-dim">
+                @foreach($service->packages as $package)
+                  <li>{{ $package->tier_name }} — UGX {{ number_format($package->price) }}</li>
+                @endforeach
+              </ul>
+            </div>
+            <span class="mt-auto pt-6 text-xs tracking-[0.14em] uppercase text-gold inline-flex items-center gap-2 w-fit border-b border-transparent group-hover:border-gold transition-all">View Packages &rarr;</span>
+          @else
+            @if($service->amount !== null)
+              <div class="mt-6 font-serif text-2xl text-gold-bright">UGX {{ number_format((float) $service->amount) }}</div>
+            @endif
+            <span class="mt-auto pt-6 text-xs tracking-[0.14em] uppercase text-gold inline-flex items-center gap-2 w-fit border-b border-transparent group-hover:border-gold transition-all">Learn More &rarr;</span>
+          @endif
         </a>
       @endforeach
     </div>
@@ -195,6 +210,7 @@
 </div>
 
 <!-- TESTIMONIALS -->
+@if($testimonials->isNotEmpty())
 <section class="py-20" style="background:radial-gradient(ellipse at top right, rgba(198,161,91,0.08), transparent 55%), #0a0908;">
   <div class="max-w-[1320px] mx-auto px-[6vw]">
     <div class="reveal mb-10">
@@ -202,33 +218,24 @@
       <h2 class="font-serif text-[clamp(2rem,3.6vw,3.1rem)] mt-3.5 max-w-[640px]">Told in their own words.</h2>
     </div>
     <div class="reveal grid grid-cols-1 md:grid-cols-3 gap-px bg-line border border-line">
-      <div class="spotlight-card bg-black p-9 flex flex-col gap-5">
-        <div class="text-gold text-sm tracking-widest">★★★★★</div>
-        <blockquote class="font-serif italic text-lg leading-snug text-ivory">Waka Shots captured our day in a way we never imagined. Every photograph tells a story.</blockquote>
-        <div class="flex items-center gap-3 mt-auto pt-4">
-          <img src="https://images.unsplash.com/photo-1530785602389-07594beb8b73?auto=format&fit=crop&w=100&q=80" alt="Sarah" class="w-[42px] h-[42px] rounded-full object-cover saturate-90">
-          <div><div class="text-sm text-ivory">Sarah &amp; Daniel</div><div class="text-xs text-silver-dim tracking-wide">Wedding, Kampala</div></div>
+      @foreach($testimonials as $testimonial)
+        <div class="spotlight-card bg-black p-9 flex flex-col gap-5">
+          <div class="text-gold text-sm tracking-widest">{{ str_repeat('★', $testimonial->rating) }}</div>
+          <blockquote class="font-serif italic text-lg leading-snug text-ivory">{{ $testimonial->quote }}</blockquote>
+          <div class="flex items-center gap-3 mt-auto pt-4">
+            @if($testimonial->photo_path)
+              <img src="{{ \Illuminate\Support\Facades\Storage::disk('r2')->url($testimonial->photo_path) }}" alt="{{ $testimonial->gallery->client_name }}" class="w-[42px] h-[42px] rounded-full object-cover saturate-90">
+            @else
+              <div class="w-[42px] h-[42px] rounded-full flex items-center justify-center bg-charcoal text-gold font-mono text-sm" aria-hidden="true">{{ \Illuminate\Support\Str::upper(\Illuminate\Support\Str::substr($testimonial->gallery->client_name, 0, 1)) }}</div>
+            @endif
+            <div><div class="text-sm text-ivory">{{ $testimonial->gallery->client_name }}</div><div class="text-xs text-silver-dim tracking-wide">{{ $testimonial->gallery->event_name }}</div></div>
+          </div>
         </div>
-      </div>
-      <div class="spotlight-card bg-black p-9 flex flex-col gap-5">
-        <div class="text-gold text-sm tracking-widest">★★★★★</div>
-        <blockquote class="font-serif italic text-lg leading-snug text-ivory">Professional, patient and quietly brilliant. Our brand shoot looked better than we'd hoped for.</blockquote>
-        <div class="flex items-center gap-3 mt-auto pt-4">
-          <img src="https://images.unsplash.com/photo-1527201987695-67c06571957e?auto=format&fit=crop&w=100&q=80" alt="Grace" class="w-[42px] h-[42px] rounded-full object-cover saturate-90">
-          <div><div class="text-sm text-ivory">Grace N.</div><div class="text-xs text-silver-dim tracking-wide">Founder, Amara Foods</div></div>
-        </div>
-      </div>
-      <div class="spotlight-card bg-black p-9 flex flex-col gap-5">
-        <div class="text-gold text-sm tracking-widest">★★★★★</div>
-        <blockquote class="font-serif italic text-lg leading-snug text-ivory">My portrait session felt effortless. The final images actually look like me, just more confident.</blockquote>
-        <div class="flex items-center gap-3 mt-auto pt-4">
-          <img src="https://images.unsplash.com/photo-1565884280295-98eb83e41c65?auto=format&fit=crop&w=100&q=80" alt="Michael" class="w-[42px] h-[42px] rounded-full object-cover saturate-90">
-          <div><div class="text-sm text-ivory">Michael K.</div><div class="text-xs text-silver-dim tracking-wide">Personal Branding</div></div>
-        </div>
-      </div>
+      @endforeach
     </div>
   </div>
 </section>
+@endif
 
 <!-- JOURNAL TEASER -->
 <section class="bg-charcoal py-20">
@@ -243,7 +250,7 @@
     <div class="reveal grid grid-cols-1 md:grid-cols-3 gap-9">
       @foreach($portfolioItems as $item)
         <a href="{{ route('portfolio') }}" class="group block">
-          <div class="overflow-hidden mb-5"><img src="{{ $item->image_path }}" alt="{{ $item->title }}" class="w-full aspect-[4/3] object-cover saturate-90 brightness-95 transition-transform duration-700 group-hover:scale-105"></div>
+          <div class="overflow-hidden mb-5"><img src="{{ \Illuminate\Support\Str::startsWith($item->image_path, ['http://', 'https://']) ? $item->image_path : \Illuminate\Support\Facades\Storage::disk('r2')->url($item->image_path) }}" alt="{{ $item->title }}" class="w-full aspect-[4/3] object-cover saturate-90 brightness-95 transition-transform duration-700 group-hover:scale-105"></div>
           <span class="font-mono text-[0.68rem] tracking-[0.14em] uppercase text-gold mb-3 block">{{ $item->category->name }}</span>
           <h4 class="font-serif text-xl mb-2.5 leading-snug">{{ $item->title }}</h4>
           <span class="text-xs text-silver-dim">Featured work</span>

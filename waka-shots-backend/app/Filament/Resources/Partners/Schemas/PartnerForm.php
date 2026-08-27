@@ -18,8 +18,8 @@ class PartnerForm
                     ->maxLength(255),
                 FileUpload::make('logo_path')
                     ->label('Partner Logo')
-                    ->disk('public')
-                    ->directory('partners')
+                    ->disk('r2')
+                    ->directory('partner-logos')
                     ->acceptedFileTypes(['image/*'])
                     ->image()
                     ->imageEditor()

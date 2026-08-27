@@ -17,7 +17,7 @@ class PartnersTable
             ->columns([
                 ImageColumn::make('logo_path')
                     ->label('Logo')
-                    ->disk('public')
+                    ->disk('r2')
                     ->size(64),
                 TextColumn::make('name')
                     ->label('Partner Name')
@@ -32,7 +32,10 @@ class PartnersTable
                     ->sortable(),
             ])
             ->recordActions([
-                EditAction::make(),
+                EditAction::make()
+                    ->modalHeading(fn (Partner $record): string => 'Edit: ' . $record->name)
+                    ->modalWidth('lg')
+                    ->modalSubmitActionLabel('Save Changes'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

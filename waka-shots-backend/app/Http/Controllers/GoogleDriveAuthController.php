@@ -24,7 +24,7 @@ class GoogleDriveAuthController extends Controller
 
     public function callback(Request $request): RedirectResponse
     {
-        $adminUrl = url('/admin/google-drive');
+        $adminUrl = url('/admin/galleries');
 
         if ($request->filled('error')) {
             return redirect($adminUrl)->with('error', 'Google Drive authorization was cancelled.');

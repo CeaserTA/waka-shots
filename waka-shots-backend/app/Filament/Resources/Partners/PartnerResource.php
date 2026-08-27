@@ -2,9 +2,7 @@
 
 namespace App\Filament\Resources\Partners;
 
-use App\Filament\Resources\Partners\Pages\CreatePartner;
-use App\Filament\Resources\Partners\Pages\EditPartner;
-use App\Filament\Resources\Partners\Pages\ListPartners;
+use App\Filament\Resources\Partners\Pages\ManagePartners;
 use App\Filament\Resources\Partners\Schemas\PartnerForm;
 use App\Filament\Resources\Partners\Tables\PartnersTable;
 use App\Models\Partner;
@@ -19,9 +17,9 @@ class PartnerResource extends Resource
 {
     protected static ?string $model = Partner::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingOffice;
 
-    protected static string|UnitEnum|null $navigationGroup = 'Content';
+    protected static string|UnitEnum|null $navigationGroup = 'Operations';
 
     protected static ?string $navigationLabel = 'Partners';
 
@@ -45,9 +43,7 @@ class PartnerResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListPartners::route('/'),
-            'create' => CreatePartner::route('/create'),
-            'edit' => EditPartner::route('/{record}/edit'),
+            'index' => ManagePartners::route('/'),
         ];
     }
 }

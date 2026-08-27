@@ -246,7 +246,12 @@
     <div class="reveal mb-16 max-w-[640px]"><span class="eyebrow font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center gap-2.5">Our Services</span><h2 class="font-serif text-[clamp(2rem,3.6vw,3.1rem)] mt-3.5 mb-5">Packages shaped around your story.</h2><p class="text-ivory-dim font-light">Choose a starting point below and we will tailor the details to your day, your people, and your vision.</p></div>
     @foreach($services as $service)
       <div id="service-{{ $service->id }}" class="mb-20 scroll-mt-24">
-        <div class="reveal mb-8"><span class="eyebrow font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center gap-2.5">{{ $service->name }}</span></div>
+        <div class="reveal mb-8"><span class="eyebrow font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center gap-2.5">{{ $service->name }}</span><p class="mt-4 max-w-2xl text-ivory-dim font-light">{{ $service->description }}</p></div>
+        @if($service->thumbnail_path)
+          <div class="reveal mb-8 max-w-2xl overflow-hidden rounded-sm">
+            <img src="{{ \Illuminate\Support\Str::startsWith($service->thumbnail_path, ['http://', 'https://']) ? $service->thumbnail_path : \Illuminate\Support\Facades\Storage::disk('r2')->url($service->thumbnail_path) }}" alt="{{ $service->name }}" class="w-full aspect-[16/9] object-cover saturate-90 brightness-95">
+          </div>
+        @endif
         @if($service->has_packages)
           <div class="reveal grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 pt-4">
             @foreach($service->packages as $package)
@@ -260,7 +265,12 @@
             @endforeach
           </div>
         @else
-          <p class="text-ivory-dim font-light">This is a bespoke service. <a href="{{ route('contact') }}?service={{ $service->id }}" class="text-gold">Start an enquiry &rarr;</a></p>
+          <div class="reveal flex flex-col gap-5">
+            @if($service->amount !== null)
+              <div class="font-serif text-3xl text-gold-bright">UGX {{ number_format((float) $service->amount) }}</div>
+            @endif
+            <p class="text-ivory-dim font-light">This is a bespoke service. <a href="{{ route('contact') }}?service={{ $service->id }}" class="text-gold">Start an enquiry &rarr;</a></p>
+          </div>
         @endif
       </div>
     @endforeach

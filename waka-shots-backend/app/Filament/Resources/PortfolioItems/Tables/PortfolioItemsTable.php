@@ -18,7 +18,7 @@ class PortfolioItemsTable
             ->columns([
                 ImageColumn::make('image_path')
                     ->label('Image')
-                    ->disk('public')
+                    ->disk('r2')
                     ->size(80),
                 TextColumn::make('title')
                     ->searchable()
@@ -36,7 +36,10 @@ class PortfolioItemsTable
                 //
             ])
             ->recordActions([
-                EditAction::make(),
+                EditAction::make()
+                    ->modalHeading(fn (PortfolioItem $record): string => 'Edit: ' . $record->title)
+                    ->modalWidth('lg')
+                    ->modalSubmitActionLabel('Save Changes'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

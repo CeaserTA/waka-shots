@@ -1,0 +1,67 @@
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@source '../../../../app/Filament/**/*.php';
+@source '../../../../resources/views/filament/**/*.blade.php';
+
+@layer components {
+    /* Brand name text color - gold */
+    .fi-logo {
+        @apply text-[#c6a15b];
+    }
+
+    /* User avatar gold ring */
+    .fi-user-avatar {
+        @apply ring-2 ring-[#c6a15b]/40;
+    }
+
+    /* Sidebar group labels hover color - transition to gold */
+    .fi-sidebar-group-label {
+        @apply transition-colors;
+    }
+
+    .fi-sidebar-group-btn:hover .fi-sidebar-group-label {
+        @apply text-[#c6a15b];
+    }
+
+    /* Stat card left-border accents - subtle colored borders */
+    .fi-stat-border-accent-gold {
+        @apply border-l-3 border-l-[#c6a15b]/30;
+    }
+
+    .fi-stat-border-accent-warning {
+        @apply border-l-3 border-l-amber-500/30;
+    }
+
+    .fi-stat-border-accent-gray {
+        @apply border-l-3 border-l-gray-400/20;
+    }
+
+    .fi-stat-border-accent-success {
+        @apply border-l-3 border-l-green-500/30;
+    }
+
+    .fi-stat-border-accent-danger {
+        @apply border-l-3 border-l-red-500/30;
+    }
+
+    /* Quick Actions widget styling */
+    .fi-quick-actions-ctn {
+        @apply rounded-lg bg-gray-900 p-4 dark:bg-gray-800;
+    }
+
+    .fi-quick-actions-row {
+        @apply flex gap-3;
+    }
+
+    .fi-quick-action-btn {
+        @apply flex flex-1 items-center gap-2 rounded-md bg-gray-800 px-4 py-3 text-center font-medium text-[#c6a15b] transition-all hover:bg-[#c6a15b]/20 hover:text-[#e6c887] dark:bg-gray-700 dark:hover:bg-[#c6a15b]/20;
+    }
+
+    .fi-quick-action-icon {
+        @apply h-5 w-5;
+    }
+
+    .fi-quick-action-label {
+        @apply flex-1 text-sm;
+    }
+}

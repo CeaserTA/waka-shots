@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Packages\Schemas;
 
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
@@ -26,6 +27,18 @@ class PackageForm
                     ->numeric()
                     ->prefix('$')
                     ->required(),
+                Repeater::make('packageFeatures')
+                    ->label('What is included')
+                    ->relationship('packageFeatures')
+                    ->schema([
+                        TextInput::make('feature_text')
+                            ->label('Included Feature')
+                            ->required()
+                            ->maxLength(255),
+                    ])
+                    ->addActionLabel('Add included feature')
+                    ->defaultItems(0)
+                    ->columnSpanFull(),
             ]);
     }
 }

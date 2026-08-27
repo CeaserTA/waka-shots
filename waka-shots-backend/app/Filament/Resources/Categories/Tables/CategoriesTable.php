@@ -37,7 +37,10 @@ class CategoriesTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->recordActions([
-                EditAction::make(),
+                EditAction::make()
+                    ->modalHeading(fn (Category $record): string => 'Edit: ' . $record->name)
+                    ->modalWidth('md')
+                    ->modalSubmitActionLabel('Save Changes'),
                 self::deleteAction(),
             ])
             ->toolbarActions([

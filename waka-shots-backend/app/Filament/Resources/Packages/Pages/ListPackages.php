@@ -13,7 +13,11 @@ class ListPackages extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            CreateAction::make('create')
+                ->label('New Package')
+                ->modalHeading('New Package')
+                ->modalWidth('md')
+                ->modalSubmitActionLabel('Create Package'),
         ];
     }
 }

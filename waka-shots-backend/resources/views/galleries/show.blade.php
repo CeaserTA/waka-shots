@@ -45,12 +45,71 @@
         <p class="py-20 text-center font-serif text-2xl text-ivory-dim">Your photos are being prepared.</p>
     @endif
 
+    @if (! $testimonial)
+    <section class="border-t border-line py-12" aria-labelledby="testimonial-heading">
+        <div class="mx-auto max-w-2xl">
+            <p class="font-mono text-xs uppercase tracking-[0.2em] text-gold">Your feedback matters</p>
+            <h2 id="testimonial-heading" class="mt-3 font-serif text-3xl font-normal text-ivory">Loved your photos? Leave a review.</h2>
+
+            @if (session('error'))
+                <p class="mt-5 border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">{{ session('error') }}</p>
+            @endif
+
+            @if ($testimonial?->status === 'pending')
+                <p class="mt-6 text-sm leading-7 text-silver">Your review has been received. Thank you.</p>
+            @elseif ($testimonial?->status === 'approved')
+                <div class="mt-6 border border-line p-5">
+                    <p class="text-gold" aria-label="Rating: {{ $testimonial->rating }} out of 5">{{ str_repeat('★', $testimonial->rating) }}{{ str_repeat('☆', 5 - $testimonial->rating) }}</p>
+                    <blockquote class="mt-3 font-serif text-xl leading-relaxed text-ivory">“{{ $testimonial->quote }}”</blockquote>
+                    <p class="mt-4 text-sm text-silver">Thank you for sharing your experience.</p>
+                </div>
+            @else
+                @if ($errors->any())
+                    <div class="mt-5 border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+                        <p>Please correct the highlighted fields and try again.</p>
+                        <ul class="mt-2 list-disc pl-5">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                <form method="POST" action="{{ route('gallery.testimonial', $gallery->access_token) }}" class="mt-7 space-y-6">
+                    @csrf
+                    <div>
+                        <label for="rating" class="block font-mono text-xs uppercase tracking-[0.14em] text-silver">Rating</label>
+                        <select id="rating" name="rating" required class="mt-2 w-full rounded-sm border border-line bg-transparent px-4 py-3 text-ivory focus:border-gold focus:outline-none">
+                            <option value="">Choose a rating</option>
+                            @for ($rating = 5; $rating >= 1; $rating--)
+                                <option value="{{ $rating }}" @selected((string) old('rating') === (string) $rating)>{{ $rating }} {{ $rating === 1 ? 'star' : 'stars' }}</option>
+                            @endfor
+                        </select>
+                    </div>
+                    <div>
+                        <label for="quote" class="block font-mono text-xs uppercase tracking-[0.14em] text-silver">Your review</label>
+                        <textarea id="quote" name="quote" rows="5" minlength="10" maxlength="1000" required class="mt-2 w-full rounded-sm border border-line bg-transparent px-4 py-3 text-ivory placeholder:text-silver-dim focus:border-gold focus:outline-none" placeholder="Tell us what you loved about your experience.">{{ old('quote') }}</textarea>
+                    </div>
+                    <button type="submit" class="rounded-sm border border-gold bg-gold px-6 py-3 font-mono text-xs uppercase tracking-[0.12em] text-black transition hover:bg-gold-bright">Submit review</button>
+                </form>
+            @endif
+        </div>
+    </section>
+    @endif
+
     <div class="flex justify-center border-t border-line pt-10">
         <a href="{{ route('home') }}" class="inline-block rounded-sm border border-gold bg-gold px-7 py-4 text-xs uppercase tracking-[0.14em] text-black transition-all duration-400 hover:-translate-y-0.5 hover:bg-gold-bright">
             Back to Waka Shots
         </a>
     </div>
 </div>
+
+@if (session('success'))
+    <div id="review-success-toast" class="fixed inset-x-5 top-5 z-40 mx-auto flex max-w-md items-center justify-between gap-5 border border-gold/60 bg-[#151316] px-5 py-4 text-sm text-ivory shadow-2xl sm:inset-x-auto sm:right-6 sm:left-auto" role="status" aria-live="polite">
+        <span>{{ session('success') }}</span>
+        <button type="button" class="text-xl leading-none text-silver transition hover:text-gold" aria-label="Dismiss message">×</button>
+    </div>
+@endif
 
 <div id="gallery-lightbox" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/95 p-5" role="dialog" aria-modal="true" aria-label="Photo preview">
     <button type="button" id="gallery-lightbox-close" class="absolute right-5 top-5 inline-flex h-11 w-11 items-center justify-center rounded-full border border-line text-2xl text-ivory" aria-label="Close preview">×</button>
@@ -75,6 +134,13 @@
         document.getElementById('gallery-lightbox-close').addEventListener('click', close);
         lightbox.addEventListener('click', (event) => { if (event.target === lightbox) close(); });
         document.addEventListener('keydown', (event) => { if (event.key === 'Escape') close(); });
+
+        const reviewToast = document.getElementById('review-success-toast');
+        if (reviewToast) {
+            const dismissReviewToast = () => reviewToast.remove();
+            reviewToast.querySelector('button').addEventListener('click', dismissReviewToast);
+            window.setTimeout(dismissReviewToast, 5000);
+        }
     })();
 </script>
 @endpush

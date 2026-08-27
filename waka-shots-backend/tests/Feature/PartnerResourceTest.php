@@ -31,7 +31,7 @@ class PartnerResourceTest extends TestCase
 
     public function test_partner_resource_configuration_is_correct(): void
     {
-        $this->assertSame('Content', PartnerResource::getNavigationGroup());
+        $this->assertSame('Operations', PartnerResource::getNavigationGroup());
         $this->assertSame('Partners', PartnerResource::getNavigationLabel());
         $this->assertSame(Partner::class, PartnerResource::getModel());
     }

@@ -3,10 +3,10 @@
 namespace App\Filament\Resources\Galleries\Pages;
 
 use App\Filament\Resources\Galleries\GalleryResource;
-use App\Filament\Pages\GoogleDriveConnection;
 use App\Models\GoogleDriveConnection as GoogleDriveConnectionModel;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 
 class ListGalleries extends ListRecords
@@ -17,10 +17,38 @@ class ListGalleries extends ListRecords
     {
         return [
             CreateAction::make(),
-            Action::make('connectDrive')
-                ->label('Connect Google Drive')
-                ->url(GoogleDriveConnection::getUrl())
-                ->visible(fn (): bool => ! GoogleDriveConnectionModel::query()->whereNotNull('refresh_token')->exists()),
+            Action::make('googleDrive')
+                ->label('Google Drive')
+                ->icon('heroicon-o-cloud')
+                ->modalHeading('Google Drive Settings')
+                ->modalWidth('md')
+                ->modalContent(fn () => view('filament.modals.google-drive-settings', [
+                    'connection' => GoogleDriveConnectionModel::query()->latest('id')->first(),
+                ]))
+                ->modalSubmitAction(false)
+                ->modalCancelActionLabel('Close')
+                ->modalFooterActions(function (): array {
+                    $isConnected = GoogleDriveConnectionModel::query()->whereNotNull('refresh_token')->exists();
+
+                    return [
+                        Action::make('connect')
+                            ->label('Connect Google Drive')
+                            ->url(route('google.redirect'))
+                            ->visible(! $isConnected),
+                        Action::make('disconnect')
+                            ->label('Disconnect')
+                            ->color('danger')
+                            ->requiresConfirmation()
+                            ->visible($isConnected)
+                            ->action(function (): void {
+                                GoogleDriveConnectionModel::query()->delete();
+                                Notification::make()
+                                    ->title('Google Drive disconnected')
+                                    ->success()
+                                    ->send();
+                            }),
+                    ];
+                }),
         ];
     }
 

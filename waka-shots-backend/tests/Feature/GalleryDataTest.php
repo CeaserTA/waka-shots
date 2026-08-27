@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Enums\UserRole;
+use App\Filament\Resources\Galleries\Pages\CreateGallery;
 use App\Filament\Resources\Galleries\GalleryResource;
 use App\Models\Gallery;
 use App\Models\GoogleDriveConnection;
@@ -86,5 +87,16 @@ class GalleryDataTest extends TestCase
         $this->assertSame('Client Delivery', GalleryResource::getNavigationGroup());
         $this->assertTrue($policy->view($admin, $gallery));
         $this->assertFalse($policy->view($editor, $gallery));
+    }
+
+    public function test_gallery_creation_redirects_to_the_galleries_table(): void
+    {
+        $method = new \ReflectionMethod(CreateGallery::class, 'getRedirectUrl');
+        $method->setAccessible(true);
+
+        $this->assertSame(
+            GalleryResource::getUrl('index'),
+            $method->invoke(new CreateGallery()),
+        );
     }
 }

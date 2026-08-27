@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\Services;
 
-use App\Filament\Resources\Services\Pages\CreateService;
 use App\Filament\Resources\Services\Pages\EditService;
 use App\Filament\Resources\Services\Pages\ListServices;
 use App\Filament\Resources\Services\RelationManagers\PackagesRelationManager;
@@ -47,7 +46,6 @@ class ServiceResource extends Resource
     {
         return [
             'index' => ListServices::route('/'),
-            'create' => CreateService::route('/create'),
             'edit' => EditService::route('/{record}/edit'),
         ];
     }

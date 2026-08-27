@@ -8,6 +8,7 @@ use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use App\Models\Film;
 
 class FilmsTable
 {
@@ -30,7 +31,10 @@ class FilmsTable
                     ->label('Category'),
             ])
             ->recordActions([
-                EditAction::make(),
+                EditAction::make()
+                    ->modalHeading(fn (Film $record): string => 'Edit: ' . $record->youtube_id)
+                    ->modalWidth('md')
+                    ->modalSubmitActionLabel('Save Changes'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

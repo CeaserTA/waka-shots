@@ -44,6 +44,7 @@ class EnquiryResourceTest extends TestCase
         $this->assertSame(Enquiry::class, EnquiryResource::getModel());
         $this->assertSame('1', EnquiryResource::getNavigationBadge());
         $this->assertArrayNotHasKey('create', EnquiryResource::getPages());
-        $this->assertArrayHasKey('edit', EnquiryResource::getPages());
+        $this->assertArrayNotHasKey('edit', EnquiryResource::getPages());
+        $this->assertArrayHasKey('view', EnquiryResource::getPages());
     }
 }

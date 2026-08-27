@@ -26,6 +26,10 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perMinutes(10, 60)->by($request->route('token') . '|' . $request->ip());
         });
 
+        RateLimiter::for('gallery-testimonials', function (Request $request) {
+            return Limit::perHour(5)->by((string) $request->route('token') . '|' . $request->ip());
+        });
+
         RateLimiter::for('gallery-download-all', function (Request $request) {
             return Limit::perHour(5)->by((string) $request->route('token'));
         });

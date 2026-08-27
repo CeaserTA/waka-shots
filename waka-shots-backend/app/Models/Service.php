@@ -7,13 +7,23 @@ use Illuminate\Database\Eloquent\Model;
 
 class Service extends Model
 {
-    protected $fillable = ['name', 'has_packages'];
+    protected $fillable = ['name', 'description', 'has_packages', 'thumbnail_path', 'amount'];
 
     protected function casts(): array
     {
         return [
             'has_packages' => 'boolean',
+            'amount' => 'decimal:2',
         ];
+    }
+
+    protected static function booted(): void
+    {
+        static::saving(function (Service $service): void {
+            if ($service->has_packages) {
+                $service->amount = null;
+            }
+        });
     }
 
     public function packages(): HasMany

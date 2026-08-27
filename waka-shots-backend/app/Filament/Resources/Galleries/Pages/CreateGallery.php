@@ -10,6 +10,11 @@ class CreateGallery extends CreateRecord
 {
     protected static string $resource = GalleryResource::class;
 
+    protected function getRedirectUrl(): string
+    {
+        return GalleryResource::getUrl('index');
+    }
+
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data['drive_folder_id'] = DriveFolderUrl::extractId($data['drive_folder_link']);

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\DriveConnectionException;
 use App\Models\Gallery;
+use App\Models\Testimonial;
 use App\Services\DriveGalleryService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -36,9 +37,49 @@ class GalleryController extends Controller
 
         $this->logAccess($request, $gallery, 'view');
 
-        return response()->view('galleries.show', compact('gallery', 'images'));
+        $testimonial = Testimonial::where('gallery_id', $gallery->id)->whereIn('status', ['pending', 'approved'])->first();
+
+        return response()->view('galleries.show', compact('gallery', 'images', 'testimonial'));
     }
 
+    public function submitTestimonial(Request $request, string $token): \Illuminate\Http\RedirectResponse
+    {
+        $gallery = $this->findAvailableGallery($token);
+
+        if (! $gallery) {
+            return redirect()->route('gallery.show', $token)->with('error', 'This gallery is no longer available.');
+        }
+
+        $validated = $request->validate([
+            'rating' => ['required', 'integer', 'between:1,5'],
+            'quote' => ['required', 'string', 'min:10', 'max:1000'],
+        ]);
+
+        $testimonial = Testimonial::where('gallery_id', $gallery->id)->first();
+
+        if ($testimonial && in_array($testimonial->status, ['pending', 'approved'], true)) {
+            return redirect()->route('gallery.show', $token)->with('error', 'A review has already been submitted for this gallery.');
+        }
+
+        if ($testimonial) {
+            $testimonial->update([
+                'quote' => $validated['quote'],
+                'rating' => $validated['rating'],
+                'status' => 'pending',
+                'is_featured' => false,
+            ]);
+        } else {
+            Testimonial::create([
+                'gallery_id' => $gallery->id,
+                'quote' => $validated['quote'],
+                'rating' => $validated['rating'],
+                'status' => 'pending',
+                'is_featured' => false,
+            ]);
+        }
+
+        return redirect()->route('gallery.show', $token)->with('success', 'Thanks for your review.');
+    }
     public function preview(Request $request, string $token, string $imageId): Response
     {
         return $this->serveImage($request, $token, $imageId, false);

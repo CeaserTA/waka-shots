@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\PortfolioItems\Schemas;
 
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
@@ -20,11 +21,15 @@ class PortfolioItemForm
                 TextInput::make('title')
                     ->required()
                     ->maxLength(255),
-                TextInput::make('image_path')
-                    ->label('Image path')
+                FileUpload::make('image_path')
+                    ->label('Portfolio Image')
+                    ->disk('r2')
+                    ->directory('portfolio-images')
+                    ->acceptedFileTypes(['image/*'])
+                    ->image()
+                    ->imageEditor()
                     ->required()
-                    ->maxLength(255)
-                    ->placeholder('/images/portfolio/example.jpg'),
+                    ->maxSize(10240),
             ]);
     }
 }
