@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Service extends Model
 {
-    protected $fillable = ['name', 'description', 'has_packages', 'thumbnail_path', 'amount'];
+    protected $fillable = ['name', 'tagline', 'description', 'has_packages', 'thumbnail_path', 'amount', 'sort_order'];
 
     protected function casts(): array
     {

@@ -20,6 +20,11 @@ class ServiceForm
                     ->placeholder('e.g., Weddings, Commercial, Portraits')
                     ->required()
                     ->maxLength(255),
+                TextInput::make('tagline')
+                    ->label('Tagline')
+                    ->placeholder('e.g., f/1.8 — Intimate')
+                    ->maxLength(100)
+                    ->helperText('Short label shown on the homepage service card (e.g. "f/1.8 — Intimate"). Optional — falls back to a generic label if left blank.'),
                 Textarea::make('description')
                     ->label('Service Description')
                     ->rows(4)
@@ -44,6 +49,12 @@ class ServiceForm
                     ->required(fn (Get $get): bool => ! $get('has_packages'))
                     ->minValue(0)
                     ->maxValue(999999999999.99),
+                TextInput::make('sort_order')
+                    ->label('Display Order')
+                    ->numeric()
+                    ->default(0)
+                    ->minValue(0)
+                    ->helperText('Controls the order this service appears on the homepage — lower numbers show first.'),
             ]);
     }
 }

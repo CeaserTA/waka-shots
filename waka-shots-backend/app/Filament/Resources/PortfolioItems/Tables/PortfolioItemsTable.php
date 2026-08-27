@@ -22,7 +22,8 @@ class PortfolioItemsTable
                     ->size(80),
                 TextColumn::make('title')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->formatStateUsing(fn ($state, PortfolioItem $record): string => $state ?: $record->category->name),
                 TextColumn::make('category.name')
                     ->label('Category')
                     ->sortable()
@@ -37,7 +38,7 @@ class PortfolioItemsTable
             ])
             ->recordActions([
                 EditAction::make()
-                    ->modalHeading(fn (PortfolioItem $record): string => 'Edit: ' . $record->title)
+                    ->modalHeading(fn (PortfolioItem $record): string => 'Edit: ' . ($record->title ?: $record->category->name))
                     ->modalWidth('lg')
                     ->modalSubmitActionLabel('Save Changes'),
             ])

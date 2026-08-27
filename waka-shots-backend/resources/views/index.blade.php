@@ -152,27 +152,20 @@
       </div>
       <a href="{{ route('services') }}" class="text-xs tracking-[0.14em] uppercase text-gold hover:text-gold-bright transition-colors pb-1.5">See All Services →</a>
     </div>
-    <div class="reveal grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+    <div class="reveal grid grid-cols-1 md:grid-cols-3 border border-line">
       @foreach($services as $service)
         <a href="{{ route('services') }}#service-{{ $service->id }}" class="group spotlight-card bg-black hover:bg-panel transition-colors duration-500 p-10 flex flex-col min-h-[320px] border border-line -mt-px -ml-px">
-          <div class="font-mono text-gold-dim text-sm tracking-wide mb-8">Waka Shots — {{ str_pad((string) ($loop->iteration), 2, '0', STR_PAD_LEFT) }}</div>
+          <div class="font-mono text-gold-dim text-sm tracking-wide mb-8">{{ $service->tagline ?: 'Waka Shots — ' . str_pad((string) ($loop->iteration), 2, '0', STR_PAD_LEFT) }}</div>
           <h3 class="font-serif text-2xl mb-4 max-w-[220px]">{{ $service->name }}</h3>
-          <p class="text-ivory-dim font-light text-sm">{{ $service->description ?: 'A considered approach shaped around your story.' }}</p>
+          <p class="text-ivory-dim font-light text-sm flex-grow">{{ $service->description ?: 'A considered approach shaped around your story.' }}</p>
           @if($service->has_packages)
-            <div class="mt-6">
-              <p class="font-mono text-[0.68rem] uppercase tracking-[0.14em] text-gold mb-3">Packages</p>
-              <ul class="space-y-1 text-xs text-silver-dim">
-                @foreach($service->packages as $package)
-                  <li>{{ $package->tier_name }} — UGX {{ number_format($package->price) }}</li>
-                @endforeach
-              </ul>
-            </div>
-            <span class="mt-auto pt-6 text-xs tracking-[0.14em] uppercase text-gold inline-flex items-center gap-2 w-fit border-b border-transparent group-hover:border-gold transition-all">View Packages &rarr;</span>
+            <span class="price-tag"><span class="price-from">{{ $service->packages->pluck('tier_name')->implode(' · ') }}</span></span>
+            <span class="mt-4 text-xs tracking-[0.14em] uppercase text-gold inline-flex items-center gap-2 w-fit border-b border-transparent group-hover:border-gold group-hover:gap-3.5 transition-all">View Packages &rarr;</span>
           @else
             @if($service->amount !== null)
-              <div class="mt-6 font-serif text-2xl text-gold-bright">UGX {{ number_format((float) $service->amount) }}</div>
+              <span class="price-tag"><span class="price-from">From</span> UGX {{ number_format((float) $service->amount) }}</span>
             @endif
-            <span class="mt-auto pt-6 text-xs tracking-[0.14em] uppercase text-gold inline-flex items-center gap-2 w-fit border-b border-transparent group-hover:border-gold transition-all">Learn More &rarr;</span>
+            <span class="mt-4 text-xs tracking-[0.14em] uppercase text-gold inline-flex items-center gap-2 w-fit border-b border-transparent group-hover:border-gold group-hover:gap-3.5 transition-all">Learn More &rarr;</span>
           @endif
         </a>
       @endforeach
@@ -212,14 +205,16 @@
 <!-- TESTIMONIALS -->
 @if($testimonials->isNotEmpty())
 <section class="py-20" style="background:radial-gradient(ellipse at top right, rgba(198,161,91,0.08), transparent 55%), #0a0908;">
-  <div class="max-w-[1320px] mx-auto px-[6vw]">
+  <div class="max-w-[420px] mx-auto px-[6vw]">
     <div class="reveal mb-10">
       <span class="eyebrow font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center gap-2.5">Client Stories</span>
       <h2 class="font-serif text-[clamp(2rem,3.6vw,3.1rem)] mt-3.5 max-w-[640px]">Told in their own words.</h2>
     </div>
-    <div class="reveal grid grid-cols-1 md:grid-cols-3 gap-px bg-line border border-line">
-      @foreach($testimonials as $testimonial)
-        <div class="spotlight-card bg-black p-9 flex flex-col gap-5">
+    <div class="relative">
+      <div id="testimonial-carousel" class="reveal overflow-hidden">
+        <div id="testimonial-carousel-track" class="flex gap-5 {{ $testimonials->count() <= 3 ? 'justify-center' : '' }}">
+          @foreach($testimonials as $testimonial)
+            <div class="spotlight-card min-w-0 w-full max-w-[420px] aspect-square shrink-0 md:basis-[calc((100%-2.5rem)/3)] border border-line bg-black p-9 flex flex-col gap-5">
           <div class="text-gold text-sm tracking-widest">{{ str_repeat('★', $testimonial->rating) }}</div>
           <blockquote class="font-serif italic text-lg leading-snug text-ivory">{{ $testimonial->quote }}</blockquote>
           <div class="flex items-center gap-3 mt-auto pt-4">
@@ -230,14 +225,44 @@
             @endif
             <div><div class="text-sm text-ivory">{{ $testimonial->gallery->client_name }}</div><div class="text-xs text-silver-dim tracking-wide">{{ $testimonial->gallery->event_name }}</div></div>
           </div>
+            </div>
+          @endforeach
         </div>
-      @endforeach
+      </div>
+      @if($testimonials->count() > 3)
+        <div class="mt-6 flex justify-end gap-3">
+          <button type="button" id="testimonial-carousel-prev" class="inline-flex h-10 w-10 items-center justify-center border border-line-strong text-gold transition hover:border-gold hover:bg-gold hover:text-black" aria-label="Previous client story">←</button>
+          <button type="button" id="testimonial-carousel-next" class="inline-flex h-10 w-10 items-center justify-center border border-line-strong text-gold transition hover:border-gold hover:bg-gold hover:text-black" aria-label="Next client story">→</button>
+        </div>
+      @endif
     </div>
   </div>
 </section>
 @endif
 
+@if($testimonials->count() > 3)
+@push('scripts')
+<script>
+  (() => {
+    const viewport = document.getElementById('testimonial-carousel');
+    const previous = document.getElementById('testimonial-carousel-prev');
+    const next = document.getElementById('testimonial-carousel-next');
+    if (!viewport || !previous || !next) return;
+
+    const scrollByPage = (direction) => viewport.scrollBy({
+      left: direction * viewport.clientWidth,
+      behavior: 'smooth',
+    });
+
+    previous.addEventListener('click', () => scrollByPage(-1));
+    next.addEventListener('click', () => scrollByPage(1));
+  })();
+</script>
+@endpush
+@endif
+
 <!-- JOURNAL TEASER -->
+@if($journalPosts->isNotEmpty())
 <section class="bg-charcoal py-20">
   <div class="max-w-[1320px] mx-auto px-[6vw]">
     <div class="reveal flex justify-between items-end gap-10 flex-wrap mb-10">
@@ -248,17 +273,18 @@
       <a href="{{ route('journal') }}" class="text-xs tracking-[0.14em] uppercase text-gold hover:text-gold-bright transition-colors pb-1.5">Read the Journal →</a>
     </div>
     <div class="reveal grid grid-cols-1 md:grid-cols-3 gap-9">
-      @foreach($portfolioItems as $item)
-        <a href="{{ route('portfolio') }}" class="group block">
-          <div class="overflow-hidden mb-5"><img src="{{ \Illuminate\Support\Str::startsWith($item->image_path, ['http://', 'https://']) ? $item->image_path : \Illuminate\Support\Facades\Storage::disk('r2')->url($item->image_path) }}" alt="{{ $item->title }}" class="w-full aspect-[4/3] object-cover saturate-90 brightness-95 transition-transform duration-700 group-hover:scale-105"></div>
-          <span class="font-mono text-[0.68rem] tracking-[0.14em] uppercase text-gold mb-3 block">{{ $item->category->name }}</span>
-          <h4 class="font-serif text-xl mb-2.5 leading-snug">{{ $item->title }}</h4>
-          <span class="text-xs text-silver-dim">Featured work</span>
+      @foreach($journalPosts as $post)
+        <a href="{{ route('journal') }}" class="group block">
+          <div class="mb-5 aspect-[4/3] bg-black flex items-center justify-center border border-line"><span class="font-mono text-xs uppercase tracking-widest text-gold">Waka Shots Journal</span></div>
+          <span class="font-mono text-[0.68rem] tracking-[0.14em] uppercase text-gold mb-3 block">{{ $post->category->name }}</span>
+          <h4 class="font-serif text-xl mb-2.5 leading-snug">{{ $post->title }}</h4>
+          <span class="text-xs text-silver-dim">From the studio</span>
         </a>
       @endforeach
     </div>
   </div>
 </section>
+@endif
 
 <!-- CTA -->
 <section class="text-center py-[150px] border-t border-b border-line" style="background:linear-gradient(180deg, rgba(198,161,91,0.06), transparent), #151316;">

@@ -58,7 +58,10 @@ class HomepageTestimonialsTest extends TestCase
             ->assertSee(Storage::disk('r2')->url('testimonials/client.jpg'))
             ->assertSee('bg-charcoal');
 
-        $this->assertSame(6, substr_count($response->getContent(), 'spotlight-card bg-black p-9 flex flex-col gap-5'));
+        $this->assertSame(6, substr_count($response->getContent(), 'spotlight-card min-w-0 w-full max-w-[420px] aspect-square'));
+        $this->assertSame(6, substr_count($response->getContent(), 'border border-line bg-black'));
+        $this->assertStringContainsString('testimonial-carousel-prev', $response->getContent());
+        $this->assertStringContainsString('testimonial-carousel-next', $response->getContent());
         $this->assertLessThan(
             strpos($response->getContent(), 'Approved review 2'),
             strpos($response->getContent(), 'Approved review 1'),

@@ -19,11 +19,11 @@ class PortfolioItemForm
                     ->searchable()
                     ->preload(),
                 TextInput::make('title')
-                    ->required()
                     ->maxLength(255),
                 FileUpload::make('image_path')
                     ->label('Portfolio Image')
                     ->disk('r2')
+                    ->visibility('public')
                     ->directory('portfolio-images')
                     ->acceptedFileTypes(['image/*'])
                     ->image()

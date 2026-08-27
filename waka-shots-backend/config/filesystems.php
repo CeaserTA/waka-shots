@@ -69,6 +69,10 @@ return [
             'endpoint' => env('R2_ENDPOINT'),
             'url' => env('R2_URL'),
             'use_path_style_endpoint' => true,
+            'http' => [
+                'connect_timeout' => 5,
+                'timeout' => 20,
+            ],
             'throw' => false,
             'report' => false,
         ],
