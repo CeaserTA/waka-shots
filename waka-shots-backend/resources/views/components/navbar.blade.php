@@ -1,7 +1,7 @@
 <header id="siteHeader" class="fixed top-0 left-0 right-0 z-[500] flex items-center justify-between px-[6vw] py-6 transition-all duration-500 border-b border-transparent">
   <a href="{{ route('home') }}" class="font-serif text-xl tracking-wide flex items-center gap-2.5">
     <span class="relative w-[9px] h-[9px] rounded-full border border-gold inline-block"><span class="absolute inset-[2.5px] rounded-full bg-gold"></span></span>
-    WAKA SHOTS
+    {{ \Illuminate\Support\Str::upper($siteSetting->studio_name ?? 'Waka Shots') }}
   </a>
   <nav class="hidden md:flex gap-9 items-center">
     <a href="{{ route('home') }}" class="text-sm tracking-wide uppercase {{ request()->routeIs('home') ? 'text-gold-bright' : 'text-ivory-dim hover:text-ivory' }} relative">Home</a>

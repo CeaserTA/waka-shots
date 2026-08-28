@@ -332,41 +332,87 @@ body.custom-cursor-active input, body.custom-cursor-active textarea, body.custom
 .price-tag .price-from{ color:#8a7140; text-transform:uppercase; font-size:0.62rem; letter-spacing:0.1em; }
 
 /* ============ LIGHTBOX — full-size view for gallery items ============ */
-/* Makes the custom cursor's "View" promise real: click opens the full image. */
+/* Makes the custom cursor's "View" promise real: click opens the full image,
+   rendered through the Morph Slider (see morph-slider.js / below). */
 .lightbox{
   position:fixed; inset:0; z-index:9990; background:rgba(10,9,8,0.96);
   display:flex; align-items:center; justify-content:center; padding:8vh 6vw;
   opacity:0; visibility:hidden; transition:opacity .4s ease, visibility .4s ease;
 }
 .lightbox.is-open{ opacity:1; visibility:visible; }
-.lightbox-content{ max-width:1100px; width:100%; text-align:center; }
-.lightbox-content img{
-  max-width:100%; max-height:74vh; margin:0 auto; display:block;
-  border:1px solid rgba(198,161,91,0.35); border-radius:2px;
-  box-shadow:0 40px 80px -20px rgba(0,0,0,0.7);
-  opacity:0; transform:scale(.96);
-  transition:opacity .5s ease, transform .5s cubic-bezier(.22,.61,.36,1);
-}
-.lightbox.is-open .lightbox-content img{ opacity:1; transform:scale(1); }
-.lightbox-caption{ margin-top:20px; }
-.lightbox-cat{ font-family:'Space Mono', monospace; font-size:0.7rem; letter-spacing:0.16em; text-transform:uppercase; color:#c6a15b; }
-.lightbox-title{ font-family:'Fraunces', serif; font-size:1.4rem; color:#ece7db; margin-top:8px; }
-.lightbox-exif{ font-family:'Space Mono', monospace; font-size:0.7rem; color:#aab0b6; display:flex; gap:16px; justify-content:center; margin-top:10px; }
-.lightbox-close, .lightbox-nav{
-  position:fixed; border:1px solid rgba(198,161,91,0.4); border-radius:50%;
+.lightbox-content{ max-width:1100px; width:100%; height:74vh; margin:0 auto; }
+.lightbox-close{
+  position:fixed; top:28px; right:6vw; width:44px; height:44px; font-size:1.6rem;
+  border:1px solid rgba(198,161,91,0.4); border-radius:50%;
   color:#ece7db; line-height:1; display:flex; align-items:center; justify-content:center;
   background:transparent; cursor:pointer; transition:border-color .3s ease, color .3s ease, background .3s ease;
   z-index:9991;
 }
-.lightbox-close:hover, .lightbox-nav:hover{ border-color:#c6a15b; background:#c6a15b; color:#0a0908; }
-.lightbox-close{ top:28px; right:6vw; width:44px; height:44px; font-size:1.6rem; }
-.lightbox-nav{ top:50%; transform:translateY(-50%); width:52px; height:52px; font-size:2rem; }
-.lightbox-prev{ left:24px; }
-.lightbox-next{ right:24px; }
+.lightbox-close:hover{ border-color:#c6a15b; background:#c6a15b; color:#0a0908; }
 @media (max-width: 640px){
-  .lightbox-nav{ width:40px; height:40px; font-size:1.5rem; }
-  .lightbox-prev{ left:10px; } .lightbox-next{ right:10px; }
   .lightbox-close{ top:16px; right:16px; }
+}
+
+/* ============ MORPH SLIDER — WebGL shader crossfade (reactbits.dev-inspired) ============ */
+/* Port of the React/OGL/GSAP "Morph Slider" component onto raw WebGL1 + a hand-rolled
+   rAF tween (see resources/js/morph-slider.js) — no new dependencies, matches every
+   other hand-built interaction on this site. */
+.morph-slider{
+  position:relative; width:100%; height:100%; overflow:hidden;
+  background:#0c0c0e; border:1px solid rgba(198,161,91,0.35); border-radius:2px;
+  box-shadow:0 40px 80px -20px rgba(0,0,0,0.7);
+  opacity:0; transform:scale(.96);
+  transition:opacity .5s ease, transform .5s cubic-bezier(.22,.61,.36,1);
+}
+.lightbox.is-open .morph-slider{ opacity:1; transform:scale(1); }
+.morph-slider-stage{ position:absolute; inset:0; cursor:grab; outline:none; touch-action:pan-y; }
+.morph-slider-stage:active{ cursor:grabbing; }
+.morph-slider-canvas{ display:block; width:100%; height:100%; }
+
+.morph-slider-caption{
+  position:absolute; left:24px; bottom:24px; z-index:2; max-width:70%;
+  pointer-events:none; display:grid;
+}
+.morph-slider-caption-text{
+  grid-area:1 / 1; justify-self:start; display:inline-block; padding:8px 16px;
+  border-radius:2px; font-family:'Space Mono', monospace; font-size:0.72rem;
+  letter-spacing:0.1em; text-transform:uppercase; color:#e6c887;
+  background:rgba(10,9,8,0.55); backdrop-filter:blur(8px);
+  opacity:0; transform:translateY(12px); filter:blur(6px);
+  transition:opacity .5s cubic-bezier(.22,.61,.36,1), transform .5s cubic-bezier(.22,.61,.36,1), filter .5s cubic-bezier(.22,.61,.36,1);
+}
+.morph-slider-caption-text.is-active{ opacity:1; transform:translateY(0); filter:blur(0); }
+
+.morph-slider-controls{
+  position:absolute; top:50%; left:0; right:0; z-index:3;
+  display:flex; justify-content:space-between; padding:0 18px;
+  transform:translateY(-50%); pointer-events:none;
+}
+.morph-slider-btn{
+  pointer-events:auto; display:inline-flex; align-items:center; justify-content:center;
+  width:48px; height:48px; border:1px solid rgba(198,161,91,0.4); border-radius:50%;
+  color:#ece7db; font-size:1.5rem; line-height:1; background:rgba(10,9,8,0.5);
+  backdrop-filter:blur(8px); cursor:pointer;
+  transition:transform .25s cubic-bezier(.22,.61,.36,1), background .25s ease, border-color .25s ease, color .25s ease;
+}
+.morph-slider-btn:hover{ background:#c6a15b; border-color:#c6a15b; color:#0a0908; transform:scale(1.06); }
+.morph-slider-btn:active{ transform:scale(0.96); }
+
+.morph-slider-indicators{
+  position:absolute; left:0; right:0; bottom:20px; z-index:3;
+  display:flex; gap:8px; justify-content:center; align-items:center;
+}
+.morph-slider-dot{
+  width:8px; height:8px; padding:0; border:none; border-radius:999px;
+  background:rgba(236,231,219,0.35); cursor:pointer;
+  transition:width .45s cubic-bezier(.22,.61,.36,1), background .45s ease;
+}
+.morph-slider-dot.is-active{ width:22px; background:#e6c887; }
+
+@media (max-width: 640px){
+  .morph-slider-btn{ width:38px; height:38px; font-size:1.2rem; }
+  .morph-slider-caption-text{ font-size:0.66rem; padding:6px 12px; }
+  .morph-slider-indicators{ bottom:14px; }
 }
 
 /* ============ BACK TO TOP ============ */

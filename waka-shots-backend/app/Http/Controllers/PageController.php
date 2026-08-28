@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\JournalPost;
+use App\Models\Partner;
 use App\Models\PortfolioItem;
 use App\Models\Service;
 use App\Models\Testimonial;
@@ -29,6 +30,7 @@ class PageController extends Controller
                 ->orderBy('sort_order')
                 ->take(6)
                 ->get(),
+            'partners' => Partner::orderBy('sort_order')->get(),
         ]);
     }
 }

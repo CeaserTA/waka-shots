@@ -84,27 +84,31 @@
     </form>
 
     <div class="reveal">
+      @if($siteSetting?->contact_email || $siteSetting?->contact_phone || $siteSetting?->address)
       <div class="border border-line rounded-sm p-9 mb-8">
         <h3 class="font-serif text-xl mb-6">Studio Details</h3>
         <div class="space-y-4 text-sm">
+          @if($siteSetting->contact_email)
           <div>
             <span class="font-mono text-[0.65rem] tracking-[0.14em] uppercase text-gold block mb-1">Email</span>
-            <span class="text-ivory-dim font-light">hello@wakashots.com</span>
+            <span class="text-ivory-dim font-light">{{ $siteSetting->contact_email }}</span>
           </div>
+          @endif
+          @if($siteSetting->contact_phone)
           <div>
             <span class="font-mono text-[0.65rem] tracking-[0.14em] uppercase text-gold block mb-1">Phone</span>
-            <span class="text-ivory-dim font-light">+256 000 000 000</span>
+            <span class="text-ivory-dim font-light">{{ $siteSetting->contact_phone }}</span>
           </div>
+          @endif
+          @if($siteSetting->address)
           <div>
             <span class="font-mono text-[0.65rem] tracking-[0.14em] uppercase text-gold block mb-1">Studio</span>
-            <span class="text-ivory-dim font-light">Kampala, Uganda</span>
+            <span class="text-ivory-dim font-light">{{ $siteSetting->address }}</span>
           </div>
-          <div>
-            <span class="font-mono text-[0.65rem] tracking-[0.14em] uppercase text-gold block mb-1">Response Time</span>
-            <span class="text-ivory-dim font-light">Within 24–48 hours</span>
-          </div>
+          @endif
         </div>
       </div>
+      @endif
       <div class="relative aspect-[4/5] overflow-hidden rounded-sm">
         <img src="https://images.unsplash.com/photo-1649532349871-b5b10b5ab9c4?auto=format&fit=crop&w=700&q=80" alt="Waka Shots studio" class="w-full h-full object-cover saturate-90 brightness-95">
       </div>
