@@ -427,6 +427,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!slides.length) return;
 
       lightbox.classList.add('is-open');
+      lightbox.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
       isOpen = true;
 
@@ -457,7 +458,11 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const closeLightbox = () => {
+      // Move focus out before hiding — aria-hidden on an ancestor of the
+      // still-focused close/nav button is itself an accessibility violation.
+      if (lightbox.contains(document.activeElement)) document.activeElement.blur();
       lightbox.classList.remove('is-open');
+      lightbox.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = '';
       isOpen = false;
       if (engine) { engine.destroy(); engine = null; }

@@ -378,6 +378,25 @@ body.custom-cursor-active input, body.custom-cursor-active textarea, body.custom
 .morph-slider-stage:active{ cursor:grabbing; }
 .morph-slider-canvas{ display:block; width:100%; height:100%; }
 
+/* Shown while the current slide's texture is still downloading — without
+   this the frozen fallback frame during a slow fetch looks indistinguishable
+   from the UI having actually hung. */
+.morph-slider-stage::after{
+  content:""; position:absolute; top:50%; left:50%; width:16px; height:16px;
+  margin:-8px 0 0 -8px; border:1px solid #c6a15b; border-radius:50%;
+  opacity:0; transition:opacity .25s ease .15s; pointer-events:none;
+}
+.morph-slider-stage::before{
+  content:""; position:absolute; top:50%; left:50%; width:16px; height:16px;
+  margin:-8px 0 0 -8px; border-radius:50%; background:#c6a15b;
+  opacity:0; transform:scale(1); pointer-events:none;
+}
+.morph-slider-stage.is-loading::after{ opacity:.5; }
+.morph-slider-stage.is-loading::before{
+  opacity:1; animation:sliderLoadPulse 1.1s ease-in-out infinite; transition:opacity .25s ease .15s;
+}
+@keyframes sliderLoadPulse{ 0%,100%{ transform:scale(1); opacity:1; } 50%{ transform:scale(1.5); opacity:.55; } }
+
 .morph-slider-caption{
   position:absolute; left:24px; bottom:24px; z-index:2; max-width:70%;
   pointer-events:none; display:grid;

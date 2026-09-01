@@ -81,17 +81,19 @@ mat2 rot(float a) {
   return mat2(c, -s, s, c);
 }
 
-// "Cover" fit (like CSS object-fit: cover): scales UV so the image always fills
-// the whole frame, cropping whatever overflows the mismatched aspect ratio.
-vec2 coverUV(vec2 uv, vec2 res, vec2 img) {
+// "Contain" fit (like CSS object-fit: contain): scales UV so the whole image
+// is always visible, letterboxing/pillarboxing whatever doesn't fill the
+// mismatched aspect ratio instead of cropping it away. A portrait photo in a
+// landscape-shaped stage gets bars on the sides, not its top/bottom cut off.
+vec2 containUV(vec2 uv, vec2 res, vec2 img) {
   float rA = res.x / max(res.y, 1.0);
   float iA = img.x / max(img.y, 1.0);
   vec2 s = vec2(1.0);
   float ratio = rA / max(iA, 0.0001);
   if (ratio > 1.0) {
-    s.y = 1.0 / ratio;
-  } else {
     s.x = ratio;
+  } else {
+    s.y = 1.0 / ratio;
   }
   return (uv - 0.5) * s + 0.5;
 }
@@ -146,8 +148,8 @@ void main() {
     }
   }
 
-  vec2 sC = coverUV(uvC, uResolution, uCurrentSize);
-  vec2 sN = coverUV(uvN, uResolution, uNextSize);
+  vec2 sC = containUV(uvC, uResolution, uCurrentSize);
+  vec2 sN = containUV(uvN, uResolution, uNextSize);
 
   float ca = uReduce < 0.5 ? uAberration * env * 0.03 : 0.0;
 
@@ -161,6 +163,14 @@ void main() {
     texture2D(tNext, sN).g,
     texture2D(tNext, sN - vec2(ca, 0.0)).b
   );
+
+  // Outside the letterboxed image bounds there's nothing to show — fall back
+  // to the background colour rather than the smeared, clamped-to-edge pixel
+  // texture2D() would otherwise return for out-of-range UVs.
+  float inC = step(0.0, sC.x) * step(sC.x, 1.0) * step(0.0, sC.y) * step(sC.y, 1.0);
+  float inN = step(0.0, sN.x) * step(sN.x, 1.0) * step(0.0, sN.y) * step(sN.y, 1.0);
+  colC = mix(uOverlay, colC, inC);
+  colN = mix(uOverlay, colN, inN);
 
   vec3 col = mix(colC, colN, m);
 
@@ -298,7 +308,11 @@ export class MorphSlider {
 
     this.textures = this.items.map(() => makeFallbackTexture(gl));
     this.sizes = this.items.map(() => [1, 1]);
+    this.loaded = this.items.map(() => false);
+    this.loadQueue = [];
+    this.loadActive = 0;
     this.nextTexture = this.textures[this.current];
+    this.setLoading(true);
     this.loadTextures();
 
     gl.uniform1i(this.uniforms.tCurrent, 0);
@@ -326,24 +340,91 @@ export class MorphSlider {
     this.bindPointerEvents();
   }
 
-  loadTextures() {
+  // Downloading every gallery image the instant the slider opens (the old
+  // behaviour) saturates the browser's per-origin connection pool and fires
+  // a burst of GPU texture uploads all at once — which is exactly why the
+  // slider used to feel slow to show anything and would visibly hang for a
+  // moment. Instead: load the image actually being viewed first, its
+  // immediate neighbours next, and the rest of the gallery afterward, capped
+  // to a small number of concurrent downloads so the current image never has
+  // to compete with a dozen others for bandwidth.
+  static LOAD_CONCURRENCY = 3;
+
+  priorityOrder(start) {
+    const n = this.items.length;
+    const order = [start];
+    for (let d = 1; d < n; d++) {
+      order.push(this.wrap(start + d));
+      if (order.length < n) order.push(this.wrap(start - d));
+    }
+    return order;
+  }
+
+  setLoading(isLoading) {
+    this.container.classList.toggle('is-loading', isLoading);
+  }
+
+  loadOne(index) {
+    if (this.loaded[index] || this.loading?.has(index)) return;
+    (this.loading ??= new Set()).add(index);
+    this.loadActive++;
+
     const gl = this.gl;
-    this.items.forEach((item, index) => {
-      const img = new Image();
-      img.crossOrigin = 'anonymous';
-      img.src = item.image;
-      img.onload = () => {
-        const texture = gl.createTexture();
-        uploadTexture(gl, texture, img);
-        this.textures[index] = texture;
-        this.sizes[index] = [img.naturalWidth || 1, img.naturalHeight || 1];
-        if (index === this.current) {
-          gl.uniform2fv(this.uniforms.uCurrentSize, this.sizes[index]);
-          this.nextTexture = this.textures[index];
-        }
-      };
-      img.onerror = () => {};
-    });
+    const item = this.items[index];
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    // Deliberately a different URL from whatever plain <img> (no crossorigin
+    // attribute, no Origin header, no CORS headers in the response) already
+    // loaded this same image elsewhere on the page — e.g. the portfolio grid
+    // thumbnail. Some CDNs (R2's public *.r2.dev domain included) cache by
+    // URL only and ignore Vary: Origin, so whichever request hits a given
+    // URL first "wins" the cache for everyone after it, CORS headers and
+    // all. Requesting a distinct URL here guarantees this fetch can never
+    // be served that stale, header-less cache entry.
+    img.src = item.image + (item.image.includes('?') ? '&' : '?') + 'cors=1';
+
+    const finish = () => {
+      this.loading.delete(index);
+      this.loadActive--;
+      if (!this.destroyed) this.pumpQueue();
+    };
+
+    img.onload = () => {
+      if (this.destroyed) { finish(); return; }
+      const texture = gl.createTexture();
+      uploadTexture(gl, texture, img);
+      this.textures[index] = texture;
+      this.sizes[index] = [img.naturalWidth || 1, img.naturalHeight || 1];
+      this.loaded[index] = true;
+      if (index === this.current) {
+        gl.uniform2fv(this.uniforms.uCurrentSize, this.sizes[index]);
+        this.nextTexture = this.textures[index];
+        this.setLoading(false);
+      }
+      finish();
+    };
+    img.onerror = finish;
+  }
+
+  pumpQueue() {
+    while (this.loadActive < MorphSlider.LOAD_CONCURRENCY && this.loadQueue.length) {
+      this.loadOne(this.loadQueue.shift());
+    }
+  }
+
+  // Jumps an index to the front of the line — used when the viewer navigates
+  // to a slide that hasn't loaded yet, so it doesn't wait behind whatever was
+  // already queued.
+  prioritizeLoad(index) {
+    if (this.loaded[index]) return;
+    this.loadQueue = this.loadQueue.filter((i) => i !== index);
+    this.loadQueue.unshift(index);
+    if (!this.loading?.has(index)) this.pumpQueue();
+  }
+
+  loadTextures() {
+    this.loadQueue = this.priorityOrder(this.current);
+    this.pumpQueue();
   }
 
   resize() {
@@ -385,6 +466,7 @@ export class MorphSlider {
     this.gl.uniform2fv(this.uniforms.uCurrentSize, this.sizes[this.current]);
     this.gl.uniform2fv(this.uniforms.uNextSize, this.sizes[target]);
     this.gl.uniform1f(this.uniforms.uDir, dir);
+    this.prioritizeLoad(target);
     return target;
   }
 
@@ -431,6 +513,7 @@ export class MorphSlider {
     this.gl.uniform1f(this.uniforms.uProgress, 0);
     this.animating = false;
     this.announce(target);
+    this.setLoading(!this.loaded[target]);
   }
 
   next() { this.goTo(1); }
@@ -519,6 +602,7 @@ export class MorphSlider {
   }
 
   destroy() {
+    this.destroyed = true;
     cancelAnimationFrame(this.raf);
     if (this.tweenRAF) cancelAnimationFrame(this.tweenRAF);
     this.resizeObserver.disconnect();
