@@ -1,9 +1,12 @@
 @extends('layouts.app')
 @section('title', 'Waka Shots Photography — Stories, Beautifully Captured')
 @section('content')
+<!-- PAGE LOADER -->
+<div class="page-loader" id="pageLoader"><span class="loader-mark">{{ $siteSetting->studio_name ?? 'Waka Shots' }}</span></div>
+
 <!-- HERO -->
 <section class="relative h-[100svh] min-h-[640px] flex items-end overflow-hidden">
-  <div class="hero-bg absolute inset-0 bg-cover" style="background-image:url('https://images.unsplash.com/photo-1631131426242-0abfa7f209c2?auto=format&fit=crop&w=1800&q=80'); background-position:center 30%;">
+  <div class="hero-bg absolute inset-0 bg-cover" style="background-image:url('{{ $siteSetting->imageUrl($siteSetting->home_hero_image) ?? 'https://images.unsplash.com/photo-1631131426242-0abfa7f209c2?auto=format&fit=crop&w=1800&q=80' }}'); background-position:center 30%;">
     <div class="absolute inset-0" style="background:linear-gradient(180deg, rgba(10,9,8,0.35) 0%, rgba(10,9,8,0.25) 40%, rgba(10,9,8,0.92) 100%), linear-gradient(90deg, rgba(10,9,8,0.55) 0%, rgba(10,9,8,0) 40%);"></div>
   </div>
   <span class="float-tag" style="top:16%; left:8%; animation-delay:0s;">f/1.8</span>
@@ -14,7 +17,13 @@
   <div class="relative z-[2] w-full px-[6vw] pb-[7vw] flex flex-col md:flex-row justify-between items-start md:items-end gap-10">
     <div class="max-w-[760px]">
       <span class="eyebrow anim-fadeup font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center gap-2.5" style="animation-delay:.4s;">Waka Shots Photography — Kampala, Uganda</span>
-      <h1 class="anim-fadeup font-serif font-normal text-[clamp(2.6rem,7vw,6rem)] leading-[1.08] my-4" style="animation-delay:.6s;">Stories,<br><em class="italic text-gold-bright font-light">beautifully</em> captured.</h1>
+      <h1 class="anim-fadeup font-serif font-normal text-[clamp(2.6rem,7vw,6rem)] leading-[1.08] my-4" style="animation-delay:.6s;">
+        @if($siteSetting?->hero_tagline)
+          {{ $siteSetting->hero_tagline }}
+        @else
+          Stories,<br><em class="italic text-gold-bright font-light">beautifully</em> captured.
+        @endif
+      </h1>
       <p class="anim-fadeup text-ivory-dim max-w-[440px] font-light" style="animation-delay:.85s;">We make timeless, intentional imagery for <span class="tagline-rotator text-gold-bright"><span class="tagline-active">weddings</span><span>portraits</span><span>graduations</span><span>brand stories</span></span> across East Africa — one honest frame at a time.</p>
     </div>
     <div class="anim-fadeup flex flex-row md:flex-col gap-3.5" style="animation-delay:1.05s;">
@@ -99,22 +108,30 @@
 </section>  -->
 
 
+@if($portfolioItems->isNotEmpty())
 <!-- SELECTED WORK — scroll-driven rotating-wheel orbit filmstrip (zeustheagency.com-inspired) -->
 <section id="filmstripWrapper" class="relative h-[190vh] md:h-[280vh]">
   <div class="orbit-stage sticky top-0 h-[78vh] md:h-screen overflow-hidden flex flex-col justify-center">
     <div class="max-w-[1320px] mx-auto px-[6vw] w-full mb-5 md:mb-10 relative z-10">
       <span class="eyebrow font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center gap-2.5">Selected Work</span>
-      <h2 class="mask-reveal font-serif text-[clamp(1.8rem,3.2vw,2.7rem)] mt-3.5"><span class="mask-inner"></span></h2>
+      <h2 class="mask-reveal font-serif text-[clamp(1.8rem,3.2vw,2.7rem)] mt-3.5"><span class="mask-inner">A closer look at recent frames.</span></h2>
     </div>
     <div id="filmstripTrack" class="filmstrip-track pl-[6vw]">
       @foreach($portfolioItems as $item)
-        <div class="filmstrip-item w-[78vw] md:w-[34vw] aspect-[4/3] rounded-sm overflow-hidden border border-line-strong">
+        <div class="filmstrip-item relative w-[78vw] md:w-[34vw] aspect-[4/3] rounded-sm overflow-hidden border border-line-strong">
           <img src="{{ \Illuminate\Support\Str::startsWith($item->image_path, ['http://', 'https://']) ? $item->image_path : \Illuminate\Support\Facades\Storage::disk('r2')->url($item->image_path) }}" alt="{{ $item->title }}">
+          <div class="absolute inset-0 flex flex-col justify-end p-5" style="background:linear-gradient(0deg, rgba(10,9,8,0.8) 0%, rgba(10,9,8,0) 45%);">
+            @if($item->category)
+              <span class="font-mono text-[0.62rem] tracking-[0.16em] uppercase text-gold-bright mb-1">{{ $item->category->name }}</span>
+            @endif
+            <div class="font-serif text-lg text-ivory">{{ $item->title }}</div>
+          </div>
         </div>
       @endforeach
     </div>
   </div>
 </section>
+@endif
 
 <div class="pt-2 pb-4 md:py-4 flex justify-center">
   <a href="{{ route('portfolio') }}" class="reveal text-xs tracking-[0.14em] uppercase px-7 py-4 rounded-sm border border-line-strong text-ivory hover:border-gold hover:text-gold-bright hover:-translate-y-0.5 transition-all duration-400">View Full Portfolio →</a>
@@ -155,7 +172,9 @@
     <div class="reveal grid grid-cols-1 md:grid-cols-3 border border-line">
       @foreach($services as $service)
         <a href="{{ route('services') }}#service-{{ $service->id }}" class="group spotlight-card bg-black hover:bg-panel transition-colors duration-500 p-10 flex flex-col min-h-[320px] border border-line -mt-px -ml-px">
-          <div class="font-mono text-gold-dim text-sm tracking-wide mb-8">{{ $service->tagline ?: 'Waka Shots — ' . str_pad((string) ($loop->iteration), 2, '0', STR_PAD_LEFT) }}</div>
+          @if($service->tagline)
+            <div class="font-mono text-gold-dim text-sm tracking-wide mb-8">{{ $service->tagline }}</div>
+          @endif
           <h3 class="font-serif text-2xl mb-4 max-w-[220px]">{{ $service->name }}</h3>
           <p class="text-ivory-dim font-light text-sm flex-grow">{{ $service->description ?: 'A considered approach shaped around your story.' }}</p>
           @if($service->has_packages)
@@ -175,7 +194,7 @@
 
 <!-- PARTNERS — cinematic full-bleed band, bonjour.paris-inspired -->
 <section class="partners-band">
-  <div class="partners-band-bg" style="background-image:url('https://images.unsplash.com/photo-1660675133902-acd1b057f75d?auto=format&fit=crop&w=1800&q=80');"></div>
+  <div class="partners-band-bg" style="background-image:url('{{ $siteSetting->imageUrl($siteSetting->home_partners_image) ?? 'https://images.unsplash.com/photo-1660675133902-acd1b057f75d?auto=format&fit=crop&w=1800&q=80' }}');"></div>
   <div class="partners-band-overlay"></div>
   <div class="reveal relative z-10 text-center px-[6vw]">
     <span class="eyebrow font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center justify-center gap-2.5">Trusted By</span>
@@ -187,18 +206,27 @@
 </section>
 <div class="marquee-fade bg-black border-b border-line overflow-hidden py-6" style="--fade-color:#0a0908;">
   <div class="marquee-track flex whitespace-nowrap">
-    <span class="font-serif text-lg text-ivory-dim px-8 flex items-center gap-8 after:content-['◆'] after:text-[0.6rem] after:text-gold-dim">Amara Foods</span>
-    <span class="font-serif text-lg text-ivory-dim px-8 flex items-center gap-8 after:content-['◆'] after:text-[0.6rem] after:text-gold-dim">Kiboko Hotels</span>
-    <span class="font-serif text-lg text-ivory-dim px-8 flex items-center gap-8 after:content-['◆'] after:text-[0.6rem] after:text-gold-dim">Nyati Bank</span>
-    <span class="font-serif text-lg text-ivory-dim px-8 flex items-center gap-8 after:content-['◆'] after:text-[0.6rem] after:text-gold-dim">Savanna Airlines</span>
-    <span class="font-serif text-lg text-ivory-dim px-8 flex items-center gap-8 after:content-['◆'] after:text-[0.6rem] after:text-gold-dim">Equator Media Group</span>
-    <span class="font-serif text-lg text-ivory-dim px-8 flex items-center gap-8 after:content-['◆'] after:text-[0.6rem] after:text-gold-dim">Zawadi Events</span>
-    <span class="font-serif text-lg text-ivory-dim px-8 flex items-center gap-8 after:content-['◆'] after:text-[0.6rem] after:text-gold-dim">Kampala Business Council</span>
-    <span class="font-serif text-lg text-ivory-dim px-8 flex items-center gap-8 after:content-['◆'] after:text-[0.6rem] after:text-gold-dim">Muzuri Fashion House</span>
-    <span class="font-serif text-lg text-ivory-dim px-8 flex items-center gap-8 after:content-['◆'] after:text-[0.6rem] after:text-gold-dim">Amara Foods</span>
-    <span class="font-serif text-lg text-ivory-dim px-8 flex items-center gap-8 after:content-['◆'] after:text-[0.6rem] after:text-gold-dim">Kiboko Hotels</span>
-    <span class="font-serif text-lg text-ivory-dim px-8 flex items-center gap-8 after:content-['◆'] after:text-[0.6rem] after:text-gold-dim">Nyati Bank</span>
-    <span class="font-serif text-lg text-ivory-dim px-8 flex items-center gap-8 after:content-['◆'] after:text-[0.6rem] after:text-gold-dim">Savanna Airlines</span>
+    @if($partners->isNotEmpty())
+      @foreach($partners as $partner)
+        <span class="font-serif text-lg text-ivory-dim px-8 flex items-center gap-8 after:content-['◆'] after:text-[0.6rem] after:text-gold-dim">{{ $partner->name }}</span>
+      @endforeach
+      @foreach($partners as $partner)
+        <span class="font-serif text-lg text-ivory-dim px-8 flex items-center gap-8 after:content-['◆'] after:text-[0.6rem] after:text-gold-dim">{{ $partner->name }}</span>
+      @endforeach
+    @else
+      <span class="font-serif text-lg text-ivory-dim px-8 flex items-center gap-8 after:content-['◆'] after:text-[0.6rem] after:text-gold-dim">Amara Foods</span>
+      <span class="font-serif text-lg text-ivory-dim px-8 flex items-center gap-8 after:content-['◆'] after:text-[0.6rem] after:text-gold-dim">Kiboko Hotels</span>
+      <span class="font-serif text-lg text-ivory-dim px-8 flex items-center gap-8 after:content-['◆'] after:text-[0.6rem] after:text-gold-dim">Nyati Bank</span>
+      <span class="font-serif text-lg text-ivory-dim px-8 flex items-center gap-8 after:content-['◆'] after:text-[0.6rem] after:text-gold-dim">Savanna Airlines</span>
+      <span class="font-serif text-lg text-ivory-dim px-8 flex items-center gap-8 after:content-['◆'] after:text-[0.6rem] after:text-gold-dim">Equator Media Group</span>
+      <span class="font-serif text-lg text-ivory-dim px-8 flex items-center gap-8 after:content-['◆'] after:text-[0.6rem] after:text-gold-dim">Zawadi Events</span>
+      <span class="font-serif text-lg text-ivory-dim px-8 flex items-center gap-8 after:content-['◆'] after:text-[0.6rem] after:text-gold-dim">Kampala Business Council</span>
+      <span class="font-serif text-lg text-ivory-dim px-8 flex items-center gap-8 after:content-['◆'] after:text-[0.6rem] after:text-gold-dim">Muzuri Fashion House</span>
+      <span class="font-serif text-lg text-ivory-dim px-8 flex items-center gap-8 after:content-['◆'] after:text-[0.6rem] after:text-gold-dim">Amara Foods</span>
+      <span class="font-serif text-lg text-ivory-dim px-8 flex items-center gap-8 after:content-['◆'] after:text-[0.6rem] after:text-gold-dim">Kiboko Hotels</span>
+      <span class="font-serif text-lg text-ivory-dim px-8 flex items-center gap-8 after:content-['◆'] after:text-[0.6rem] after:text-gold-dim">Nyati Bank</span>
+      <span class="font-serif text-lg text-ivory-dim px-8 flex items-center gap-8 after:content-['◆'] after:text-[0.6rem] after:text-gold-dim">Savanna Airlines</span>
+    @endif
   </div>
 </div>
 
@@ -293,7 +321,9 @@
     <h2 class="font-serif text-[clamp(2rem,3.6vw,3.1rem)] mt-4 mb-10 mx-auto text-center">Ready to create something unforgettable?</h2>
     <div class="flex gap-4.5 justify-center flex-wrap">
       <a href="{{ route('contact') }}" class="text-xs tracking-[0.14em] uppercase px-7 py-4 rounded-sm bg-gold text-black border border-gold hover:bg-gold-bright hover:-translate-y-0.5 transition-all duration-400">Start Your Enquiry</a>
-      <a href="tel:+256000000000" class="text-xs tracking-[0.14em] uppercase px-7 py-4 rounded-sm border border-line-strong text-ivory hover:border-gold hover:text-gold-bright hover:-translate-y-0.5 transition-all duration-400">Call the Studio</a>
+      @if($siteSetting?->contact_phone)
+        <a href="tel:{{ $siteSetting->contact_phone }}" class="text-xs tracking-[0.14em] uppercase px-7 py-4 rounded-sm border border-line-strong text-ivory hover:border-gold hover:text-gold-bright hover:-translate-y-0.5 transition-all duration-400">Call the Studio</a>
+      @endif
     </div>
   </div>
 </section>

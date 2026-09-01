@@ -23,7 +23,7 @@
   </div>
   <div class="relative z-[2] w-full px-[6vw] pb-16">
     <span class="eyebrow anim-fadeup font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center gap-2.5">Let's Talk</span>
-    <h1 class="anim-fadeup font-serif font-normal text-[clamp(2.4rem,6vw,4.6rem)] leading-[1.08] mt-4" style="animation-delay:.15s;">Let's create something unforgettable.</h1>
+    <h1 class="anim-fadeup font-serif font-normal text-[clamp(2.4rem,6vw,4.6rem)] leading-[1.08] mt-4" style="animation-delay:.15s;">{{ $siteSetting->contact_tagline ?: "Let's create something unforgettable." }}</h1>
   </div>
 </section>
 
@@ -87,18 +87,24 @@
       <div class="border border-line rounded-sm p-9 mb-8">
         <h3 class="font-serif text-xl mb-6">Studio Details</h3>
         <div class="space-y-4 text-sm">
-          <div>
-            <span class="font-mono text-[0.65rem] tracking-[0.14em] uppercase text-gold block mb-1">Email</span>
-            <span class="text-ivory-dim font-light">hello@wakashots.com</span>
-          </div>
-          <div>
-            <span class="font-mono text-[0.65rem] tracking-[0.14em] uppercase text-gold block mb-1">Phone</span>
-            <span class="text-ivory-dim font-light">+256 000 000 000</span>
-          </div>
-          <div>
-            <span class="font-mono text-[0.65rem] tracking-[0.14em] uppercase text-gold block mb-1">Studio</span>
-            <span class="text-ivory-dim font-light">Kampala, Uganda</span>
-          </div>
+          @if($siteSetting?->contact_email)
+            <div>
+              <span class="font-mono text-[0.65rem] tracking-[0.14em] uppercase text-gold block mb-1">Email</span>
+              <span class="text-ivory-dim font-light">{{ $siteSetting->contact_email }}</span>
+            </div>
+          @endif
+          @if($siteSetting?->contact_phone)
+            <div>
+              <span class="font-mono text-[0.65rem] tracking-[0.14em] uppercase text-gold block mb-1">Phone</span>
+              <span class="text-ivory-dim font-light">{{ $siteSetting->contact_phone }}</span>
+            </div>
+          @endif
+          @if($siteSetting?->address)
+            <div>
+              <span class="font-mono text-[0.65rem] tracking-[0.14em] uppercase text-gold block mb-1">Studio</span>
+              <span class="text-ivory-dim font-light">{{ $siteSetting->address }}</span>
+            </div>
+          @endif
           <div>
             <span class="font-mono text-[0.65rem] tracking-[0.14em] uppercase text-gold block mb-1">Response Time</span>
             <span class="text-ivory-dim font-light">Within 24–48 hours</span>
@@ -106,7 +112,7 @@
         </div>
       </div>
       <div class="relative aspect-[4/5] overflow-hidden rounded-sm">
-        <img src="https://images.unsplash.com/photo-1649532349871-b5b10b5ab9c4?auto=format&fit=crop&w=700&q=80" alt="Waka Shots studio" class="w-full h-full object-cover saturate-90 brightness-95">
+        <img src="{{ $siteSetting->imageUrl($siteSetting->contact_image) ?? 'https://images.unsplash.com/photo-1649532349871-b5b10b5ab9c4?auto=format&fit=crop&w=700&q=80' }}" alt="{{ $siteSetting->studio_name ?? 'Waka Shots' }} studio" class="w-full h-full object-cover saturate-90 brightness-95">
       </div>
     </div>
 

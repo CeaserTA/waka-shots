@@ -20,6 +20,7 @@ class ServicesTable
                 ImageColumn::make('thumbnail_path')
                     ->label('Thumbnail')
                     ->disk('r2')
+                    ->checkFileExistence(false)
                     ->size(64),
                 TextColumn::make('name')
                     ->searchable()

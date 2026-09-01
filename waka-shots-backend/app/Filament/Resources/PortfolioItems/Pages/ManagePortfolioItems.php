@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\PortfolioItems\Pages;
 
 use App\Filament\Resources\PortfolioItems\PortfolioItemResource;
-use App\Models\PortfolioItem;
+use App\Jobs\UploadPortfolioImage;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Forms\Components\FileUpload;
@@ -40,9 +40,8 @@ class ManagePortfolioItems extends ManageRecords
                         ->label('Images')
                         ->multiple()
                         ->reorderable()
-                        ->disk('r2')
-                        ->visibility('public')
-                        ->directory('portfolio-images')
+                        ->disk('local')
+                        ->directory('portfolio-uploads-tmp')
                         ->acceptedFileTypes(['image/*'])
                         ->image()
                         ->imageEditor()
@@ -51,14 +50,10 @@ class ManagePortfolioItems extends ManageRecords
                 ])
                 ->action(function (array $data): void {
                     foreach ($data['images'] as $imagePath) {
-                        PortfolioItem::create([
-                            'category_id' => $data['category_id'],
-                            'image_path' => $imagePath,
-                            'title' => null,
-                        ]);
+                        UploadPortfolioImage::dispatch($imagePath, (int) $data['category_id']);
                     }
                 })
-                ->successNotificationTitle('Images uploaded successfully'),
+                ->successNotificationTitle('Images queued — they will appear in the table shortly'),
         ];
     }
 }

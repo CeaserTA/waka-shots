@@ -3,6 +3,8 @@
 namespace App\Filament\Resources\Packages\Pages;
 
 use App\Filament\Resources\Packages\PackageResource;
+use App\Filament\Resources\Packages\Schemas\PackageForm;
+use App\Models\Package;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
@@ -17,7 +19,10 @@ class ListPackages extends ListRecords
                 ->label('New Package')
                 ->modalHeading('New Package')
                 ->modalWidth('md')
-                ->modalSubmitActionLabel('Create Package'),
+                ->modalSubmitActionLabel('Create Package')
+                ->after(function (Package $record, array $data): void {
+                    PackageForm::syncFeatures($record, $data['features_text'] ?? null);
+                }),
         ];
     }
 }

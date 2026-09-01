@@ -44,6 +44,7 @@ class TestimonialsTable
                 ImageColumn::make('photo_path')
                     ->label('Photo')
                     ->disk('r2')
+                    ->checkFileExistence(false)
                     ->size(48),
                 TextColumn::make('created_at')
                     ->dateTime()

@@ -266,34 +266,75 @@ document.addEventListener('DOMContentLoaded', () => {
   const filmstripTrack = document.getElementById('filmstripTrack');
   if (filmstripWrapper && filmstripTrack) {
     const orbitItems = filmstripTrack.querySelectorAll('.filmstrip-item');
-    const MAX_TILT = 38;   // deg of rotateY at the screen edges
-    const MAX_DEPTH = 140; // px an edge item recedes into the drum
+    const MAX_TILT = 38;      // deg of rotateY at the screen edges
+    const MAX_DEPTH = 140;    // px an edge item recedes into the drum
+    const MIN_SCALE = 0.82;   // scale of an item at the far edge
+    const MIN_OPACITY = 0.32; // opacity of an item at the far edge
+    const SMOOTHING = 0.12;   // lerp factor — lower = silkier, more lag
+
+    let smoothShift = null;
+    let rafId = 0;
+
     const filmstripTick = () => {
       const rect = filmstripWrapper.getBoundingClientRect();
       const total = rect.height - window.innerHeight;
       let progress = total > 0 ? -rect.top / total : 0;
       progress = Math.max(0, Math.min(1, progress));
       const maxTranslate = Math.max(filmstripTrack.scrollWidth - window.innerWidth, 0);
-      const shift = progress * maxTranslate;
-      filmstripTrack.style.transform = `translateX(${-shift}px)`;
+      const targetShift = progress * maxTranslate;
+      // Ease the raw scroll position toward its target instead of snapping
+      // 1:1 to it — turns the mechanical scrollbar-linked motion into a
+      // fluid, slightly-trailing drift (zeustheagency.com's carousels never
+      // move in lockstep with the scrollbar).
+      smoothShift = smoothShift === null ? targetShift : smoothShift + (targetShift - smoothShift) * SMOOTHING;
+      filmstripTrack.style.transform = `translateX(${-smoothShift}px)`;
 
-      // Rotating orbit: each item tilts on the wheel according to its
-      // distance from center stage (computed from layout, not live rects,
-      // so there's no feedback loop with the transforms we set).
-      // Mobile gets a plain flat strip — the drum curve is desktop-only.
+      // Rotating orbit: each item tilts, recedes, shrinks and dims on the
+      // wheel according to its distance from center stage (computed from
+      // layout, not live rects, so there's no feedback loop with the
+      // transforms we set). The scale/opacity falloff is what actually
+      // sells the drum illusion — tilt alone reads as flat cards leaning.
       const vw = window.innerWidth;
       const flat = vw < 768;
       orbitItems.forEach((item) => {
-        if (flat) { item.style.transform = ''; return; }
-        const center = item.offsetLeft + item.offsetWidth / 2 - shift;
+        const center = item.offsetLeft + item.offsetWidth / 2 - smoothShift;
         const t = Math.max(-1, Math.min(1, (center - vw / 2) / (vw / 2)));
+        const falloff = Math.abs(t);
+        const opacity = 1 - falloff * (1 - MIN_OPACITY);
+
+        if (flat) {
+          // Mobile: no 3D tilt (perspective looks janky on small/low-power
+          // screens), but keep the scale + opacity falloff for depth.
+          const scale = 1 - falloff * (1 - MIN_SCALE) * 0.6;
+          item.style.transform = `scale(${scale})`;
+          item.style.opacity = String(opacity);
+          return;
+        }
+
         const tilt = -t * MAX_TILT;
-        const depth = -Math.abs(t) * MAX_DEPTH;
-        item.style.transform = `rotateY(${tilt}deg) translateZ(${depth}px)`;
+        const depth = -falloff * MAX_DEPTH;
+        const scale = 1 - falloff * (1 - MIN_SCALE);
+        item.style.transform = `rotateY(${tilt}deg) translateZ(${depth}px) scale(${scale})`;
+        item.style.opacity = String(opacity);
       });
-      requestAnimationFrame(filmstripTick);
+
+      rafId = requestAnimationFrame(filmstripTick);
     };
-    requestAnimationFrame(filmstripTick);
+
+    // Only run the loop while the section is actually on screen — it was
+    // previously ticking forever, every frame, for the entire page lifetime.
+    const filmstripIo = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          smoothShift = null; // re-snap to the correct position, don't drift in from the last spot
+          cancelAnimationFrame(rafId);
+          rafId = requestAnimationFrame(filmstripTick);
+        } else {
+          cancelAnimationFrame(rafId);
+        }
+      });
+    });
+    filmstripIo.observe(filmstripWrapper);
   }
 
   // ============ SPOTLIGHT HOVER — cursor-tracking glow on cards (React Bits "SpotlightCard"-inspired) ============

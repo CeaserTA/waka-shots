@@ -1,6 +1,14 @@
 @import 'tailwindcss';
 @import './style.css';
 
+@font-face {
+    font-family: 'Americans Classy';
+    src: url('/fonts/AmericansClassy.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
 @theme {
     --color-black: #0a0908;
     --color-charcoal: #151316;
@@ -17,6 +25,7 @@
     --font-serif: 'Fraunces', serif;
     --font-sans: 'Manrope', sans-serif;
     --font-mono: 'Space Mono', monospace;
+    --font-script: 'Americans Classy', 'Alex Brush', cursive;
 }
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';

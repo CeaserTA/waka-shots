@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\Services\RelationManagers;
 
-use App\Filament\Resources\Packages\RelationManagers\PackageFeaturesRelationManager;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -63,12 +62,5 @@ class PackagesRelationManager extends RelationManager
                     DeleteBulkAction::make(),
                 ]),
             ]);
-    }
-
-    public function getRelations(): array
-    {
-        return [
-            PackageFeaturesRelationManager::class,
-        ];
     }
 }

@@ -6,6 +6,7 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use App\Filament\Pages\Auth\EditProfile;
 use App\Filament\Pages\Dashboard;
 use App\Filament\Widgets\QuickStats;
 use App\Filament\Widgets\RecentActivityWidget;
@@ -30,6 +31,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->login()
+            ->profile(EditProfile::class, isSimple: false)
             ->brandName('Waka Shots Photography')
             ->darkMode(true, true)
             ->defaultThemeMode(ThemeMode::Dark)

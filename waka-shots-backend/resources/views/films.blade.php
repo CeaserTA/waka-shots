@@ -22,49 +22,8 @@
 <!-- VIDEO GRID -->
 <section class="pb-32">
   <div class="max-w-[1320px] mx-auto px-[6vw]">
-    @if($films->isEmpty())
     <div class="reveal grid grid-cols-1 md:grid-cols-2 gap-8">
-
-      <div>
-        <div class="video-card" data-video-id="366ooN49spY" data-cursor="Play">
-          <img src="https://img.youtube.com/vi/366ooN49spY/hqdefault.jpg" alt="Wedding highlight film thumbnail">
-          <div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
-          <div class="video-label">Wedding Film · Highlight Reel</div>
-        </div>
-        <p class="mt-4 text-ivory-dim font-light text-sm">A same-day edit capturing the emotion of a full Kampala wedding, start to finish.</p>
-      </div>
-
-      <div>
-        <div class="video-card" data-video-id="366ooN49spY" data-cursor="Play">
-          <img src="https://img.youtube.com/vi/366ooN49spY/hqdefault.jpg" alt="Behind the scenes thumbnail">
-          <div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
-          <div class="video-label">Behind the Scenes · Studio</div>
-        </div>
-        <p class="mt-4 text-ivory-dim font-light text-sm">A day in the studio — how we plan, light and shoot a portrait session.</p>
-      </div>
-
-      <div>
-        <div class="video-card" data-video-id="366ooN49spY" data-cursor="Play">
-          <img src="https://img.youtube.com/vi/366ooN49spY/hqdefault.jpg" alt="Graduation film thumbnail">
-          <div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
-          <div class="video-label">Graduation Day · Class of 2026</div>
-        </div>
-        <p class="mt-4 text-ivory-dim font-light text-sm">Coverage from a graduation ceremony, from the procession to family portraits.</p>
-      </div>
-
-      <div>
-        <div class="video-card" data-video-id="366ooN49spY" data-cursor="Play">
-          <img src="https://img.youtube.com/vi/366ooN49spY/hqdefault.jpg" alt="Brand campaign film thumbnail">
-          <div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>
-          <div class="video-label">Brand Campaign · Behind the Lens</div>
-        </div>
-        <p class="mt-4 text-ivory-dim font-light text-sm">On set for a commercial shoot — from concept to final delivery.</p>
-      </div>
-
-    </div>
-    @else
-    <div class="reveal grid grid-cols-1 md:grid-cols-2 gap-8">
-      @foreach($films as $film)
+      @forelse($films as $film)
         <div>
           <div class="video-card" data-video-id="{{ $film->youtube_id }}" data-cursor="Play">
             <img src="https://img.youtube.com/vi/{{ $film->youtube_id }}/hqdefault.jpg" alt="{{ $film->category->name }} film thumbnail">
@@ -73,9 +32,10 @@
           </div>
           <p class="mt-4 text-ivory-dim font-light text-sm">A Waka Shots film from {{ $film->category->name }}.</p>
         </div>
-      @endforeach
+      @empty
+        <p class="text-ivory-dim font-light">No films posted yet — check back soon.</p>
+      @endforelse
     </div>
-    @endif
   </div>
 </section>
 
@@ -84,7 +44,9 @@
   <div class="max-w-[1320px] mx-auto px-[6vw]">
     <span class="eyebrow font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center justify-center gap-2.5">Watch More</span>
     <h2 class="font-serif text-[clamp(2rem,3.6vw,3.1rem)] mt-4 mb-10 mx-auto text-center">More films live on our YouTube channel.</h2>
-    <a href="#" class="text-xs tracking-[0.14em] uppercase px-7 py-4 rounded-sm bg-gold text-black border border-gold hover:bg-gold-bright hover:-translate-y-0.5 transition-all duration-400 inline-block">Subscribe on YouTube</a>
+    @if($siteSetting?->youtube_url)
+      <a href="{{ $siteSetting->youtube_url }}" target="_blank" rel="noopener" class="text-xs tracking-[0.14em] uppercase px-7 py-4 rounded-sm bg-gold text-black border border-gold hover:bg-gold-bright hover:-translate-y-0.5 transition-all duration-400 inline-block">Subscribe on YouTube</a>
+    @endif
   </div>
 </section>
 @endsection

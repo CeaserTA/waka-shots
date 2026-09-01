@@ -18,6 +18,7 @@ class PartnersTable
                 ImageColumn::make('logo_path')
                     ->label('Logo')
                     ->disk('r2')
+                    ->checkFileExistence(false)
                     ->size(64),
                 TextColumn::make('name')
                     ->label('Partner Name')

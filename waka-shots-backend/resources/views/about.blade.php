@@ -18,13 +18,23 @@
     <div class="reveal relative aspect-[4/5] overflow-hidden rounded-sm">
       <div class="absolute -top-3.5 -left-3.5 w-[70px] h-[70px] border-t border-l border-gold z-[2]"></div>
       <div class="absolute -bottom-3.5 -right-3.5 w-[70px] h-[70px] border-b border-r border-gold z-[2]"></div>
-      <img src="https://images.unsplash.com/photo-1649532349871-b5b10b5ab9c4?auto=format&fit=crop&w=900&q=80" alt="Waka Shots photographer at work" class="w-full h-full object-cover saturate-90 brightness-95">
+      <img src="{{ $siteSetting->imageUrl($siteSetting->story_image) ?? 'https://images.unsplash.com/photo-1649532349871-b5b10b5ab9c4?auto=format&fit=crop&w=900&q=80' }}" alt="Waka Shots photographer at work" class="w-full h-full object-cover saturate-90 brightness-95">
     </div>
     <div class="reveal">
       <span class="eyebrow font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center gap-2.5">Who We Are</span>
-      <h2 class="font-serif text-[clamp(1.9rem,3.2vw,2.7rem)] my-4 mb-6">More than photographs.<br>Moments with meaning.</h2>
-      <p class="text-ivory-dim font-light max-w-[520px] mb-4.5">Waka Shots is a Kampala-based photography studio built around one idea: that the best images come from patience, not performance. We spend more time watching than directing, so what we deliver feels like memory, not a photoshoot.</p>
-      <p class="text-ivory-dim font-light max-w-[520px] mb-4.5">From wedding mornings to boardroom portraits, every project is shaped around the people in front of the lens — their pace, their light, their story. We've carried that approach across weddings, portraits, events and brand campaigns throughout Uganda and beyond.</p>
+      @if($siteSetting?->story_heading)
+        <h2 class="font-serif text-[clamp(1.9rem,3.2vw,2.7rem)] my-4 mb-6">{{ $siteSetting->story_heading }}</h2>
+      @else
+        <h2 class="font-serif text-[clamp(1.9rem,3.2vw,2.7rem)] my-4 mb-6">More than photographs.<br>Moments with meaning.</h2>
+      @endif
+      @if($siteSetting?->story_text)
+        @foreach(preg_split('/\n\s*\n/', trim($siteSetting->story_text)) as $paragraph)
+          <p class="text-ivory-dim font-light max-w-[520px] {{ $loop->last ? '' : 'mb-4.5' }}">{{ trim($paragraph) }}</p>
+        @endforeach
+      @else
+        <p class="text-ivory-dim font-light max-w-[520px] mb-4.5">Waka Shots is a Kampala-based photography studio built around one idea: that the best images come from patience, not performance. We spend more time watching than directing, so what we deliver feels like memory, not a photoshoot.</p>
+        <p class="text-ivory-dim font-light max-w-[520px] mb-4.5">From wedding mornings to boardroom portraits, every project is shaped around the people in front of the lens — their pace, their light, their story. We've carried that approach across weddings, portraits, events and brand campaigns throughout Uganda and beyond.</p>
+      @endif
       <div class="flex gap-12 mt-10 pt-8 border-t border-line">
         <div><strong class="block font-serif text-3xl text-gold-bright font-normal">120+</strong><span class="text-xs tracking-wide uppercase text-silver-dim">Stories Told</span></div>
         <div><strong class="block font-serif text-3xl text-gold-bright font-normal">7</strong><span class="text-xs tracking-wide uppercase text-silver-dim">Years Behind the Lens</span></div>
@@ -39,12 +49,16 @@
   <div class="max-w-[1320px] mx-auto px-[6vw] grid grid-cols-1 md:grid-cols-[1.15fr_0.85fr] gap-12 md:gap-20 items-center">
     <div class="reveal">
       <span class="eyebrow font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center gap-2.5">Meet the Photographer</span>
-      <h2 class="font-serif text-[clamp(1.9rem,3.2vw,2.7rem)] my-4 mb-6">Behind every frame.</h2>
-      <p class="text-ivory-dim font-light max-w-[520px] mb-4.5">Waka Shots was founded on the belief that photography should feel like collaboration, not direction. What started as a small wedding photography practice in Kampala has grown into a full studio working across weddings, portraiture and commercial work — but the approach has stayed the same: show up early, listen closely, and let the moment lead.</p>
-      <p class="text-ivory-dim font-light max-w-[520px]">Every project, big or small, gets the same attention to light, timing and story.</p>
+      <h2 class="font-serif text-[clamp(1.9rem,3.2vw,2.7rem)] my-4 mb-6">{{ $siteSetting->photographer_heading ?: 'Behind every frame.' }}</h2>
+      @if($siteSetting?->photographer_bio)
+        <p class="text-ivory-dim font-light max-w-[520px]">{{ $siteSetting->photographer_bio }}</p>
+      @else
+        <p class="text-ivory-dim font-light max-w-[520px] mb-4.5">Waka Shots was founded on the belief that photography should feel like collaboration, not direction. What started as a small wedding photography practice in Kampala has grown into a full studio working across weddings, portraiture and commercial work — but the approach has stayed the same: show up early, listen closely, and let the moment lead.</p>
+        <p class="text-ivory-dim font-light max-w-[520px]">Every project, big or small, gets the same attention to light, timing and story.</p>
+      @endif
     </div>
     <div class="reveal relative aspect-[4/5] overflow-hidden rounded-sm">
-      <img src="https://images.unsplash.com/photo-1565884280295-98eb83e41c65?auto=format&fit=crop&w=900&q=80" alt="Portrait of the photographer" class="w-full h-full object-cover saturate-90 brightness-95">
+      <img src="{{ $siteSetting->imageUrl($siteSetting->photographer_image) ?? 'https://images.unsplash.com/photo-1565884280295-98eb83e41c65?auto=format&fit=crop&w=900&q=80' }}" alt="Portrait of the photographer" class="w-full h-full object-cover saturate-90 brightness-95">
     </div>
   </div>
 </section>

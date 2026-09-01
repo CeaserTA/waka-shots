@@ -2,8 +2,9 @@
 
 namespace App\Filament\Resources\Packages\Schemas;
 
+use App\Models\Package;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
@@ -27,18 +28,35 @@ class PackageForm
                     ->numeric()
                     ->prefix('$')
                     ->required(),
-                Repeater::make('packageFeatures')
+                Textarea::make('features_text')
                     ->label('What is included')
-                    ->relationship('packageFeatures')
-                    ->schema([
-                        TextInput::make('feature_text')
-                            ->label('Included Feature')
-                            ->required()
-                            ->maxLength(255),
-                    ])
-                    ->addActionLabel('Add included feature')
-                    ->defaultItems(0)
-                    ->columnSpanFull(),
+                    ->helperText('One feature per line. Add, edit, or delete lines and save — the included list is replaced with exactly what you enter, in that order.')
+                    ->placeholder("Full day coverage\n2 photographers\nOnline gallery\nPrint release")
+                    ->rows(6)
+                    ->columnSpanFull()
+                    ->afterStateHydrated(function (Textarea $component, ?Package $record): void {
+                        if ($record?->exists) {
+                            $component->state($record->packageFeatures()->pluck('feature_text')->implode("\n"));
+                        }
+                    }),
             ]);
+    }
+
+    public static function syncFeatures(Package $record, ?string $featuresText): void
+    {
+        $features = collect(preg_split('/\r\n|\r|\n/', (string) $featuresText))
+            ->map(fn (string $line) => trim($line))
+            ->filter()
+            ->values();
+
+        $record->packageFeatures()->delete();
+
+        if ($features->isEmpty()) {
+            return;
+        }
+
+        $record->packageFeatures()->createMany(
+            $features->map(fn (string $text) => ['feature_text' => $text])->all()
+        );
     }
 }
