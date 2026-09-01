@@ -165,7 +165,7 @@
     <div class="reveal flex justify-between items-end gap-10 flex-wrap mb-10">
       <div>
         <span class="eyebrow font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center gap-2.5">Services</span>
-        <h2 class="font-serif text-[clamp(2rem,3.6vw,3.1rem)] mt-3.5 max-w-[640px]">Five ways to work with us.</h2>
+        <h2 class="font-serif text-[clamp(2rem,3.6vw,3.1rem)] mt-3.5 max-w-[640px]">Ways to work with us.</h2>
       </div>
       <a href="{{ route('services') }}" class="text-xs tracking-[0.14em] uppercase text-gold hover:text-gold-bright transition-colors pb-1.5">See All Services →</a>
     </div>
@@ -192,6 +192,7 @@
   </div>
 </section>
 
+@if($partners->isNotEmpty())
 <!-- PARTNERS — cinematic full-bleed band, bonjour.paris-inspired -->
 <section class="partners-band">
   <div class="partners-band-bg" style="background-image:url('{{ $siteSetting->imageUrl($siteSetting->home_partners_image) ?? 'https://images.unsplash.com/photo-1660675133902-acd1b057f75d?auto=format&fit=crop&w=1800&q=80' }}');"></div>
@@ -206,29 +207,12 @@
 </section>
 <div class="marquee-fade bg-black border-b border-line overflow-hidden py-6" style="--fade-color:#0a0908;">
   <div class="marquee-track flex whitespace-nowrap">
-    @if($partners->isNotEmpty())
-      @foreach($partners as $partner)
-        <span class="font-serif text-lg text-ivory-dim px-8 flex items-center gap-8 after:content-['◆'] after:text-[0.6rem] after:text-gold-dim">{{ $partner->name }}</span>
-      @endforeach
-      @foreach($partners as $partner)
-        <span class="font-serif text-lg text-ivory-dim px-8 flex items-center gap-8 after:content-['◆'] after:text-[0.6rem] after:text-gold-dim">{{ $partner->name }}</span>
-      @endforeach
-    @else
-      <span class="font-serif text-lg text-ivory-dim px-8 flex items-center gap-8 after:content-['◆'] after:text-[0.6rem] after:text-gold-dim">Amara Foods</span>
-      <span class="font-serif text-lg text-ivory-dim px-8 flex items-center gap-8 after:content-['◆'] after:text-[0.6rem] after:text-gold-dim">Kiboko Hotels</span>
-      <span class="font-serif text-lg text-ivory-dim px-8 flex items-center gap-8 after:content-['◆'] after:text-[0.6rem] after:text-gold-dim">Nyati Bank</span>
-      <span class="font-serif text-lg text-ivory-dim px-8 flex items-center gap-8 after:content-['◆'] after:text-[0.6rem] after:text-gold-dim">Savanna Airlines</span>
-      <span class="font-serif text-lg text-ivory-dim px-8 flex items-center gap-8 after:content-['◆'] after:text-[0.6rem] after:text-gold-dim">Equator Media Group</span>
-      <span class="font-serif text-lg text-ivory-dim px-8 flex items-center gap-8 after:content-['◆'] after:text-[0.6rem] after:text-gold-dim">Zawadi Events</span>
-      <span class="font-serif text-lg text-ivory-dim px-8 flex items-center gap-8 after:content-['◆'] after:text-[0.6rem] after:text-gold-dim">Kampala Business Council</span>
-      <span class="font-serif text-lg text-ivory-dim px-8 flex items-center gap-8 after:content-['◆'] after:text-[0.6rem] after:text-gold-dim">Muzuri Fashion House</span>
-      <span class="font-serif text-lg text-ivory-dim px-8 flex items-center gap-8 after:content-['◆'] after:text-[0.6rem] after:text-gold-dim">Amara Foods</span>
-      <span class="font-serif text-lg text-ivory-dim px-8 flex items-center gap-8 after:content-['◆'] after:text-[0.6rem] after:text-gold-dim">Kiboko Hotels</span>
-      <span class="font-serif text-lg text-ivory-dim px-8 flex items-center gap-8 after:content-['◆'] after:text-[0.6rem] after:text-gold-dim">Nyati Bank</span>
-      <span class="font-serif text-lg text-ivory-dim px-8 flex items-center gap-8 after:content-['◆'] after:text-[0.6rem] after:text-gold-dim">Savanna Airlines</span>
-    @endif
+    @foreach($partners->concat($partners) as $partner)
+      <span class="font-serif text-lg text-ivory-dim px-8 flex items-center gap-8 after:content-['◆'] after:text-[0.6rem] after:text-gold-dim">{{ $partner->name }}</span>
+    @endforeach
   </div>
 </div>
+@endif
 
 <!-- TESTIMONIALS -->
 @if($testimonials->isNotEmpty())

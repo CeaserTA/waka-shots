@@ -16,6 +16,7 @@
         <a href="{{ route('journal') }}" class="block text-ivory-dim text-sm font-light mb-2 hover:text-gold-bright transition-colors">Journal</a>
         <a href="{{ route('films') }}" class="block text-ivory-dim text-sm font-light mb-2 hover:text-gold-bright transition-colors">Films</a>
       </div>
+      @if($siteSetting?->contact_email || $siteSetting?->contact_phone || $siteSetting?->address)
       <div>
         <h5 class="font-mono text-[0.7rem] tracking-[0.16em] uppercase text-silver-dim mb-3">Contact</h5>
         @if($siteSetting?->contact_email)
@@ -28,7 +29,8 @@
           <p class="text-ivory-dim text-sm font-light mb-3">{{ $siteSetting->address }}</p>
         @endif
       </div>
-      @if($siteSetting?->instagram_url || $siteSetting?->facebook_url || $siteSetting?->tiktok_url || $siteSetting?->whatsapp_number)
+      @endif
+      @if($siteSetting?->instagram_url || $siteSetting?->facebook_url || $siteSetting?->tiktok_url || $siteSetting?->youtube_url || $siteSetting?->whatsapp_number)
         <div>
           <h5 class="font-mono text-[0.7rem] tracking-[0.16em] uppercase text-silver-dim mb-3">Follow</h5>
           @if($siteSetting->instagram_url)
@@ -39,6 +41,9 @@
           @endif
           @if($siteSetting->tiktok_url)
             <a href="{{ $siteSetting->tiktok_url }}" target="_blank" rel="noopener" class="block text-ivory-dim text-sm font-light mb-2 hover:text-gold-bright transition-colors">TikTok</a>
+          @endif
+          @if($siteSetting->youtube_url)
+            <a href="{{ $siteSetting->youtube_url }}" target="_blank" rel="noopener" class="block text-ivory-dim text-sm font-light mb-2 hover:text-gold-bright transition-colors">YouTube</a>
           @endif
           @if($siteSetting->whatsapp_number)
             <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $siteSetting->whatsapp_number) }}" target="_blank" rel="noopener" class="block text-ivory-dim text-sm font-light mb-2 hover:text-gold-bright transition-colors">WhatsApp</a>

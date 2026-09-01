@@ -84,6 +84,7 @@
     </form>
 
     <div class="reveal">
+      @if($siteSetting?->contact_email || $siteSetting?->contact_phone || $siteSetting?->address)
       <div class="border border-line rounded-sm p-9 mb-8">
         <h3 class="font-serif text-xl mb-6">Studio Details</h3>
         <div class="space-y-4 text-sm">
@@ -111,6 +112,7 @@
           </div>
         </div>
       </div>
+      @endif
       <div class="relative aspect-[4/5] overflow-hidden rounded-sm">
         <img src="{{ $siteSetting->imageUrl($siteSetting->contact_image) ?? 'https://images.unsplash.com/photo-1649532349871-b5b10b5ab9c4?auto=format&fit=crop&w=700&q=80' }}" alt="{{ $siteSetting->studio_name ?? 'Waka Shots' }} studio" class="w-full h-full object-cover saturate-90 brightness-95">
       </div>

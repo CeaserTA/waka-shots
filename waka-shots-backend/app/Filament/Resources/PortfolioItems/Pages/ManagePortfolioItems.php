@@ -42,9 +42,13 @@ class ManagePortfolioItems extends ManageRecords
                         ->reorderable()
                         ->disk('local')
                         ->directory('portfolio-uploads-tmp')
+                        ->fetchFileInformation(false)
                         ->acceptedFileTypes(['image/*'])
                         ->image()
                         ->imageEditor()
+                        ->automaticallyResizeImagesToWidth(2500)
+                        ->automaticallyResizeImagesMode('contain')
+                        ->imageResizeUpscale(false)
                         ->required()
                         ->maxSize(10240),
                 ])

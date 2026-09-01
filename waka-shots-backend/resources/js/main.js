@@ -1,3 +1,5 @@
+import { MorphSlider } from './morph-slider';
+
 document.addEventListener('DOMContentLoaded', () => {
   const header = document.getElementById('siteHeader');
   if (header) {
@@ -374,51 +376,91 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // ============ LIGHTBOX — full-size view for gallery items ============
-  // Makes the custom cursor's "View" promise real: click opens the full image,
-  // with caption/EXIF, prev/next through the currently-filtered set, and
-  // close via the X, backdrop click, or Escape.
+  // ============ LIGHTBOX — Morph Slider viewer for gallery items ============
+  // Makes the custom cursor's "View" promise real: click opens a WebGL Morph
+  // Slider (see morph-slider.js) showing every currently-filtered portfolio
+  // image, with a shader crossfade between frames on prev/next/drag.
   const lightbox = document.getElementById('lightbox');
   if (lightbox) {
-    const lbImg = document.getElementById('lightboxImg');
-    const lbCat = document.getElementById('lightboxCat');
-    const lbTitle = document.getElementById('lightboxTitle');
-    const lbExif = document.getElementById('lightboxExif');
     const closeBtn = document.getElementById('lightboxClose');
-    const prevBtn = document.getElementById('lightboxPrev');
-    const nextBtn = document.getElementById('lightboxNext');
+    const stage = document.getElementById('morphSliderStage');
+    const captionEl = document.getElementById('morphSliderCaption');
+    const indicatorsEl = document.getElementById('morphSliderIndicators');
+    const prevBtn = document.getElementById('morphSliderPrev');
+    const nextBtn = document.getElementById('morphSliderNext');
 
     const getVisibleItems = () =>
       Array.from(document.querySelectorAll('.gallery-item')).filter(el => !el.classList.contains('hidden-item'));
 
-    let currentIndex = 0;
+    const buildSlides = () => getVisibleItems().map((el) => {
+      const img = el.querySelector('img');
+      const overlay = el.querySelector('.absolute');
+      const caption = overlay?.children[1]?.textContent?.trim() || img.alt || '';
+      return { image: img.src.replace(/w=\d+/, 'w=1800'), caption };
+    });
+
+    let engine = null;
+    let isOpen = false;
+
+    const renderCaption = (slides, index) => {
+      captionEl.innerHTML = slides.map((slide, i) => slide.caption
+        ? `<span class="morph-slider-caption-text${i === index ? ' is-active' : ''}">${slide.caption}</span>`
+        : '').join('');
+    };
+
+    const renderIndicators = (slides, index) => {
+      indicatorsEl.innerHTML = slides.map((_, i) =>
+        `<button type="button" class="morph-slider-dot${i === index ? ' is-active' : ''}" data-index="${i}" aria-label="Go to image ${i + 1}"></button>`
+      ).join('');
+      indicatorsEl.querySelectorAll('.morph-slider-dot').forEach((dot) => {
+        dot.addEventListener('click', () => {
+          if (!engine) return;
+          const target = parseInt(dot.dataset.index, 10);
+          if (target === engine.current) return;
+          engine.goTo(target > engine.current ? 1 : -1);
+        });
+      });
+    };
 
     const openLightbox = (index) => {
-      const items = getVisibleItems();
-      if (!items.length) return;
-      currentIndex = (index + items.length) % items.length;
-      const item = items[currentIndex];
-      const img = item.querySelector('img');
-      const overlay = item.querySelector('.absolute');
-      const cat = overlay?.children[0]?.textContent || '';
-      const title = overlay?.children[1]?.textContent || '';
-      const exifSpans = overlay?.children[2]
-        ? Array.from(overlay.children[2].querySelectorAll('span')).map(s => s.textContent)
-        : [];
-
-      lbImg.src = img.src.replace(/w=\d+/, 'w=1800');
-      lbImg.alt = img.alt;
-      lbCat.textContent = cat;
-      lbTitle.textContent = title;
-      lbExif.innerHTML = exifSpans.map(t => `<span>${t}</span>`).join('');
+      const slides = buildSlides();
+      if (!slides.length) return;
 
       lightbox.classList.add('is-open');
       document.body.style.overflow = 'hidden';
+      isOpen = true;
+
+      if (engine) engine.destroy();
+      stage.innerHTML = '';
+
+      engine = new MorphSlider(stage, {
+        items: slides,
+        startIndex: index,
+        opts: {
+          transition: 'melt',
+          duration: 1.1,
+          intensity: 0.55,
+          scale: 2.4,
+          aberration: 0.35,
+          drift: 0.4,
+          overlayColor: '#0a0908',
+          loop: true,
+        },
+        onIndexChange: (i) => {
+          renderCaption(slides, i);
+          renderIndicators(slides, i);
+        },
+      });
+
+      renderCaption(slides, index);
+      renderIndicators(slides, index);
     };
 
     const closeLightbox = () => {
       lightbox.classList.remove('is-open');
       document.body.style.overflow = '';
+      isOpen = false;
+      if (engine) { engine.destroy(); engine = null; }
     };
 
     document.querySelectorAll('.gallery-item').forEach((item) => {
@@ -429,14 +471,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     closeBtn.addEventListener('click', closeLightbox);
     lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
-    prevBtn.addEventListener('click', () => openLightbox(currentIndex - 1));
-    nextBtn.addEventListener('click', () => openLightbox(currentIndex + 1));
+    prevBtn.addEventListener('click', () => engine?.prev());
+    nextBtn.addEventListener('click', () => engine?.next());
 
     document.addEventListener('keydown', (e) => {
-      if (!lightbox.classList.contains('is-open')) return;
+      if (!isOpen) return;
       if (e.key === 'Escape') closeLightbox();
-      if (e.key === 'ArrowLeft') openLightbox(currentIndex - 1);
-      if (e.key === 'ArrowRight') openLightbox(currentIndex + 1);
+      if (e.key === 'ArrowLeft') engine?.prev();
+      if (e.key === 'ArrowRight') engine?.next();
     });
   }
 

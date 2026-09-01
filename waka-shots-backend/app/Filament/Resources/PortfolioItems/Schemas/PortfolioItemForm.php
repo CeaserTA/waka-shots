@@ -24,10 +24,14 @@ class PortfolioItemForm
                     ->label('Portfolio Image')
                     ->disk('r2')
                     ->visibility('public')
+                    ->fetchFileInformation(false)
                     ->directory('portfolio-images')
                     ->acceptedFileTypes(['image/*'])
                     ->image()
                     ->imageEditor()
+                    ->automaticallyResizeImagesToWidth(2500)
+                    ->automaticallyResizeImagesMode('contain')
+                    ->imageResizeUpscale(false)
                     ->required()
                     ->maxSize(10240),
             ]);

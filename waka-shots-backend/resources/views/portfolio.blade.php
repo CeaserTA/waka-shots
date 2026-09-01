@@ -28,108 +28,7 @@
 @if($categories->flatMap->portfolioItems->isEmpty())
 <section class="pb-32">
   <div class="max-w-[1320px] mx-auto px-[6vw]">
-    <div class="reveal columns-2 md:columns-3 gap-5 md:gap-9">
-
-      <div class="gallery-item group relative overflow-hidden rounded-sm bg-panel cursor-pointer break-inside-avoid mb-5 md:mb-9" data-category="weddings">
-        <img src="https://images.unsplash.com/photo-1608009232260-9b527a5bb9bd?auto=format&fit=crop&w=900&q=80" alt="Wedding couple" class="w-full h-auto saturate-[.92] brightness-[.92] transition-transform duration-[1100ms] group-hover:scale-[1.06] group-hover:saturate-100 group-hover:brightness-100">
-        <div class="absolute inset-0 flex flex-col justify-end p-5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style="background:linear-gradient(0deg, rgba(10,9,8,0.92) 0%, rgba(10,9,8,0) 55%);">
-          <span class="font-mono text-[0.65rem] tracking-[0.16em] uppercase text-gold-bright mb-1">Wedding · Kampala</span>
-          <div class="font-serif text-lg mb-2">A Kampala Wedding</div>
-          <div class="font-mono text-[0.62rem] text-silver flex gap-3 border-t border-gold/25 pt-2"><span>85mm</span><span>f/1.8</span></div>
-        </div>
-      </div>
-
-      <div class="gallery-item group relative overflow-hidden rounded-sm bg-panel cursor-pointer break-inside-avoid mb-5 md:mb-9" data-category="portraits">
-        <img src="https://images.unsplash.com/photo-1530785602389-07594beb8b73?auto=format&fit=crop&w=900&q=80" alt="Editorial portrait" class="w-full h-auto saturate-[.92] brightness-[.92] transition-transform duration-[1100ms] group-hover:scale-[1.06] group-hover:saturate-100 group-hover:brightness-100">
-        <div class="absolute inset-0 flex flex-col justify-end p-5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style="background:linear-gradient(0deg, rgba(10,9,8,0.92) 0%, rgba(10,9,8,0) 55%);">
-          <span class="font-mono text-[0.65rem] tracking-[0.16em] uppercase text-gold-bright mb-1">Portrait · Studio</span>
-          <div class="font-serif text-lg mb-2">The Modern Gentleman</div>
-          <div class="font-mono text-[0.62rem] text-silver flex gap-3 border-t border-gold/25 pt-2"><span>50mm</span><span>f/2</span></div>
-        </div>
-      </div>
-
-      <div class="gallery-item group relative overflow-hidden rounded-sm bg-panel cursor-pointer break-inside-avoid mb-5 md:mb-9" data-category="commercial">
-        <img src="https://images.unsplash.com/photo-1578509566163-068acd11b8e7?auto=format&fit=crop&w=900&q=80" alt="Brand campaign shoot" class="w-full h-auto saturate-[.92] brightness-[.92] transition-transform duration-[1100ms] group-hover:scale-[1.06] group-hover:saturate-100 group-hover:brightness-100">
-        <div class="absolute inset-0 flex flex-col justify-end p-5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style="background:linear-gradient(0deg, rgba(10,9,8,0.92) 0%, rgba(10,9,8,0) 55%);">
-          <span class="font-mono text-[0.65rem] tracking-[0.16em] uppercase text-gold-bright mb-1">Commercial</span>
-          <div class="font-serif text-lg mb-2">Brand Story — Amara</div>
-          <div class="font-mono text-[0.62rem] text-silver flex gap-3 border-t border-gold/25 pt-2"><span>35mm</span><span>f/4</span></div>
-        </div>
-      </div>
-
-      <div class="gallery-item group relative overflow-hidden rounded-sm bg-panel cursor-pointer break-inside-avoid mb-5 md:mb-9" data-category="corporate">
-        <img src="https://images.unsplash.com/photo-1617244147299-5ef406921c35?auto=format&fit=crop&w=900&q=80" alt="Corporate portrait" class="w-full h-auto saturate-[.92] brightness-[.92] transition-transform duration-[1100ms] group-hover:scale-[1.06] group-hover:saturate-100 group-hover:brightness-100">
-        <div class="absolute inset-0 flex flex-col justify-end p-5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style="background:linear-gradient(0deg, rgba(10,9,8,0.92) 0%, rgba(10,9,8,0) 55%);">
-          <span class="font-mono text-[0.65rem] tracking-[0.16em] uppercase text-gold-bright mb-1">Corporate</span>
-          <div class="font-serif text-lg mb-2">Leadership Series</div>
-          <div class="font-mono text-[0.62rem] text-silver flex gap-3 border-t border-gold/25 pt-2"><span>70mm</span><span>f/2.8</span></div>
-        </div>
-      </div>
-
-      <div class="gallery-item group relative overflow-hidden rounded-sm bg-panel cursor-pointer break-inside-avoid mb-5 md:mb-9" data-category="fashion">
-        <img src="https://images.unsplash.com/photo-1625646741211-711bdd65c570?auto=format&fit=crop&w=900&q=80" alt="Fashion editorial" class="w-full h-auto saturate-[.92] brightness-[.92] transition-transform duration-[1100ms] group-hover:scale-[1.06] group-hover:saturate-100 group-hover:brightness-100">
-        <div class="absolute inset-0 flex flex-col justify-end p-5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style="background:linear-gradient(0deg, rgba(10,9,8,0.92) 0%, rgba(10,9,8,0) 55%);">
-          <span class="font-mono text-[0.65rem] tracking-[0.16em] uppercase text-gold-bright mb-1">Fashion · Editorial</span>
-          <div class="font-serif text-lg mb-2">Kitenge Reimagined</div>
-          <div class="font-mono text-[0.62rem] text-silver flex gap-3 border-t border-gold/25 pt-2"><span>135mm</span><span>f/2</span></div>
-        </div>
-      </div>
-
-      <div class="gallery-item group relative overflow-hidden rounded-sm bg-panel cursor-pointer break-inside-avoid mb-5 md:mb-9" data-category="events">
-        <img src="https://images.unsplash.com/photo-1660675133902-acd1b057f75d?auto=format&fit=crop&w=900&q=80" alt="Cultural celebration event" class="w-full h-auto saturate-[.92] brightness-[.92] transition-transform duration-[1100ms] group-hover:scale-[1.06] group-hover:saturate-100 group-hover:brightness-100">
-        <div class="absolute inset-0 flex flex-col justify-end p-5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style="background:linear-gradient(0deg, rgba(10,9,8,0.92) 0%, rgba(10,9,8,0) 55%);">
-          <span class="font-mono text-[0.65rem] tracking-[0.16em] uppercase text-gold-bright mb-1">Event · Kampala</span>
-          <div class="font-serif text-lg mb-2">The Product Launch</div>
-          <div class="font-mono text-[0.62rem] text-silver flex gap-3 border-t border-gold/25 pt-2"><span>24mm</span><span>f/2.8</span></div>
-        </div>
-      </div>
-
-      <div class="gallery-item group relative overflow-hidden rounded-sm bg-panel cursor-pointer break-inside-avoid mb-5 md:mb-9" data-category="weddings">
-        <img src="https://images.unsplash.com/photo-1633150747731-c945ec51b663?auto=format&fit=crop&w=900&q=80" alt="Wedding reception" class="w-full h-auto saturate-[.92] brightness-[.92] transition-transform duration-[1100ms] group-hover:scale-[1.06] group-hover:saturate-100 group-hover:brightness-100">
-        <div class="absolute inset-0 flex flex-col justify-end p-5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style="background:linear-gradient(0deg, rgba(10,9,8,0.92) 0%, rgba(10,9,8,0) 55%);">
-          <span class="font-mono text-[0.65rem] tracking-[0.16em] uppercase text-gold-bright mb-1">Wedding · Reception</span>
-          <div class="font-serif text-lg mb-2">First Dance, Entebbe</div>
-          <div class="font-mono text-[0.62rem] text-silver flex gap-3 border-t border-gold/25 pt-2"><span>35mm</span><span>f/1.4</span></div>
-        </div>
-      </div>
-
-      <div class="gallery-item group relative overflow-hidden rounded-sm bg-panel cursor-pointer break-inside-avoid mb-5 md:mb-9" data-category="portraits">
-        <img src="https://images.unsplash.com/photo-1568782517100-09bf22d88c2d?auto=format&fit=crop&w=900&q=80" alt="Personal branding portrait" class="w-full h-auto saturate-[.92] brightness-[.92] transition-transform duration-[1100ms] group-hover:scale-[1.06] group-hover:saturate-100 group-hover:brightness-100">
-        <div class="absolute inset-0 flex flex-col justify-end p-5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style="background:linear-gradient(0deg, rgba(10,9,8,0.92) 0%, rgba(10,9,8,0) 55%);">
-          <span class="font-mono text-[0.65rem] tracking-[0.16em] uppercase text-gold-bright mb-1">Portrait · Personal</span>
-          <div class="font-serif text-lg mb-2">Michael, Founder</div>
-          <div class="font-mono text-[0.62rem] text-silver flex gap-3 border-t border-gold/25 pt-2"><span>85mm</span><span>f/1.8</span></div>
-        </div>
-      </div>
-
-      <div class="gallery-item group relative overflow-hidden rounded-sm bg-panel cursor-pointer break-inside-avoid mb-5 md:mb-9" data-category="corporate">
-        <img src="https://images.unsplash.com/photo-1495603889488-42d1d66e5523?auto=format&fit=crop&w=900&q=80" alt="Office corporate shoot" class="w-full h-auto saturate-[.92] brightness-[.92] transition-transform duration-[1100ms] group-hover:scale-[1.06] group-hover:saturate-100 group-hover:brightness-100">
-        <div class="absolute inset-0 flex flex-col justify-end p-5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style="background:linear-gradient(0deg, rgba(10,9,8,0.92) 0%, rgba(10,9,8,0) 55%);">
-          <span class="font-mono text-[0.65rem] tracking-[0.16em] uppercase text-gold-bright mb-1">Corporate · Office</span>
-          <div class="font-serif text-lg mb-2">Team, Kampala HQ</div>
-          <div class="font-mono text-[0.62rem] text-silver flex gap-3 border-t border-gold/25 pt-2"><span>50mm</span><span>f/4</span></div>
-        </div>
-      </div>
-
-      <div class="gallery-item group relative overflow-hidden rounded-sm bg-panel cursor-pointer break-inside-avoid mb-5 md:mb-9" data-category="graduation">
-        <img src="https://images.unsplash.com/photo-1631131426242-0abfa7f209c2?auto=format&fit=crop&w=900&q=80" alt="Graduation portrait, Kampala" class="w-full h-auto saturate-[.92] brightness-[.92] transition-transform duration-[1100ms] group-hover:scale-[1.06] group-hover:saturate-100 group-hover:brightness-100">
-        <div class="absolute inset-0 flex flex-col justify-end p-5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style="background:linear-gradient(0deg, rgba(10,9,8,0.92) 0%, rgba(10,9,8,0) 55%);">
-          <span class="font-mono text-[0.65rem] tracking-[0.16em] uppercase text-gold-bright mb-1">Graduation · Kampala</span>
-          <div class="font-serif text-lg mb-2">Class of 2026</div>
-          <div class="font-mono text-[0.62rem] text-silver flex gap-3 border-t border-gold/25 pt-2"><span>85mm</span><span>f/2</span></div>
-        </div>
-      </div>
-
-      <div class="gallery-item group relative overflow-hidden rounded-sm bg-panel cursor-pointer break-inside-avoid mb-5 md:mb-9" data-category="graduation">
-        <img src="https://images.unsplash.com/photo-1719606545131-51daa664485d?auto=format&fit=crop&w=900&q=80" alt="Graduation portrait" class="w-full h-auto saturate-[.92] brightness-[.92] transition-transform duration-[1100ms] group-hover:scale-[1.06] group-hover:saturate-100 group-hover:brightness-100">
-        <div class="absolute inset-0 flex flex-col justify-end p-5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style="background:linear-gradient(0deg, rgba(10,9,8,0.92) 0%, rgba(10,9,8,0) 55%);">
-          <span class="font-mono text-[0.65rem] tracking-[0.16em] uppercase text-gold-bright mb-1">Graduation · Studio</span>
-          <div class="font-serif text-lg mb-2">Milestone Portrait</div>
-          <div class="font-mono text-[0.62rem] text-silver flex gap-3 border-t border-gold/25 pt-2"><span>50mm</span><span>f/2.8</span></div>
-        </div>
-      </div>
-
-    </div>
+    <p class="reveal text-center text-ivory-dim font-light">No portfolio items have been published yet.</p>
   </div>
 </section>
 @else
@@ -139,7 +38,7 @@
       @foreach($categories as $category)
         @foreach($category->portfolioItems as $item)
           <div class="gallery-item group relative overflow-hidden rounded-sm bg-panel cursor-pointer break-inside-avoid mb-5 md:mb-9" data-category="{{ $category->slug }}">
-            <img src="{{ \Illuminate\Support\Str::startsWith($item->image_path, ['http://', 'https://']) ? $item->image_path : \Illuminate\Support\Facades\Storage::disk('r2')->url($item->image_path) }}" alt="{{ $item->title }}" class="w-full h-auto saturate-[.92] brightness-[.92] transition-transform duration-[1100ms] group-hover:scale-[1.06] group-hover:saturate-100 group-hover:brightness-100">
+            <img src="{{ \Illuminate\Support\Str::startsWith($item->image_path, ['http://', 'https://']) ? $item->image_path : \Illuminate\Support\Facades\Storage::disk('r2')->url($item->image_path) }}" alt="{{ $item->title }}" loading="lazy" decoding="async" class="w-full h-auto saturate-[.92] brightness-[.92] transition-transform duration-[1100ms] group-hover:scale-[1.06] group-hover:saturate-100 group-hover:brightness-100">
             <div class="absolute inset-0 flex flex-col justify-end p-5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style="background:linear-gradient(0deg, rgba(10,9,8,0.92) 0%, rgba(10,9,8,0) 55%);">
               <span class="font-mono text-[0.65rem] tracking-[0.16em] uppercase text-gold-bright mb-1">{{ $category->name }}</span>
               <div class="font-serif text-lg mb-2">{{ $item->title }}</div>
@@ -161,17 +60,18 @@
   </div>
 </section>
 
-<!-- LIGHTBOX -->
-<div class="lightbox" id="lightbox">
+<!-- LIGHTBOX — WebGL Morph Slider viewer (reactbits.dev-inspired) -->
+<div class="lightbox" id="lightbox" aria-hidden="true">
   <button class="lightbox-close" id="lightboxClose" aria-label="Close">&times;</button>
-  <button class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="Previous image">&lsaquo;</button>
-  <button class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="Next image">&rsaquo;</button>
   <div class="lightbox-content">
-    <img id="lightboxImg" src="" alt="">
-    <div class="lightbox-caption">
-      <span class="lightbox-cat" id="lightboxCat"></span>
-      <div class="lightbox-title" id="lightboxTitle"></div>
-      <div class="lightbox-exif" id="lightboxExif"></div>
+    <div class="morph-slider">
+      <div class="morph-slider-stage" id="morphSliderStage" role="group" aria-roledescription="carousel" aria-label="Portfolio image viewer" tabindex="0"></div>
+      <div class="morph-slider-caption" id="morphSliderCaption" aria-live="polite"></div>
+      <div class="morph-slider-controls">
+        <button type="button" class="morph-slider-btn" id="morphSliderPrev" aria-label="Previous image">&larr;</button>
+        <button type="button" class="morph-slider-btn" id="morphSliderNext" aria-label="Next image">&rarr;</button>
+      </div>
+      <div class="morph-slider-indicators" id="morphSliderIndicators" role="tablist" aria-label="Slides"></div>
     </div>
   </div>
 </div>
