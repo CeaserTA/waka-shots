@@ -14,6 +14,7 @@ class ServiceForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
+            ->columns(2)
             ->components([
                 TextInput::make('name')
                     ->label('Service Name')
@@ -40,7 +41,8 @@ class ServiceForm
                     ->imageEditor()
                     ->automaticallyResizeImagesToWidth(1600)
                     ->automaticallyResizeImagesMode('contain')
-                    ->imageResizeUpscale(false),
+                    ->imageResizeUpscale(false)
+                    ->columnSpanFull(),
                 Toggle::make('has_packages')
                     ->label('Offers Packages')
                     ->default(true)

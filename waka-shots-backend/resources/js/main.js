@@ -208,14 +208,23 @@ document.addEventListener('DOMContentLoaded', () => {
     statEls.forEach((el) => statIo.observe(el));
   }
 
-  // Page loader (only present on index.html, Awwwards "Load In"-inspired)
+  // Page loader — BlurText reveal (only present on index.html, reactbits.dev-inspired)
   const loader = document.getElementById('pageLoader');
   if (loader) {
+    // Let every word finish its staggered blur-in before fading the loader
+    // out — computed from the actual word count (via its CSS animation-delay)
+    // rather than a fixed guess, so it holds correctly regardless of how many
+    // words the admin's studio name happens to have.
+    const words = loader.querySelectorAll('.loader-word');
+    const lastDelay = words.length
+      ? Math.max(...Array.from(words, (w) => parseFloat(w.style.animationDelay) || 0))
+      : 0;
+    const revealDuration = (lastDelay + 1) * 1000; // +1s per-word animation length
     window.addEventListener('load', () => {
       setTimeout(() => {
         loader.classList.add('is-loaded');
         setTimeout(() => loader.remove(), 800);
-      }, 400);
+      }, Math.max(revealDuration, 400));
     });
   }
 

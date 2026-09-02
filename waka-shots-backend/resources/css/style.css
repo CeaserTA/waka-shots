@@ -165,7 +165,10 @@ body.custom-cursor-active input, body.custom-cursor-active textarea, body.custom
 /* ============ COUNT-UP STATS (React Bits CountUp-inspired) ============ */
 .stat-counting{ font-variant-numeric:tabular-nums; }
 
-/* ============ PAGE LOADER (Awwwards "Load In"-inspired) ============ */
+/* ============ PAGE LOADER — "BlurText" reveal (reactbits.dev-inspired) ============ */
+/* Each word blurs into focus on its own stagger, the same blur-to-focus
+   language as .reveal (used for every section on scroll) — the loader
+   speaks the site's existing visual grammar instead of a one-off effect. */
 .page-loader{
   position:fixed; inset:0; z-index:10000; background:#0a0908;
   display:flex; align-items:center; justify-content:center;
@@ -174,14 +177,16 @@ body.custom-cursor-active input, body.custom-cursor-active textarea, body.custom
 .page-loader .loader-mark{
   font-family:'Americans Classy', 'Alex Brush', cursive;
   font-size:clamp(2.6rem, 7vw, 5rem);
-  color:#ece7db;
-  opacity:0;
-  transform:translateY(14px) scale(.94);
-  animation:loaderTextIn 1.3s cubic-bezier(.22,.61,.36,1) forwards;
+  color:#c6a15b;
+  display:inline-flex; flex-wrap:wrap; justify-content:center; gap:0 0.28em;
 }
-@keyframes loaderTextIn{
-  0%{ opacity:0; transform:translateY(14px) scale(.94); }
-  100%{ opacity:1; transform:translateY(0) scale(1); }
+.page-loader .loader-word{
+  display:inline-block;
+  opacity:0; filter:blur(12px); transform:translateY(18px);
+  animation:loaderBlurIn 1s cubic-bezier(.22,.61,.36,1) forwards;
+}
+@keyframes loaderBlurIn{
+  to{ opacity:1; filter:blur(0); transform:translateY(0); }
 }
 .page-loader.is-loaded{ opacity:0; visibility:hidden; pointer-events:none; }
 
@@ -368,7 +373,7 @@ body.custom-cursor-active input, body.custom-cursor-active textarea, body.custom
    other hand-built interaction on this site. */
 .morph-slider{
   position:relative; width:100%; height:100%; overflow:hidden;
-  background:#0c0c0e; border:1px solid rgba(198,161,91,0.35); border-radius:2px;
+  background:#0c0c0e; border-radius:2px;
   box-shadow:0 40px 80px -20px rgba(0,0,0,0.7);
   opacity:0; transform:scale(.96);
   transition:opacity .5s ease, transform .5s cubic-bezier(.22,.61,.36,1);

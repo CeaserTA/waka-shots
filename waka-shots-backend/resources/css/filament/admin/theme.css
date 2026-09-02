@@ -3,10 +3,21 @@
 @source '../../../../app/Filament/**/*.php';
 @source '../../../../resources/views/filament/**/*.blade.php';
 
+@font-face {
+    font-family: 'Americans Classy';
+    src: url('/fonts/AmericansClassy.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
 @layer components {
     /* Brand name text color - gold */
     .fi-logo {
         @apply text-[#c6a15b];
+        font-family: 'Americans Classy', 'Alex Brush', cursive;
+        font-size: 1.5em;
+        letter-spacing: normal;
     }
 
     /* User avatar gold ring */

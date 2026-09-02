@@ -2,7 +2,13 @@
 @section('title', 'Waka Shots Photography — Stories, Beautifully Captured')
 @section('content')
 <!-- PAGE LOADER -->
-<div class="page-loader" id="pageLoader"><span class="loader-mark">{{ $siteSetting->studio_name ?? 'Waka Shots' }}</span></div>
+<div class="page-loader" id="pageLoader">
+  <span class="loader-mark">
+    @foreach(explode(' ', $siteSetting->studio_name ?? 'Waka Shots') as $word)
+      <span class="loader-word" style="animation-delay:{{ $loop->index * 0.15 }}s">{{ $word }}</span>
+    @endforeach
+  </span>
+</div>
 
 <!-- HERO -->
 <section class="relative h-[100svh] min-h-[640px] flex items-end overflow-hidden">

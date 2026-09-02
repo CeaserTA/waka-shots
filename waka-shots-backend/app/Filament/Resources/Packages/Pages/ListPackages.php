@@ -18,7 +18,7 @@ class ListPackages extends ListRecords
             CreateAction::make('create')
                 ->label('New Package')
                 ->modalHeading('New Package')
-                ->modalWidth('md')
+                ->modalWidth('xl')
                 ->modalSubmitActionLabel('Create Package')
                 ->after(function (Package $record, array $data): void {
                     PackageForm::syncFeatures($record, $data['features_text'] ?? null);

@@ -13,6 +13,7 @@ class PackageForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
+            ->columns(2)
             ->components([
                 Select::make('service_id')
                     ->relationship('service', 'name')

@@ -16,7 +16,7 @@ class ListServices extends ListRecords
             CreateAction::make('create')
                 ->label('New Service')
                 ->modalHeading('New Service')
-                ->modalWidth('md')
+                ->modalWidth('2xl')
                 ->modalSubmitActionLabel('Create Service'),
         ];
     }

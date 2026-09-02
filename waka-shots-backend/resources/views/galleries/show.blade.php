@@ -6,7 +6,7 @@
 <div class="mx-auto max-w-[1440px] px-5 py-8 sm:px-8 lg:px-12 lg:py-12">
     <header class="border-b border-line pb-10">
         <div class="flex items-center justify-between gap-5">
-            <a href="{{ route('home') }}" class="font-serif text-lg tracking-wide text-gold-bright">Waka Shots</a>
+            <a href="{{ route('home') }}" class="font-script text-3xl leading-none text-gold-bright">{{ $siteSetting->studio_name ?? 'Waka Shots' }}</a>
             <span class="font-mono text-[0.65rem] uppercase tracking-[0.18em] text-silver-dim">Private gallery</span>
         </div>
         <div class="mt-16 max-w-3xl">
@@ -99,7 +99,7 @@
 
     <div class="flex justify-center border-t border-line pt-10">
         <a href="{{ route('home') }}" class="inline-block rounded-sm border border-gold bg-gold px-7 py-4 text-xs uppercase tracking-[0.14em] text-black transition-all duration-400 hover:-translate-y-0.5 hover:bg-gold-bright">
-            Back to Waka Shots
+            Back to {{ $siteSetting->studio_name ?? 'Waka Shots' }}
         </a>
     </div>
 </div>
