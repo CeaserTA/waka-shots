@@ -9,7 +9,7 @@
             <a href="{{ route('home') }}" class="font-script text-3xl leading-none text-gold-bright">{{ $siteSetting->studio_name ?? 'Waka Shots' }}</a>
             <span class="font-mono text-[0.65rem] uppercase tracking-[0.18em] text-silver-dim">Private gallery</span>
         </div>
-        <div class="mt-16 max-w-3xl">
+        <div class="reveal mt-16 max-w-3xl">
             <p class="font-mono text-xs uppercase tracking-[0.2em] text-gold">{{ $gallery->event_name }}</p>
             <h1 class="mt-3 font-serif text-4xl font-normal leading-tight text-ivory sm:text-6xl">{{ $gallery->client_name }}</h1>
             <div class="mt-6 flex flex-wrap gap-x-8 gap-y-2 text-sm text-ivory-dim">
@@ -21,21 +21,24 @@
         </div>
     </header>
 
-    <section class="flex flex-col gap-6 border-b border-line py-7 sm:flex-row sm:items-center sm:justify-between">
+    <section class="reveal flex flex-col gap-6 border-b border-line py-7 sm:flex-row sm:items-center sm:justify-between">
         <p class="max-w-xl text-sm leading-7 text-silver">This gallery is private. Please don't share this link publicly.</p>
-        <a href="{{ route('gallery.download-all', $gallery->access_token) }}" class="inline-flex w-fit items-center gap-3 rounded-sm border border-gold bg-gold px-5 py-3 font-mono text-xs uppercase tracking-[0.12em] text-black transition hover:bg-gold-bright">
-            <span aria-hidden="true">↓</span> Download All
-        </a>
+        <div class="flex w-fit flex-col items-start gap-2 sm:items-end">
+            <a href="{{ route('gallery.download-all', $gallery->access_token) }}" data-cursor="Download" class="inline-flex w-fit items-center gap-3 rounded-sm border border-gold bg-gold px-5 py-3 font-mono text-xs uppercase tracking-[0.12em] text-black transition hover:bg-gold-bright">
+                <span aria-hidden="true">↓</span> Download All
+            </a>
+            <span class="font-mono text-xs text-silver-dim">{{ count($images) }} {{ \Illuminate\Support\Str::plural('photo', count($images)) }}</span>
+        </div>
     </section>
 
     @if (count($images))
-        <section class="grid grid-cols-1 gap-4 py-10 sm:grid-cols-2 lg:grid-cols-3">
+        <section class="columns-1 gap-4 py-10 sm:columns-2 lg:columns-3">
             @foreach ($images as $image)
-                <figure class="gallery-photo group relative overflow-hidden rounded-sm border border-line">
-                    <button type="button" class="lightbox-trigger h-full w-full cursor-zoom-in text-left" data-full-image="{{ route('gallery.preview', [$gallery->access_token, $image['id']]) }}" data-image-name="{{ $image['name'] }}" aria-label="View {{ $image['name'] }}">
-                        <img src="{{ $image['thumbnailLink'] }}" alt="{{ $image['name'] }}" loading="lazy" class="h-full w-full object-cover" referrerpolicy="no-referrer">
+                <figure class="gallery-photo reveal group relative mb-4 overflow-hidden rounded-sm border border-line break-inside-avoid" style="transition-delay:{{ min($loop->index * 40, 400) }}ms">
+                    <button type="button" class="lightbox-trigger block w-full cursor-zoom-in text-left" data-cursor="View" data-full-image="{{ route('gallery.thumb', [$gallery->access_token, $image['id']]) }}" data-image-name="{{ $image['name'] }}" aria-label="View {{ $image['name'] }}">
+                        <img src="{{ $image['thumbnailLink'] }}" alt="{{ $image['name'] }}" loading="lazy" class="block w-full h-auto" referrerpolicy="no-referrer">
                     </button>
-                    <a href="{{ route('gallery.download', [$gallery->access_token, $image['id']]) }}" class="gallery-icon absolute bottom-3 right-3 inline-flex h-10 w-10 items-center justify-center rounded-full text-ivory transition" aria-label="Download {{ $image['name'] }}" title="Download image">
+                    <a href="{{ route('gallery.download', [$gallery->access_token, $image['id']]) }}" data-cursor="Download" class="gallery-icon absolute bottom-3 right-3 inline-flex h-10 w-10 items-center justify-center rounded-full text-ivory transition" aria-label="Download {{ $image['name'] }}" title="Download image">
                         <span aria-hidden="true">↓</span>
                     </a>
                 </figure>
@@ -47,7 +50,7 @@
 
     @if (! $testimonial)
     <section class="border-t border-line py-12" aria-labelledby="testimonial-heading">
-        <div class="mx-auto max-w-2xl">
+        <div class="reveal mx-auto max-w-2xl">
             <p class="font-mono text-xs uppercase tracking-[0.2em] text-gold">Your feedback matters</p>
             <h2 id="testimonial-heading" class="mt-3 font-serif text-3xl font-normal text-ivory">Loved your photos? Leave a review.</h2>
 
@@ -90,15 +93,15 @@
                         <label for="quote" class="block font-mono text-xs uppercase tracking-[0.14em] text-silver">Your review</label>
                         <textarea id="quote" name="quote" rows="5" minlength="10" maxlength="1000" required class="mt-2 w-full rounded-sm border border-line bg-transparent px-4 py-3 text-ivory placeholder:text-silver-dim focus:border-gold focus:outline-none" placeholder="Tell us what you loved about your experience.">{{ old('quote') }}</textarea>
                     </div>
-                    <button type="submit" class="rounded-sm border border-gold bg-gold px-6 py-3 font-mono text-xs uppercase tracking-[0.12em] text-black transition hover:bg-gold-bright">Submit review</button>
+                    <button type="submit" data-cursor="Submit" class="rounded-sm border border-gold bg-gold px-6 py-3 font-mono text-xs uppercase tracking-[0.12em] text-black transition hover:bg-gold-bright">Submit review</button>
                 </form>
             @endif
         </div>
     </section>
     @endif
 
-    <div class="flex justify-center border-t border-line pt-10">
-        <a href="{{ route('home') }}" class="inline-block rounded-sm border border-gold bg-gold px-7 py-4 text-xs uppercase tracking-[0.14em] text-black transition-all duration-400 hover:-translate-y-0.5 hover:bg-gold-bright">
+    <div class="reveal flex justify-center border-t border-line pt-10">
+        <a href="{{ route('home') }}" data-cursor="Home" class="inline-block rounded-sm border border-gold bg-gold px-7 py-4 text-xs uppercase tracking-[0.14em] text-black transition-all duration-400 hover:-translate-y-0.5 hover:bg-gold-bright">
             Back to {{ $siteSetting->studio_name ?? 'Waka Shots' }}
         </a>
     </div>
@@ -111,30 +114,29 @@
     </div>
 @endif
 
-<div id="gallery-lightbox" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/95 p-5" role="dialog" aria-modal="true" aria-label="Photo preview">
-    <button type="button" id="gallery-lightbox-close" class="absolute right-5 top-5 inline-flex h-11 w-11 items-center justify-center rounded-full border border-line text-2xl text-ivory" aria-label="Close preview">×</button>
-    <img id="gallery-lightbox-image" src="" alt="" class="max-h-[90vh] max-w-full object-contain">
+<!-- LIGHTBOX — WebGL Morph Slider viewer, same as the public portfolio -->
+<div class="lightbox" id="galleryLightbox" aria-hidden="true">
+  <button class="lightbox-close" id="galleryLightboxClose" aria-label="Close">&times;</button>
+  <div class="lightbox-content">
+    <div class="morph-slider">
+      <div class="morph-slider-stage" id="galleryMorphStage" role="group" aria-roledescription="carousel" aria-label="Photo viewer" tabindex="0"></div>
+      <div class="morph-slider-caption" id="galleryMorphCaption" aria-live="polite"></div>
+      <div class="morph-slider-controls">
+        <button type="button" class="morph-slider-btn" id="galleryMorphPrev" aria-label="Previous image">&larr;</button>
+        <button type="button" class="morph-slider-btn" id="galleryMorphNext" aria-label="Next image">&rarr;</button>
+      </div>
+      <div class="morph-slider-indicators" id="galleryMorphIndicators" role="tablist" aria-label="Slides"></div>
+    </div>
+  </div>
 </div>
 @endsection
 
 @push('scripts')
 <script>
     (() => {
-        const lightbox = document.getElementById('gallery-lightbox');
-        const lightboxImage = document.getElementById('gallery-lightbox-image');
-        const close = () => { lightbox.classList.add('hidden'); lightbox.classList.remove('flex'); lightboxImage.src = ''; };
-        document.querySelectorAll('.lightbox-trigger').forEach((trigger) => {
-            trigger.addEventListener('click', () => {
-                lightboxImage.src = trigger.dataset.fullImage;
-                lightboxImage.alt = trigger.dataset.imageName;
-                lightbox.classList.remove('hidden');
-                lightbox.classList.add('flex');
-            });
-        });
-        document.getElementById('gallery-lightbox-close').addEventListener('click', close);
-        lightbox.addEventListener('click', (event) => { if (event.target === lightbox) close(); });
-        document.addEventListener('keydown', (event) => { if (event.key === 'Escape') close(); });
-
+        // Lightbox/slider behaviour now lives in resources/js/gallery-lightbox.js
+        // (bundled via app.js) so it can share the MorphSlider engine with the
+        // public portfolio page.
         const reviewToast = document.getElementById('review-success-toast');
         if (reviewToast) {
             const dismissReviewToast = () => reviewToast.remove();

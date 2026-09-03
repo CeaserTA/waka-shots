@@ -8,7 +8,8 @@
     src: url('/fonts/AmericansClassy.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
-    font-display: swap;
+    /* block, not swap — see resources/css/app.css for why. */
+    font-display: block;
 }
 
 @layer components {

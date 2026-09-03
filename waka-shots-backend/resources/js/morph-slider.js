@@ -260,6 +260,15 @@ export class MorphSlider {
       drift: 0.4,
       overlayColor: '#0a0908',
       loop: true,
+      // How many neighbours on each side of the opening slide get queued for
+      // background loading up front. Infinity (the default) eventually loads
+      // the whole gallery in the background, capped by LOAD_CONCURRENCY —
+      // fine for images on a CDN, but callers behind a rate-limited or
+      // otherwise expensive per-image endpoint should pass a small number so
+      // opening the slider doesn't silently fire a request for every single
+      // item. Anything beyond the radius still loads on demand the moment
+      // the viewer navigates to it (see prioritizeLoad).
+      preloadRadius: Infinity,
     }, opts);
 
     this.reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -353,7 +362,7 @@ export class MorphSlider {
   priorityOrder(start) {
     const n = this.items.length;
     const order = [start];
-    for (let d = 1; d < n; d++) {
+    for (let d = 1; d < n && d <= this.opts.preloadRadius; d++) {
       order.push(this.wrap(start + d));
       if (order.length < n) order.push(this.wrap(start - d));
     }

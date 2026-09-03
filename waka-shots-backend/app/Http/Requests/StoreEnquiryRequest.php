@@ -21,16 +21,7 @@ class StoreEnquiryRequest extends FormRequest
             'package_id' => ['nullable', 'exists:packages,id'],
             'preferred_date' => ['nullable', 'date'],
             'location' => ['nullable', 'string', 'max:255'],
-            'budget' => ['nullable', 'string', 'max:255'],
             'details' => ['nullable', 'string'],
-            'status' => ['nullable', 'string', 'max:255'],
         ];
-    }
-
-    protected function prepareForValidation(): void
-    {
-        $this->merge([
-            'status' => $this->input('status', 'pending'),
-        ]);
     }
 }

@@ -45,6 +45,9 @@ Route::post('/gallery/{token}/testimonial', [GalleryController::class, 'submitTe
 Route::get('/gallery/{token}/preview/{imageId}', [GalleryController::class, 'preview'])
     ->middleware('throttle:gallery-downloads')
     ->name('gallery.preview');
+Route::get('/gallery/{token}/thumb/{imageId}', [GalleryController::class, 'thumbnail'])
+    ->middleware('throttle:gallery-thumbnails')
+    ->name('gallery.thumb');
 Route::get('/gallery/{token}/download/{imageId}', [GalleryController::class, 'download'])
     ->middleware('throttle:gallery-downloads')
     ->name('gallery.download');

@@ -13,6 +13,17 @@
   }
   .field select{ appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23c6a15b' stroke-width='1.4' fill='none'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 16px center; }
   .field select option{ background:#151316; color:#ece7db; }
+  /* The native date control renders its calendar icon near-black by default,
+     which disappears against this dark field. color-scheme tells the browser
+     to draw the whole control (and its dropdown) for a dark background, and
+     the indicator is swapped for a gold calendar glyph to match the select
+     arrow above. */
+  .field input[type="date"]{ color-scheme:dark; }
+  .field input[type="date"]::-webkit-calendar-picker-indicator{
+    opacity:1; cursor:pointer; width:16px; height:16px;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23c6a15b' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2'/%3E%3Cpath d='M16 2v4M8 2v4M3 10h18'/%3E%3C/svg%3E");
+    background-size:contain; background-repeat:no-repeat; background-position:center;
+  }
 </style>
 @endpush
 @section('content')
@@ -65,21 +76,10 @@
         <div class="field"><label for="location">Location</label><input type="text" id="location" name="location" value="{{ old('location') }}" placeholder="e.g. Kampala, Entebbe"></div>
       </div>
       <div class="field">
-        <label for="budget">Budget Range</label>
-        <select id="budget" name="budget">
-            <option value="">Select a budget range</option>
-            @foreach(['Under UGX 1,000,000', 'UGX 1,000,000 – 3,000,000', 'UGX 3,000,000 – 6,000,000', 'UGX 6,000,000+', 'Not sure yet'] as $budget)
-              <option value="{{ $budget }}" @selected(old('budget') === $budget)>{{ $budget }}</option>
-            @endforeach
-        </select>
-      </div>
-      <div class="field">
         <label for="details">Tell Us About Your Project</label>
         <textarea id="details" name="details" rows="5" placeholder="Share a bit about your day, your brand, or what you have in mind...">{{ old('details') }}</textarea>
       </div>
-      <input type="hidden" name="status" value="pending">
       <button type="submit" class="text-xs tracking-[0.14em] uppercase px-8 py-4 rounded-sm bg-gold text-black border border-gold hover:bg-gold-bright hover:-translate-y-0.5 transition-all duration-400">Send Enquiry</button>
-      @if(session('success'))<p class="text-sm text-gold font-light pt-2">{{ session('success') }}</p>@endif
       @if($errors->any())<p class="text-sm text-red-300 font-light pt-2">Please check the highlighted details and try again.</p>@endif
     </form>
 
@@ -120,4 +120,23 @@
 
   </div>
 </section>
+
+@if(session('success'))
+  <div id="enquiry-success-toast" class="fixed inset-x-5 top-24 z-[600] mx-auto flex max-w-md items-start justify-between gap-5 rounded-sm border border-gold/60 bg-[#151316] px-5 py-4 text-sm text-ivory shadow-2xl sm:inset-x-auto sm:right-6 sm:left-auto" role="status" aria-live="polite">
+    <span>{{ session('success') }}</span>
+    <button type="button" class="text-xl leading-none text-silver transition hover:text-gold" aria-label="Dismiss message">&times;</button>
+  </div>
+@endif
 @endsection
+
+@push('scripts')
+<script>
+  (() => {
+    const toast = document.getElementById('enquiry-success-toast');
+    if (!toast) return;
+    const dismiss = () => toast.remove();
+    toast.querySelector('button').addEventListener('click', dismiss);
+    window.setTimeout(dismiss, 6000);
+  })();
+</script>
+@endpush

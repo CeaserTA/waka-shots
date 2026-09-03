@@ -35,7 +35,6 @@ class ExampleTest extends TestCase
             'service_id' => $service->id,
             'preferred_date' => '2026-09-12',
             'location' => 'Kampala',
-            'budget' => 'UGX 1,000,000 – 3,000,000',
             'details' => 'Wedding coverage for our ceremony.',
         ]);
 
@@ -49,9 +48,11 @@ class ExampleTest extends TestCase
             'package_id' => null,
             'preferred_date' => '2026-09-12',
             'location' => 'Kampala',
-            'budget' => 'UGX 1,000,000 – 3,000,000',
+            // Budget is no longer collected, and status is assigned by the
+            // controller rather than accepted from the request.
+            'budget' => null,
             'details' => 'Wedding coverage for our ceremony.',
-            'status' => 'pending',
+            'status' => 'new',
         ]);
         $this->assertSame(1, Enquiry::count());
     }

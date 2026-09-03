@@ -35,6 +35,13 @@ class AdminPanelProvider extends PanelProvider
             ->brandName('Waka Shots Photography')
             ->darkMode(true, true)
             ->defaultThemeMode(ThemeMode::Dark)
+            // Bell icon in the topbar, backed by the notifications table.
+            // Polled rather than pushed: true push would need a websocket
+            // server (Reverb/Pusher) plus a long-running process to keep it
+            // alive, which is a lot of moving parts for a single-studio
+            // admin panel. 10s is frequent enough to feel immediate.
+            ->databaseNotifications()
+            ->databaseNotificationsPolling('10s')
             ->navigationGroups([
                 'Content',
                 'Operations',

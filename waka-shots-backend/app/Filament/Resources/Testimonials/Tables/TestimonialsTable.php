@@ -17,6 +17,8 @@ class TestimonialsTable
     public static function configure(Table $table): Table
     {
         return $table
+            // Clients submit reviews from their gallery at any time.
+            ->poll('15s')
             ->columns([
                 TextColumn::make('gallery.client_name')
                     ->label('Client')

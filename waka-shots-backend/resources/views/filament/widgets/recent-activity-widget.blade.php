@@ -1,4 +1,6 @@
-<x-filament-widgets::widget>
+{{-- Unlike StatsOverviewWidget, a plain Widget has no polling of its own,
+     so this feed only ever updated on a full page refresh. --}}
+<x-filament-widgets::widget wire:poll.10s>
     <x-filament::section heading="Recent Activity">
         @if ($activities->isEmpty())
             <p class="text-sm text-gray-500 dark:text-gray-400">No recent activity</p>

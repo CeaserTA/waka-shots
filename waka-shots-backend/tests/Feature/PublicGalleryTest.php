@@ -78,10 +78,11 @@ class PublicGalleryTest extends TestCase
         ]);
 
         $drive = Mockery::mock(DriveGalleryService::class);
-        $drive->shouldReceive('listImagesInFolder')->once()->andReturn([
-            ['id' => 'image_123', 'name' => 'portrait.jpg', 'thumbnailLink' => null, 'webContentLink' => null],
-        ]);
-        $drive->shouldReceive('downloadFile')->once()->with('image_123')->andReturn([
+        // Serving one image no longer re-lists the whole folder to find it —
+        // downloadFileInFolder() verifies folder membership from the file's
+        // own metadata in the same call that fetches it.
+        $drive->shouldNotReceive('listImagesInFolder');
+        $drive->shouldReceive('downloadFileInFolder')->once()->with('image_123', 'folder_123')->andReturn([
             'contents' => 'image bytes',
             'name' => 'portrait.jpg',
             'mimeType' => 'image/jpeg',

@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Filament\Resources\Packages\RelationManagers\PackageFeaturesRelationManager;
 use App\Filament\Resources\Packages\Pages\ListPackages;
 use App\Filament\Resources\Services\RelationManagers\PackagesRelationManager;
 use App\Filament\Resources\Services\Pages\ListServices;
@@ -57,10 +56,17 @@ class ServicePackageFeatureTest extends TestCase
         ]);
     }
 
-    public function test_nested_relation_managers_are_registered_on_service_and_package_resources(): void
+    public function test_service_resource_registers_the_packages_relation_manager(): void
     {
         $this->assertContains(PackagesRelationManager::class, ServiceResource::getRelations());
-        $this->assertContains(PackageFeaturesRelationManager::class, PackageResource::getRelations());
+    }
+
+    public function test_package_features_are_edited_on_the_package_form_not_a_relation_manager(): void
+    {
+        // Features used to be a separate relation manager, added one row at a
+        // time. They're now a single "one per line" textarea on the package
+        // form itself, so the package resource has no relation managers.
+        $this->assertSame([], PackageResource::getRelations());
     }
 
     public function test_service_and_package_creation_uses_list_page_modals(): void

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Enquiries\Schemas;
 
+use App\Models\Enquiry;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -68,7 +69,11 @@ class EnquiryForm
                             ->disabled($readOnlyOnEdit),
                         TextInput::make('budget')
                             ->label('Budget')
-                            ->disabled($readOnlyOnEdit),
+                            ->disabled($readOnlyOnEdit)
+                            // No longer collected on the public form — kept
+                            // so older enquiries that did capture it still
+                            // show it, rather than silently hiding data.
+                            ->visible(fn (?Enquiry $record): bool => filled($record?->budget)),
                         Textarea::make('details')
                             ->label('Additional Details / Message')
                             ->columnSpanFull()

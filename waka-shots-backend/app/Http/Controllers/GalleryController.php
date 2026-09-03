@@ -6,6 +6,8 @@ use App\Exceptions\DriveConnectionException;
 use App\Models\Gallery;
 use App\Models\Testimonial;
 use App\Services\DriveGalleryService;
+use App\Support\AdminNotifier;
+use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
@@ -90,6 +92,46 @@ class GalleryController extends Controller
         return $this->serveImage($request, $token, $imageId, true);
     }
 
+    /**
+     * Same-origin proxy for a single image's thumbnail — used by the
+     * lightbox's WebGL slider, which (unlike a plain <img>) needs CORS to
+     * read the image as a texture, and Google's thumbnail CDN never sends
+     * the header that would allow that cross-origin. Proxying the small
+     * thumbnail here keeps this fast; full-quality originals still go
+     * through preview()/download() above.
+     */
+    public function thumbnail(Request $request, string $token, string $imageId): Response
+    {
+        $gallery = $this->findAvailableGallery($token);
+
+        if (! $gallery) {
+            return response()->view('galleries.unavailable', [], 200);
+        }
+
+        try {
+            $file = $this->drive->fetchThumbnail($imageId, $gallery->drive_folder_id);
+
+            abort_if(! $file, 404);
+
+            return response($file['contents'], 200, [
+                'Content-Type' => $file['mimeType'],
+                'Cache-Control' => 'private, max-age=3600',
+            ]);
+        } catch (Throwable $exception) {
+            if ($exception instanceof \Symfony\Component\HttpKernel\Exception\HttpException) {
+                throw $exception;
+            }
+
+            Log::error('Unable to load gallery thumbnail.', [
+                'gallery_id' => $gallery->id,
+                'image_id' => $imageId,
+                'exception' => $exception,
+            ]);
+
+            return response('', 502);
+        }
+    }
+
     private function serveImage(Request $request, string $token, string $imageId, bool $asDownload): Response
     {
         $gallery = $this->findAvailableGallery($token);
@@ -99,12 +141,10 @@ class GalleryController extends Controller
         }
 
         try {
-            $image = collect($this->drive->listImagesInFolder($gallery->drive_folder_id))
-                ->firstWhere('id', $imageId);
+            $file = $this->drive->downloadFileInFolder($imageId, $gallery->drive_folder_id);
 
-            abort_if(! $image, 404);
+            abort_if(! $file, 404);
 
-            $file = $this->drive->downloadFile($imageId);
             if ($asDownload) {
                 $this->logAccess($request, $gallery, 'download', $imageId);
             }
@@ -157,6 +197,14 @@ class GalleryController extends Controller
             $zip->close();
 
             $this->logAccess($request, $gallery, 'download_all');
+
+            AdminNotifier::send(
+                FilamentNotification::make()
+                    ->title('Gallery collected')
+                    ->body($gallery->client_name . ' downloaded all photos from ' . $gallery->event_name . '.')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->success()
+            );
 
             return response()->download(
                 $zipPath,

@@ -48,7 +48,10 @@ class HomepageServicesTeaserTest extends TestCase
         $this->assertStringContainsString('Description 1', $content);
         $this->assertStringContainsString('f/1.8 — Intimate', $content);
         $this->assertStringContainsString('Silver · Gold', $content);
-        $this->assertStringContainsString('Waka Shots — 02', $content);
+        // A service without a tagline shows nothing in its place — the old
+        // auto-generated "Waka Shots — 02" filler was removed so the card
+        // only ever shows what the admin actually entered.
+        $this->assertStringNotContainsString('Waka Shots — 02', $content);
         $this->assertLessThan(strpos($content, 'Description 1'), strpos($content, 'Description 2'));
         $this->assertStringNotContainsString('Service 4', $content);
     }

@@ -6,7 +6,11 @@
     src: url('/fonts/AmericansClassy.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
-    font-display: swap;
+    /* block, not swap: this is a brand wordmark, not body copy — briefly
+       invisible while the (small, same-origin) font loads reads as clean,
+       whereas "swap" deliberately shows Alex Brush/cursive first and then
+       pops to Americans Classy, which is the flash being complained about. */
+    font-display: block;
 }
 
 @theme {
