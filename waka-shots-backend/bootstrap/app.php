@@ -11,6 +11,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // In production the app is only reachable through the Caddy container,
+        // which terminates HTTPS; trust its X-Forwarded-* headers.
+        $middleware->trustProxies(at: '*');
+
         $middleware->alias([
             'auth' => App\Http\Middleware\Authenticate::class,
         ]);

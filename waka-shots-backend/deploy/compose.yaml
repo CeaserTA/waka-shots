@@ -1,0 +1,76 @@
+# Production stack. Lives in /opt/waka on the server next to Caddyfile and .env;
+# CI copies this file and the Caddyfile over on every deploy.
+name: waka
+
+services:
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      DOMAIN: ${DOMAIN:?Set DOMAIN in .env}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - app
+
+  app:
+    image: ${APP_IMAGE:-ghcr.io/ceaserta/waka-shots:latest}
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      # Runs migrate --force, storage:link and optimize on container start.
+      AUTORUN_ENABLED: "true"
+      # Also sets Nginx's fastcgi_read_timeout; "download all" builds the ZIP in-request.
+      PHP_MAX_EXECUTION_TIME: "300"
+      PHP_UPLOAD_MAX_FILE_SIZE: "50M"
+      PHP_POST_MAX_SIZE: "50M"
+      NGINX_CLIENT_MAX_BODY_SIZE: "50M"
+    volumes:
+      - storage:/var/www/html/storage
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  queue:
+    image: ${APP_IMAGE:-ghcr.io/ceaserta/waka-shots:latest}
+    restart: unless-stopped
+    command: ["php", "/var/www/html/artisan", "queue:work", "--tries=3", "--sleep=3"]
+    stop_signal: SIGTERM
+    env_file: .env
+    volumes:
+      - storage:/var/www/html/storage
+    healthcheck:
+      test: ["CMD", "healthcheck-queue"]
+      start_period: 10s
+    depends_on:
+      app:
+        condition: service_healthy
+
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:?Set DB_ROOT_PASSWORD in .env}
+    volumes:
+      - mysql:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p\"$$MYSQL_ROOT_PASSWORD\" --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+volumes:
+  caddy_data:
+  caddy_config:
+  storage:
+  mysql:
