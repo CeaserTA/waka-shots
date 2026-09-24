@@ -19,3 +19,4 @@ Dockerfile
 railway.toml
 Procfile
 *.md
+database/*.sql
