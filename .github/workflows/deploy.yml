@@ -66,6 +66,8 @@ jobs:
           tags: |
             ${{ env.IMAGE }}:latest
             ${{ env.IMAGE }}:${{ github.sha }}
+          # One registry version per build, without extra untagged attestation manifests.
+          provenance: false
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -100,4 +102,19 @@ jobs:
             docker compose pull app queue
             docker compose up -d --remove-orphans
             docker logout ghcr.io
-            docker image prune -f
+            # Removes every image no container is using, including old releases.
+            # Any earlier release can still be pulled back from GHCR by its commit tag.
+            docker image prune -af
+
+  cleanup:
+    needs: deploy
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    steps:
+      - name: Keep only the 10 most recent images in GHCR
+        uses: actions/delete-package-versions@v5
+        with:
+          package-name: waka-shots
+          package-type: container
+          min-versions-to-keep: 10
