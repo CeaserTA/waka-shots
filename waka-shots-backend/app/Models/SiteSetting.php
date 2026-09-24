@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\WhatsApp;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -40,6 +41,15 @@ class SiteSetting extends Model
         return static::query()->firstOrCreate([], [
             'studio_name' => 'Waka Shots',
         ]);
+    }
+
+    /**
+     * Click-to-chat link for the studio's WhatsApp number, or null when no
+     * number is set so callers can skip rendering.
+     */
+    public function whatsappLink(?string $message = null): ?string
+    {
+        return WhatsApp::link($this->whatsapp_number, $message);
     }
 
     public function imageUrl(?string $path): ?string

@@ -1,8 +1,21 @@
 // Vanilla WebGL + rAF-tween port of the reactbits.dev "Morph Slider" component.
 // Same shader (melt / ripple / shear / swirl) and drag-to-swipe behaviour as the
-// React/OGL/GSAP original, rebuilt on raw WebGL1 with no external dependencies —
+// React/OGL/GSAP original, rebuilt on raw WebGL1 with no external dependencies:
 // this project has no animation libraries installed, and every other interaction
 // in main.js is hand-rolled the same way.
+//
+// Performance notes (this runs full-screen over the whole site, often on
+// integrated GPUs, so it has to be cheap):
+//   * It renders on demand. There is no free-running requestAnimationFrame
+//     loop: a frame is drawn only while a transition/drag is running, or once
+//     after something changes (image loaded, resize). A still image costs no
+//     GPU time at all.
+//   * The shader skips its noise/warp work and the second texture whenever no
+//     transition is running (progress == 0).
+//   * The shader is compiled with KHR_parallel_shader_compile where available,
+//     so opening the viewer does not block the main thread on the driver.
+//   * Only the images around the current slide live on the GPU; the rest of
+//     the gallery is not downloaded up front and far-away textures are freed.
 
 const TRANSITIONS = { melt: 0, ripple: 1, shear: 2, swirl: 3 };
 
@@ -64,10 +77,13 @@ float noise(vec2 p) {
   return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
 }
 
+// 4 octaves rather than the original 5: the 5th adds ~3% to the noise
+// amplitude (invisible in a 1s warp) but is ~36% of the per-frame GPU cost
+// of the melt transition on an integrated GPU at 1.5x pixel density.
 float fbm(vec2 p) {
   float v = 0.0;
   float a = 0.5;
-  for (int i = 0; i < 5; i++) {
+  for (int i = 0; i < 4; i++) {
     v += a * noise(p);
     p *= 2.0;
     a *= 0.5;
@@ -111,7 +127,11 @@ void main() {
   vec2 uvN = uv;
   float m = smoothstep(0.0, 1.0, p);
 
-  if (uReduce < 0.5) {
+  // The warp below is the expensive part (the melt mode alone is two 5-octave
+  // noise loops per pixel). With no transition running (p == 0) it has no
+  // visible effect, so a still image skips it entirely. uProgress is a
+  // uniform, so every pixel takes the same branch.
+  if (uReduce < 0.5 && p > 0.0) {
     if (uMode == 3) {
       vec2 c = uv - 0.5;
       float r = length(c);
@@ -149,7 +169,6 @@ void main() {
   }
 
   vec2 sC = containUV(uvC, uResolution, uCurrentSize);
-  vec2 sN = containUV(uvN, uResolution, uNextSize);
 
   float ca = uReduce < 0.5 ? uAberration * env * 0.03 : 0.0;
 
@@ -158,21 +177,25 @@ void main() {
     texture2D(tCurrent, sC).g,
     texture2D(tCurrent, sC - vec2(ca, 0.0)).b
   );
-  vec3 colN = vec3(
-    texture2D(tNext, sN + vec2(ca, 0.0)).r,
-    texture2D(tNext, sN).g,
-    texture2D(tNext, sN - vec2(ca, 0.0)).b
-  );
 
-  // Outside the letterboxed image bounds there's nothing to show — fall back
+  // Outside the letterboxed image bounds there's nothing to show: fall back
   // to the background colour rather than the smeared, clamped-to-edge pixel
   // texture2D() would otherwise return for out-of-range UVs.
   float inC = step(0.0, sC.x) * step(sC.x, 1.0) * step(0.0, sC.y) * step(sC.y, 1.0);
-  float inN = step(0.0, sN.x) * step(sN.x, 1.0) * step(0.0, sN.y) * step(sN.y, 1.0);
-  colC = mix(uOverlay, colC, inC);
-  colN = mix(uOverlay, colN, inN);
+  vec3 col = mix(uOverlay, colC, inC);
 
-  vec3 col = mix(colC, colN, m);
+  // The next slide is only sampled while a transition is running.
+  if (p > 0.0) {
+    vec2 sN = containUV(uvN, uResolution, uNextSize);
+    vec3 colN = vec3(
+      texture2D(tNext, sN + vec2(ca, 0.0)).r,
+      texture2D(tNext, sN).g,
+      texture2D(tNext, sN - vec2(ca, 0.0)).b
+    );
+    float inN = step(0.0, sN.x) * step(sN.x, 1.0) * step(0.0, sN.y) * step(sN.y, 1.0);
+    colN = mix(uOverlay, colN, inN);
+    col = mix(col, colN, m);
+  }
 
   float vig = smoothstep(1.25, 0.25, length(uv - 0.5));
   col = mix(col, uOverlay, (1.0 - vig) * 0.28);
@@ -181,51 +204,80 @@ void main() {
 }
 `;
 
-function compileShader(gl, type, source) {
-  const shader = gl.createShader(type);
-  gl.shaderSource(shader, source);
-  gl.compileShader(shader);
-  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-    const info = gl.getShaderInfoLog(shader);
-    gl.deleteShader(shader);
-    throw new Error('MorphSlider shader compile error: ' + info);
-  }
-  return shader;
-}
+// Kicks off compile + link WITHOUT reading any status back. Reading
+// COMPILE_STATUS / LINK_STATUS (or asking for uniform/attribute locations)
+// blocks the main thread until the GPU driver has finished, which on Windows
+// (ANGLE/D3D11) on an integrated GPU is hundreds of milliseconds. The caller
+// polls for completion instead; see MorphSlider#tryFinishProgram.
+function startProgram(gl, vertexSource, fragmentSource) {
+  const vertex = gl.createShader(gl.VERTEX_SHADER);
+  gl.shaderSource(vertex, vertexSource);
+  gl.compileShader(vertex);
 
-function createProgram(gl, vertexSource, fragmentSource) {
+  const fragment = gl.createShader(gl.FRAGMENT_SHADER);
+  gl.shaderSource(fragment, fragmentSource);
+  gl.compileShader(fragment);
+
   const program = gl.createProgram();
-  gl.attachShader(program, compileShader(gl, gl.VERTEX_SHADER, vertexSource));
-  gl.attachShader(program, compileShader(gl, gl.FRAGMENT_SHADER, fragmentSource));
+  gl.attachShader(program, vertex);
+  gl.attachShader(program, fragment);
+  // Fixed attribute slots so the vertex buffers can be wired up without
+  // getAttribLocation(), which would force the same blocking wait.
+  gl.bindAttribLocation(program, 0, 'position');
+  gl.bindAttribLocation(program, 1, 'uv');
   gl.linkProgram(program);
-  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-    const info = gl.getProgramInfoLog(program);
-    gl.deleteProgram(program);
-    throw new Error('MorphSlider program link error: ' + info);
-  }
-  return program;
+
+  return { program, vertex, fragment };
 }
 
-function setTextureParams(gl) {
+function assertProgramLinked(gl, { program, vertex, fragment }) {
+  if (gl.getProgramParameter(program, gl.LINK_STATUS)) return;
+  const log = [
+    gl.getShaderInfoLog(vertex),
+    gl.getShaderInfoLog(fragment),
+    gl.getProgramInfoLog(program),
+  ].filter(Boolean).join('\n');
+  throw new Error('MorphSlider shader failed to build: ' + log);
+}
+
+// `mipmap` is only ever true on a WebGL2 context, where a non-power-of-two
+// texture can carry a full mip chain. Trilinear minification is what stops a
+// downscaled photo from aliasing into sparkle; anisotropy (when the driver
+// offers it) keeps that from over-blurring the axis that is not minified.
+function setTextureParams(gl, mipmap) {
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+
+  if (!mipmap) {
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    return;
+  }
+
+  gl.generateMipmap(gl.TEXTURE_2D);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+
+  const aniso = gl.getExtension('EXT_texture_filter_anisotropic')
+    || gl.getExtension('WEBKIT_EXT_texture_filter_anisotropic');
+  if (aniso) {
+    const max = gl.getParameter(aniso.MAX_TEXTURE_MAX_ANISOTROPY_EXT);
+    gl.texParameterf(gl.TEXTURE_2D, aniso.TEXTURE_MAX_ANISOTROPY_EXT, Math.min(8, max));
+  }
 }
 
 function makeFallbackTexture(gl) {
   const texture = gl.createTexture();
   gl.bindTexture(gl.TEXTURE_2D, texture);
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([24, 24, 28, 255]));
-  setTextureParams(gl);
+  setTextureParams(gl, false); // a 1x1 placeholder is never minified
   return texture;
 }
 
-function uploadTexture(gl, texture, image) {
+function uploadTexture(gl, texture, image, mipmap) {
   gl.bindTexture(gl.TEXTURE_2D, texture);
   gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
-  setTextureParams(gl);
+  setTextureParams(gl, mipmap);
 }
 
 function hexToRgb(hex) {
@@ -247,6 +299,39 @@ const UNIFORM_NAMES = [
 ];
 
 export class MorphSlider {
+  // Downloading every gallery image the instant the slider opens saturates the
+  // browser's per-origin connection pool and fires a burst of GPU texture
+  // uploads (each one a main-thread stall, and each a full-resolution texture
+  // held in GPU memory). Instead: load the image actually being viewed first,
+  // then its neighbours, capped to a few concurrent downloads so the current
+  // image never has to compete with a dozen others for bandwidth.
+  static LOAD_CONCURRENCY = 3;
+
+  // Every image is fetched under a URL that differs from the plain <img> one
+  // on the page (e.g. the portfolio grid thumbnail). Some CDNs (R2's public
+  // *.r2.dev domain included) cache by URL only and ignore Vary: Origin, so
+  // whichever request hits a given URL first "wins" the cache for everyone
+  // after it, CORS headers and all. Requesting a distinct URL here guarantees
+  // this fetch can never be served that stale, header-less cache entry.
+  static corsUrl(url) {
+    return url + (url.includes('?') ? '&' : '?') + 'cors=1';
+  }
+
+  static warmed = new Set();
+
+  // Starts downloading an image into the HTTP cache ahead of time (e.g. while
+  // the pointer rests on a grid thumbnail) so that opening it is near-instant.
+  // Uses exactly the request the slider itself will make.
+  static prefetch(url) {
+    if (!url || MorphSlider.warmed.has(url)) return;
+    if (navigator.connection?.saveData) return;
+    MorphSlider.warmed.add(url);
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.decoding = 'async';
+    img.src = MorphSlider.corsUrl(url);
+  }
+
   constructor(container, { items, startIndex = 0, opts = {}, onIndexChange = () => {} }) {
     this.container = container;
     this.items = items;
@@ -260,139 +345,198 @@ export class MorphSlider {
       drift: 0.4,
       overlayColor: '#0a0908',
       loop: true,
-      // How many neighbours on each side of the opening slide get queued for
-      // background loading up front. Infinity (the default) eventually loads
-      // the whole gallery in the background, capped by LOAD_CONCURRENCY —
-      // fine for images on a CDN, but callers behind a rate-limited or
-      // otherwise expensive per-image endpoint should pass a small number so
-      // opening the slider doesn't silently fire a request for every single
-      // item. Anything beyond the radius still loads on demand the moment
-      // the viewer navigates to it (see prioritizeLoad).
-      preloadRadius: Infinity,
+      // How many neighbours on each side of the current slide are kept loaded
+      // (queued for background loading, and protected from eviction). Anything
+      // further away loads on demand the moment the viewer navigates to it
+      // (see prioritizeLoad) and its texture is freed once they move on.
+      // Pass Infinity to load and keep the whole set.
+      preloadRadius: 2,
     }, opts);
+
+    const radius = this.opts.preloadRadius;
+    this.keepRadius = Number.isFinite(radius) ? Math.max(1, radius) + 1 : Infinity;
 
     this.reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     this.current = startIndex;
+    this.nextIndex = startIndex;
     this.shownIndex = startIndex;
     this.animating = false;
     this.dragging = false;
     this.dragDir = 0;
     this.tweenRAF = null;
-    this.dprCap = 2;
+    this.raf = 0;
+    // 1.5 rather than 2: the fragment shader is per-pixel work, and the source
+    // images are at most ~2500px wide anyway, so rendering above 1.5x buys
+    // nothing visible but costs ~45% more pixels on a HiDPI screen.
+    this.dprCap = 1.5;
+
+    // All shader inputs live in JS and are pushed to the GPU in render(), so
+    // they can be set at any time, even before the program has finished
+    // compiling.
+    this.progress = 0;
+    this.dir = 1;
+    this.pointer = [0.5, 0.5];
+    this.width = 1;
+    this.height = 1;
+    this.time = 0;
+    this.lastFrame = 0;
+    this.programReady = false;
+    this.programFailed = false;
 
     const canvas = document.createElement('canvas');
     canvas.className = 'morph-slider-canvas';
     container.appendChild(canvas);
     this.canvas = canvas;
 
-    const gl = canvas.getContext('webgl', { alpha: false, antialias: true })
-      || canvas.getContext('experimental-webgl', { alpha: false, antialias: true });
+    // No MSAA: this draws one full-screen quad of a photo, there are no
+    // geometry edges to smooth, and a multisampled back buffer is pure cost.
+    //
+    // WebGL2 is tried first purely for texture filtering: WebGL1 cannot mipmap
+    // a non-power-of-two texture, and photos never are, so it is stuck with
+    // plain LINEAR. Minifying a 2500px photo into a ~1100px stage that way
+    // samples 4 texels per pixel and aliases — fine detail (hair, fabric,
+    // foliage) breaks into sparkling speckles. WebGL2 mipmaps NPOT textures
+    // normally, so the same draw resolves cleanly. GLSL ES 1.00 shaders with
+    // no #version directive compile unchanged on both.
+    const attrs = { alpha: false, antialias: false };
+    const gl = canvas.getContext('webgl2', attrs)
+      || canvas.getContext('webgl', attrs)
+      || canvas.getContext('experimental-webgl', attrs);
     if (!gl) throw new Error('WebGL is not supported in this browser');
     this.gl = gl;
+    this.canMipmap = typeof WebGL2RenderingContext !== 'undefined'
+      && gl instanceof WebGL2RenderingContext;
     gl.clearColor(0.02, 0.02, 0.024, 1);
 
-    this.program = createProgram(gl, VERTEX_SHADER, FRAGMENT_SHADER);
-    gl.useProgram(this.program);
+    this.parallelCompile = gl.getExtension('KHR_parallel_shader_compile');
+    this.build = startProgram(gl, VERTEX_SHADER, FRAGMENT_SHADER);
+    this.program = this.build.program;
 
-    // Fullscreen triangle (avoids a quad's diagonal seam) — clipped to the
-    // viewport, its UVs land exactly on 0..1 across the visible area.
+    // Fullscreen triangle (avoids a quad's diagonal seam), clipped to the
+    // viewport, so its UVs land exactly on 0..1 across the visible area.
     const positionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
-    const positionLoc = gl.getAttribLocation(this.program, 'position');
-    gl.enableVertexAttribArray(positionLoc);
-    gl.vertexAttribPointer(positionLoc, 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(0);
+    gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
 
     const uvBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, uvBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([0, 0, 2, 0, 0, 2]), gl.STATIC_DRAW);
-    const uvLoc = gl.getAttribLocation(this.program, 'uv');
-    gl.enableVertexAttribArray(uvLoc);
-    gl.vertexAttribPointer(uvLoc, 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(1);
+    gl.vertexAttribPointer(1, 2, gl.FLOAT, false, 0, 0);
 
+    // One shared placeholder until a slide's real image has loaded.
+    this.fallback = makeFallbackTexture(gl);
+    this.textures = this.items.map(() => this.fallback);
+    this.sizes = this.items.map(() => [1, 1]);
+    this.loaded = this.items.map(() => false);
+    this.loading = new Set();
+    this.failed = new Set();
+    this.deferred = new Map(); // index -> decoded image waiting for a quiet moment to upload
+    this.pendingImages = new Set();
+    this.loadQueue = [];
+    this.loadActive = 0;
+    this.refreshLoading();
+    this.queueAround();
+
+    this.resizeObserver = new ResizeObserver(() => this.resize());
+    this.resizeObserver.observe(container);
+    this.resize();
+
+    this.requestRender();
+    this.bindPointerEvents();
+  }
+
+  // ---------- program ----------
+
+  // Called each frame until the program is usable. Returns true once it is.
+  tryFinishProgram() {
+    if (this.programReady) return true;
+    if (this.programFailed) return false;
+    const gl = this.gl;
+
+    if (this.parallelCompile
+      && !gl.getProgramParameter(this.program, this.parallelCompile.COMPLETION_STATUS_KHR)) {
+      return false; // driver still compiling on its own thread; check next frame
+    }
+
+    try {
+      assertProgramLinked(gl, this.build);
+    } catch (err) {
+      this.programFailed = true;
+      console.error(err);
+      return false;
+    }
+
+    gl.useProgram(this.program);
     this.uniforms = {};
     UNIFORM_NAMES.forEach((name) => {
       this.uniforms[name] = gl.getUniformLocation(this.program, name);
     });
 
-    this.textures = this.items.map(() => makeFallbackTexture(gl));
-    this.sizes = this.items.map(() => [1, 1]);
-    this.loaded = this.items.map(() => false);
-    this.loadQueue = [];
-    this.loadActive = 0;
-    this.nextTexture = this.textures[this.current];
-    this.setLoading(true);
-    this.loadTextures();
-
+    // Settings that never change after construction.
     gl.uniform1i(this.uniforms.tCurrent, 0);
     gl.uniform1i(this.uniforms.tNext, 1);
-    gl.uniform2fv(this.uniforms.uCurrentSize, this.sizes[this.current]);
-    gl.uniform2fv(this.uniforms.uNextSize, this.sizes[this.current]);
-    gl.uniform1f(this.uniforms.uProgress, 0);
-    gl.uniform1f(this.uniforms.uDir, 1);
     gl.uniform1i(this.uniforms.uMode, TRANSITIONS[this.opts.transition] ?? 0);
     gl.uniform1f(this.uniforms.uIntensity, this.opts.intensity);
     gl.uniform1f(this.uniforms.uScale, this.opts.scale);
     gl.uniform1f(this.uniforms.uAberration, this.opts.aberration);
     gl.uniform1f(this.uniforms.uDrift, this.opts.drift);
     gl.uniform1f(this.uniforms.uReduce, this.reducedMotion ? 1 : 0);
-    gl.uniform2fv(this.uniforms.uPointer, [0.5, 0.5]);
     gl.uniform3fv(this.uniforms.uOverlay, hexToRgb(this.opts.overlayColor));
 
-    this.resizeObserver = new ResizeObserver(() => this.resize());
-    this.resizeObserver.observe(container);
-    this.resize();
-
-    this.startTime = performance.now();
-    this.raf = requestAnimationFrame((t) => this.loop(t));
-
-    this.bindPointerEvents();
+    this.programReady = true;
+    this.refreshLoading();
+    return true;
   }
 
-  // Downloading every gallery image the instant the slider opens (the old
-  // behaviour) saturates the browser's per-origin connection pool and fires
-  // a burst of GPU texture uploads all at once — which is exactly why the
-  // slider used to feel slow to show anything and would visibly hang for a
-  // moment. Instead: load the image actually being viewed first, its
-  // immediate neighbours next, and the rest of the gallery afterward, capped
-  // to a small number of concurrent downloads so the current image never has
-  // to compete with a dozen others for bandwidth.
-  static LOAD_CONCURRENCY = 3;
+  // ---------- loading ----------
+
+  // Shown while the current slide's texture (or the shader) is still being
+  // prepared; without it the frozen placeholder frame during a slow fetch
+  // looks indistinguishable from the UI having hung.
+  refreshLoading() {
+    const busy = !this.programFailed && (!this.programReady || !this.loaded[this.current]);
+    this.container.classList.toggle('is-loading', busy);
+  }
+
+  distance(a, b) {
+    const d = Math.abs(a - b);
+    return this.opts.loop ? Math.min(d, this.items.length - d) : d;
+  }
 
   priorityOrder(start) {
     const n = this.items.length;
     const order = [start];
     for (let d = 1; d < n && d <= this.opts.preloadRadius; d++) {
       order.push(this.wrap(start + d));
-      if (order.length < n) order.push(this.wrap(start - d));
+      order.push(this.wrap(start - d));
     }
-    return order;
+    return [...new Set(order)];
   }
 
-  setLoading(isLoading) {
-    this.container.classList.toggle('is-loading', isLoading);
+  // Loads the current slide first, then outward through its neighbours.
+  queueAround() {
+    this.loadQueue = this.priorityOrder(this.current)
+      .filter((i) => !this.loaded[i] && !this.loading.has(i) && !this.deferred.has(i));
+    this.pumpQueue();
   }
 
   loadOne(index) {
-    if (this.loaded[index] || this.loading?.has(index)) return;
-    (this.loading ??= new Set()).add(index);
+    if (this.loaded[index] || this.loading.has(index) || this.deferred.has(index)) return;
+    this.loading.add(index);
     this.loadActive++;
 
     const gl = this.gl;
-    const item = this.items[index];
     const img = new Image();
     img.crossOrigin = 'anonymous';
-    // Deliberately a different URL from whatever plain <img> (no crossorigin
-    // attribute, no Origin header, no CORS headers in the response) already
-    // loaded this same image elsewhere on the page — e.g. the portfolio grid
-    // thumbnail. Some CDNs (R2's public *.r2.dev domain included) cache by
-    // URL only and ignore Vary: Origin, so whichever request hits a given
-    // URL first "wins" the cache for everyone after it, CORS headers and
-    // all. Requesting a distinct URL here guarantees this fetch can never
-    // be served that stale, header-less cache entry.
-    img.src = item.image + (item.image.includes('?') ? '&' : '?') + 'cors=1';
+    img.decoding = 'async';
+    this.pendingImages.add(img);
+    img.src = MorphSlider.corsUrl(this.items[index].image);
 
     const finish = () => {
+      this.pendingImages.delete(img);
       this.loading.delete(index);
       this.loadActive--;
       if (!this.destroyed) this.pumpQueue();
@@ -400,41 +544,92 @@ export class MorphSlider {
 
     img.onload = () => {
       if (this.destroyed) { finish(); return; }
-      const texture = gl.createTexture();
-      uploadTexture(gl, texture, img);
-      this.textures[index] = texture;
-      this.sizes[index] = [img.naturalWidth || 1, img.naturalHeight || 1];
-      this.loaded[index] = true;
-      if (index === this.current) {
-        gl.uniform2fv(this.uniforms.uCurrentSize, this.sizes[index]);
-        this.nextTexture = this.textures[index];
-        this.setLoading(false);
+      // Uploading a full-size photo to the GPU blocks the main thread for
+      // ~100-200ms on an integrated GPU. If that lands in the middle of a
+      // transition or drag it shows up as a visible hitch, so a background
+      // slide that arrives mid-motion waits until the motion settles.
+      if ((this.animating || this.dragging) && index !== this.current && index !== this.nextIndex) {
+        this.deferred.set(index, img);
+      } else {
+        this.uploadLoaded(index, img);
       }
       finish();
     };
-    img.onerror = finish;
+    img.onerror = () => {
+      this.failed.add(index); // lets the queue move on instead of waiting on it forever
+      finish();
+    };
+  }
+
+  uploadLoaded(index, img) {
+    this.deferred.delete(index);
+    // The viewer has moved well away while this was downloading: don't spend
+    // a main-thread GPU upload (and GPU memory) on a slide they can't see.
+    if (index !== this.current && index !== this.nextIndex
+      && this.distance(index, this.current) > this.keepRadius) {
+      return;
+    }
+    const gl = this.gl;
+    const texture = gl.createTexture();
+    uploadTexture(gl, texture, img, this.canMipmap);
+    this.textures[index] = texture;
+    this.sizes[index] = [img.naturalWidth || 1, img.naturalHeight || 1];
+    this.loaded[index] = true;
+    if (index === this.current) this.refreshLoading();
+    if (index === this.current || index === this.nextIndex) this.requestRender();
+    this.evictFar();
+  }
+
+  // Called once a transition/drag has settled.
+  flushDeferred() {
+    if (this.destroyed || this.animating || this.dragging) return;
+    this.deferred.forEach((img, index) => this.uploadLoaded(index, img));
   }
 
   pumpQueue() {
     while (this.loadActive < MorphSlider.LOAD_CONCURRENCY && this.loadQueue.length) {
-      this.loadOne(this.loadQueue.shift());
+      const next = this.loadQueue[0];
+      // Background neighbours must not share bandwidth with the slide being
+      // looked at: three parallel downloads each get a third of the pipe, so
+      // the photo the viewer actually clicked would arrive up to 3x later.
+      // They wait until the current slide has loaded (or definitively failed).
+      const urgent = next === this.current || next === this.nextIndex;
+      const currentSettled = this.loaded[this.current] || this.failed.has(this.current);
+      if (!urgent && !currentSettled) break;
+      this.loadQueue.shift();
+      this.loadOne(next);
     }
   }
 
-  // Jumps an index to the front of the line — used when the viewer navigates
+  // Jumps an index to the front of the line: used when the viewer navigates
   // to a slide that hasn't loaded yet, so it doesn't wait behind whatever was
   // already queued.
   prioritizeLoad(index) {
     if (this.loaded[index]) return;
+    const waiting = this.deferred.get(index);
+    if (waiting) { this.uploadLoaded(index, waiting); return; } // already downloaded, needed now
     this.loadQueue = this.loadQueue.filter((i) => i !== index);
     this.loadQueue.unshift(index);
-    if (!this.loading?.has(index)) this.pumpQueue();
+    if (!this.loading.has(index)) this.pumpQueue();
   }
 
-  loadTextures() {
-    this.loadQueue = this.priorityOrder(this.current);
-    this.pumpQueue();
+  // Frees the GPU memory of textures the viewer has moved away from. A
+  // full-resolution photo is ~15-20MB as a texture; keeping a whole gallery of
+  // them resident is what makes a low-end GPU crawl.
+  evictFar() {
+    if (!Number.isFinite(this.keepRadius)) return;
+    const gl = this.gl;
+    for (let i = 0; i < this.items.length; i++) {
+      if (!this.loaded[i] || i === this.current || i === this.nextIndex) continue;
+      if (this.distance(i, this.current) <= this.keepRadius) continue;
+      gl.deleteTexture(this.textures[i]);
+      this.textures[i] = this.fallback;
+      this.sizes[i] = [1, 1];
+      this.loaded[i] = false;
+    }
   }
+
+  // ---------- rendering ----------
 
   resize() {
     const rect = this.container.getBoundingClientRect();
@@ -446,22 +641,60 @@ export class MorphSlider {
     this.canvas.style.width = rect.width + 'px';
     this.canvas.style.height = rect.height + 'px';
     this.gl.viewport(0, 0, w, h);
-    this.gl.uniform2f(this.uniforms.uResolution, w, h);
+    this.width = w;
+    this.height = h;
+    this.requestRender(); // resizing clears the canvas
   }
 
-  loop(t) {
+  // Schedules at most one frame; further calls before it runs are no-ops.
+  requestRender() {
+    if (this.raf || this.destroyed) return;
+    this.raf = requestAnimationFrame((t) => {
+      this.raf = 0;
+      this.render(t);
+    });
+  }
+
+  // Draws right now (used from inside an animation frame callback).
+  renderNow(t) {
+    if (this.raf) {
+      cancelAnimationFrame(this.raf);
+      this.raf = 0;
+    }
+    this.render(t);
+  }
+
+  render(now) {
+    if (this.destroyed) return;
+    if (!this.tryFinishProgram()) {
+      if (!this.programFailed) this.requestRender(); // still compiling: poll next frame
+      return;
+    }
+
     const gl = this.gl;
-    gl.uniform1f(this.uniforms.uTime, (t - this.startTime) * 0.001);
+    const u = this.uniforms;
+
+    // A clock that only advances while frames are being drawn (and never by
+    // more than one long frame at a time), so the ambient drift picks up
+    // where it left off after an idle stretch instead of jumping.
+    if (this.lastFrame) this.time += Math.min((now - this.lastFrame) / 1000, 0.05);
+    this.lastFrame = now;
+
+    gl.uniform1f(u.uTime, this.time);
+    gl.uniform1f(u.uProgress, this.progress);
+    gl.uniform1f(u.uDir, this.dir);
+    gl.uniform2f(u.uResolution, this.width, this.height);
+    gl.uniform2fv(u.uCurrentSize, this.sizes[this.current]);
+    gl.uniform2fv(u.uNextSize, this.sizes[this.nextIndex]);
+    gl.uniform2fv(u.uPointer, this.pointer);
 
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, this.textures[this.current]);
     gl.activeTexture(gl.TEXTURE1);
-    gl.bindTexture(gl.TEXTURE_2D, this.nextTexture || this.textures[this.current]);
+    gl.bindTexture(gl.TEXTURE_2D, this.textures[this.nextIndex]);
 
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
-
-    this.raf = requestAnimationFrame((nt) => this.loop(nt));
   }
 
   wrap(i) {
@@ -471,10 +704,8 @@ export class MorphSlider {
 
   prepareNext(dir) {
     const target = this.wrap(this.current + dir);
-    this.nextTexture = this.textures[target];
-    this.gl.uniform2fv(this.uniforms.uCurrentSize, this.sizes[this.current]);
-    this.gl.uniform2fv(this.uniforms.uNextSize, this.sizes[target]);
-    this.gl.uniform1f(this.uniforms.uDir, dir);
+    this.nextIndex = target;
+    this.dir = dir;
     this.prioritizeLoad(target);
     return target;
   }
@@ -502,10 +733,10 @@ export class MorphSlider {
   tween(from, to, duration, onComplete) {
     if (this.tweenRAF) cancelAnimationFrame(this.tweenRAF);
     const start = performance.now();
-    const gl = this.gl;
     const step = (now) => {
-      const t = Math.min((now - start) / 1000 / duration, 1);
-      gl.uniform1f(this.uniforms.uProgress, from + (to - from) * power2InOut(t));
+      const t = Math.min(Math.max((now - start) / 1000 / duration, 0), 1);
+      this.progress = from + (to - from) * power2InOut(t);
+      this.renderNow(now);
       if (t < 1) {
         this.tweenRAF = requestAnimationFrame(step);
       } else {
@@ -518,18 +749,22 @@ export class MorphSlider {
 
   commit(target) {
     this.current = target;
-    this.gl.uniform2fv(this.uniforms.uCurrentSize, this.sizes[target]);
-    this.gl.uniform1f(this.uniforms.uProgress, 0);
+    this.nextIndex = target;
+    this.progress = 0;
     this.animating = false;
     this.announce(target);
-    this.setLoading(!this.loaded[target]);
+    this.refreshLoading();
+    this.queueAround();
+    this.evictFar();
+    this.flushDeferred();
+    this.requestRender(); // settle on the cheap still-image frame
   }
 
   next() { this.goTo(1); }
   prev() { this.goTo(-1); }
 
   setPointer(x, y) {
-    this.gl.uniform2f(this.uniforms.uPointer, x, y);
+    this.pointer = [x, y];
   }
 
   bindPointerEvents() {
@@ -579,7 +814,8 @@ export class MorphSlider {
     if (!this.opts.loop) {
       const raw = this.current + dir;
       if (raw < 0 || raw > this.items.length - 1) {
-        this.gl.uniform1f(this.uniforms.uProgress, 0);
+        this.progress = 0;
+        this.requestRender();
         return;
       }
     }
@@ -587,34 +823,50 @@ export class MorphSlider {
       this.dragDir = dir;
       this.prepareNext(dir);
     }
-    const progress = Math.min(Math.abs(ndx), 1);
-    this.gl.uniform1f(this.uniforms.uProgress, progress);
-    this.announce(progress > 0.5 ? this.wrap(this.current + dir) : this.current);
+    this.progress = Math.min(Math.abs(ndx), 1);
+    this.announce(this.progress > 0.5 ? this.wrap(this.current + dir) : this.current);
+    this.requestRender(); // pointermove can fire faster than frames: coalesced to one draw per frame
   }
 
   endDrag() {
     if (!this.dragging) return;
     this.dragging = false;
-    if (this.dragDir === 0) return;
+    if (this.dragDir === 0) { this.flushDeferred(); return; }
     const target = this.wrap(this.current + this.dragDir);
     const duration = this.reducedMotion ? 0.3 : 0.5;
     this.animating = true;
-    const p = this.gl.getUniform(this.program, this.uniforms.uProgress) || 0;
+    const p = this.progress;
 
     if (p > 0.4) {
       this.announce(target);
       this.tween(p, 1, duration, () => this.commit(target));
     } else {
       this.announce(this.current);
-      this.tween(p, 0, duration, () => { this.animating = false; });
+      this.tween(p, 0, duration, () => {
+        this.animating = false;
+        this.flushDeferred();
+        this.requestRender();
+      });
     }
   }
 
   destroy() {
     this.destroyed = true;
-    cancelAnimationFrame(this.raf);
+    if (this.raf) cancelAnimationFrame(this.raf);
     if (this.tweenRAF) cancelAnimationFrame(this.tweenRAF);
+    this.raf = 0;
+    this.tweenRAF = null;
     this.resizeObserver.disconnect();
+
+    // Stop downloads for slides the viewer never got to (matters most when
+    // each one is a proxied request to our own server).
+    this.pendingImages.forEach((img) => {
+      img.onload = null;
+      img.onerror = null;
+      img.removeAttribute('src');
+    });
+    this.pendingImages.clear();
+    this.deferred.clear();
 
     const el = this.canvas;
     el.removeEventListener('pointerdown', this.onDown);
@@ -623,7 +875,7 @@ export class MorphSlider {
     el.removeEventListener('pointercancel', this.onUp);
 
     const gl = this.gl;
-    this.textures.forEach((tex) => gl.deleteTexture(tex));
+    new Set(this.textures).forEach((tex) => gl.deleteTexture(tex));
     gl.deleteProgram(this.program);
     const ext = gl.getExtension('WEBGL_lose_context');
     if (ext) ext.loseContext();

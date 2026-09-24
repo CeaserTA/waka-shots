@@ -17,7 +17,7 @@ class PageController extends Controller
     {
         return view('index', [
             'featuredCategories' => Category::with('portfolioItems')->orderBy('name')->get(),
-            'portfolioItems' => PortfolioItem::with('category')->latest()->take(7)->get(),
+            'portfolioItems' => PortfolioItem::with('category')->inRandomOrder()->take(7)->get(),
             'journalPosts' => JournalPost::with('category')
                 ->where('is_published', true)
                 ->latest()

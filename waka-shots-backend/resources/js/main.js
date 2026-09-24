@@ -1,4 +1,5 @@
 import { MorphSlider } from './morph-slider';
+import { createSliderUI } from './slider-ui';
 
 document.addEventListener('DOMContentLoaded', () => {
   const header = document.getElementById('siteHeader');
@@ -97,6 +98,11 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   const revealEls = document.querySelectorAll('.reveal, .mask-reveal');
+  // A ratio threshold silently breaks on containers taller than the viewport:
+  // the portfolio gallery wrapper holds every item at once, so its visible
+  // ratio peaks well under 0.12 and the callback never fires — leaving the
+  // items stuck at the opacity:0 set below. Trigger on first contact instead,
+  // held back by a small pixel inset so the reveal still reads as on-scroll.
   const io = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
@@ -104,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
         io.unobserve(entry.target);
       }
     });
-  }, { threshold: 0.12 });
+  }, { threshold: 0, rootMargin: '0px 0px -60px 0px' });
   revealEls.forEach(el => io.observe(el));
 
   // Portfolio category filter (only present on portfolio.html)
@@ -137,20 +143,27 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.appendChild(ring);
     document.body.classList.add('custom-cursor-active');
 
-    let mx = 0, my = 0, rx = 0, ry = 0;
+    // Moved with transform (compositor-only) rather than left/top (which
+    // forced a layout on every mouse event and every frame), and the ring's
+    // easing loop only runs while it is still catching up to the pointer
+    // instead of spinning on every frame for the life of the page.
+    let mx = 0, my = 0, rx = 0, ry = 0, ringRAF = 0;
+    const ringTick = () => {
+      rx += (mx - rx) * 0.15; ry += (my - ry) * 0.15;
+      ring.style.transform = `translate3d(${rx}px, ${ry}px, 0)`;
+      ringRAF = (Math.abs(mx - rx) > 0.1 || Math.abs(my - ry) > 0.1)
+        ? requestAnimationFrame(ringTick)
+        : 0;
+    };
     window.addEventListener('mousemove', (e) => {
       mx = e.clientX; my = e.clientY;
-      dot.style.left = mx + 'px'; dot.style.top = my + 'px';
+      dot.style.transform = `translate3d(${mx}px, ${my}px, 0)`;
       dot.classList.add('is-visible'); ring.classList.add('is-visible');
-    });
+      if (!ringRAF) ringRAF = requestAnimationFrame(ringTick);
+    }, { passive: true });
     document.addEventListener('mouseleave', () => {
       dot.classList.remove('is-visible'); ring.classList.remove('is-visible');
     });
-    (function loop() {
-      rx += (mx - rx) * 0.15; ry += (my - ry) * 0.15;
-      ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
-      requestAnimationFrame(loop);
-    })();
 
     const hoverTargets = document.querySelectorAll(
       '.work-item, .gallery-item, .bg-gold, [data-cursor]'
@@ -401,35 +414,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const getVisibleItems = () =>
       Array.from(document.querySelectorAll('.gallery-item')).filter(el => !el.classList.contains('hidden-item'));
 
+    const slideImageUrl = (img) => img.src.replace(/w=\d+/, 'w=1800');
+
     const buildSlides = () => getVisibleItems().map((el) => {
       const img = el.querySelector('img');
       const overlay = el.querySelector('.absolute');
       const caption = overlay?.children[1]?.textContent?.trim() || img.alt || '';
-      return { image: img.src.replace(/w=\d+/, 'w=1800'), caption };
+      return { image: slideImageUrl(img), caption };
     });
 
     let engine = null;
     let isOpen = false;
-
-    const renderCaption = (slides, index) => {
-      captionEl.innerHTML = slides.map((slide, i) => slide.caption
-        ? `<span class="morph-slider-caption-text${i === index ? ' is-active' : ''}">${slide.caption}</span>`
-        : '').join('');
-    };
-
-    const renderIndicators = (slides, index) => {
-      indicatorsEl.innerHTML = slides.map((_, i) =>
-        `<button type="button" class="morph-slider-dot${i === index ? ' is-active' : ''}" data-index="${i}" aria-label="Go to image ${i + 1}"></button>`
-      ).join('');
-      indicatorsEl.querySelectorAll('.morph-slider-dot').forEach((dot) => {
-        dot.addEventListener('click', () => {
-          if (!engine) return;
-          const target = parseInt(dot.dataset.index, 10);
-          if (target === engine.current) return;
-          engine.goTo(target > engine.current ? 1 : -1);
-        });
-      });
-    };
+    const ui = createSliderUI({ captionEl, indicatorsEl, getEngine: () => engine });
 
     const openLightbox = (index) => {
       const slides = buildSlides();
@@ -438,6 +434,7 @@ document.addEventListener('DOMContentLoaded', () => {
       lightbox.classList.add('is-open');
       lightbox.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
+      document.body.classList.add('lightbox-open');
       isOpen = true;
 
       if (engine) engine.destroy();
@@ -456,14 +453,10 @@ document.addEventListener('DOMContentLoaded', () => {
           overlayColor: '#0a0908',
           loop: true,
         },
-        onIndexChange: (i) => {
-          renderCaption(slides, i);
-          renderIndicators(slides, i);
-        },
+        onIndexChange: (i) => ui.update(i),
       });
 
-      renderCaption(slides, index);
-      renderIndicators(slides, index);
+      ui.render(slides, index);
     };
 
     const closeLightbox = () => {
@@ -473,6 +466,7 @@ document.addEventListener('DOMContentLoaded', () => {
       lightbox.classList.remove('is-open');
       lightbox.setAttribute('aria-hidden', 'true');
       document.body.style.overflow = '';
+      document.body.classList.remove('lightbox-open');
       isOpen = false;
       if (engine) { engine.destroy(); engine = null; }
     };
@@ -481,6 +475,18 @@ document.addEventListener('DOMContentLoaded', () => {
       item.addEventListener('click', () => {
         openLightbox(getVisibleItems().indexOf(item));
       });
+
+      // Start fetching the full image once the pointer has rested on a
+      // thumbnail for a moment, so by the time it is clicked the download is
+      // already under way (or finished) instead of starting from zero.
+      let warmTimer = 0;
+      item.addEventListener('pointerenter', () => {
+        warmTimer = window.setTimeout(() => {
+          const img = item.querySelector('img');
+          if (img) MorphSlider.prefetch(slideImageUrl(img));
+        }, 150);
+      });
+      item.addEventListener('pointerleave', () => window.clearTimeout(warmTimer));
     });
 
     closeBtn.addEventListener('click', closeLightbox);

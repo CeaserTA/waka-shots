@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Enquiries\Tables;
 
 use App\Models\Enquiry;
 use App\Models\SiteSetting;
+use App\Support\WhatsApp;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
@@ -77,8 +78,7 @@ class EnquiriesTable
                     Action::make('whatsapp')
                         ->label('WhatsApp')
                         ->icon(Heroicon::OutlinedChatBubbleLeftRight)
-                        // wa.me needs digits only, no +, spaces or dashes.
-                        ->url(fn (Enquiry $record): string => 'https://wa.me/' . preg_replace('/\D/', '', (string) $record->phone) . '?text=' . rawurlencode(self::greetingFor($record)))
+                        ->url(fn (Enquiry $record): ?string => WhatsApp::link($record->phone, self::greetingFor($record)))
                         ->openUrlInNewTab()
                         ->visible(fn (Enquiry $record): bool => filled($record->phone)),
                     Action::make('call')

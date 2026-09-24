@@ -33,7 +33,7 @@ class PortfolioItemForm
                     ->automaticallyResizeImagesMode('contain')
                     ->imageResizeUpscale(false)
                     ->required()
-                    ->maxSize(10240),
+                    ->maxSize(25600),
             ]);
     }
 }

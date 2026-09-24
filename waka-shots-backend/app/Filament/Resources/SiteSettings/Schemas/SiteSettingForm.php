@@ -32,7 +32,8 @@ class SiteSettingForm
                         TextInput::make('contact_phone')
                             ->label('Contact Phone'),
                         TextInput::make('whatsapp_number')
-                            ->label('WhatsApp Number'),
+                            ->label('WhatsApp Number')
+                            ->helperText('Include the country code, e.g. +256 700 000000 (spaces and "+" are fine). Used for the site\'s WhatsApp links.'),
                         Textarea::make('address')
                             ->columnSpanFull(),
                     ])

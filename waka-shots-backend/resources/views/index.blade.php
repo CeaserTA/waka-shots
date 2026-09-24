@@ -37,9 +37,9 @@
       <a href="{{ route('contact') }}" class="text-xs tracking-[0.14em] uppercase px-7 py-4 rounded-sm text-center border border-line-strong text-ivory hover:border-gold hover:text-gold-bright hover:-translate-y-0.5 transition-all duration-400 whitespace-nowrap">Book a Session</a>
     </div>
   </div>
-  <div class="hidden md:flex absolute bottom-6 left-[6vw] z-[2] items-center gap-3 font-mono text-[0.68rem] tracking-[0.2em] uppercase text-silver-dim">
+  <!-- <div class="hidden md:flex absolute bottom-6 left-[max(6vw,98px)] z-[2] items-center gap-3 font-mono text-[0.68rem] tracking-[0.2em] uppercase text-silver-dim">
     <span>Scroll</span><span class="scroll-line relative w-px h-[34px] bg-line-strong overflow-hidden"></span>
-  </div>
+  </div> -->
 </section>
 
 <!-- MARQUEE -->

@@ -1,13 +1,23 @@
 import { MorphSlider } from './morph-slider';
+import { createSliderUI } from './slider-ui';
 
-// ============ CLIENT GALLERY LIGHTBOX — same WebGL Morph Slider as the
-// public portfolio (see main.js), wired up separately here because this
-// page has its own trigger markup (.lightbox-trigger / data-full-image)
-// rather than the portfolio's .gallery-item. Slides use Google's
-// thumbnailLink (same as the grid) rather than the authenticated
-// gallery.preview proxy — that route re-fetches the full original from
-// Drive on every request, which is appropriately slow for a deliberate
-// "Download" click but far too slow to gate simply viewing a photo.
+// ============ CLIENT GALLERY LIGHTBOX ============
+// Same WebGL Morph Slider as the public portfolio (see main.js), wired up
+// separately here because this page has its own trigger markup
+// (.lightbox-trigger / data-full-image) rather than the portfolio's
+// .gallery-item.
+//
+// Slides load from gallery.thumb, a same-origin proxy of Google's
+// thumbnailLink (same as the grid, just readable as a WebGL texture) rather
+// than the authenticated gallery.preview route, which re-fetches the full
+// original from Drive on every request: appropriately slow for a deliberate
+// "Download" click, far too slow to gate simply viewing a photo.
+//
+// Even the thumb proxy is not free: each request costs the server a Drive
+// metadata call plus an upstream fetch, and `php artisan serve` handles one
+// request at a time. So the slider keeps to its default preload radius (the
+// current photo and its immediate neighbours) instead of pulling the whole
+// gallery through the proxy the moment the viewer opens.
 document.addEventListener('DOMContentLoaded', () => {
   const lightbox = document.getElementById('galleryLightbox');
   if (!lightbox) return;
@@ -28,26 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let engine = null;
   let isOpen = false;
-
-  const renderCaption = (slides, index) => {
-    captionEl.innerHTML = slides.map((slide, i) => slide.caption
-      ? `<span class="morph-slider-caption-text${i === index ? ' is-active' : ''}">${slide.caption}</span>`
-      : '').join('');
-  };
-
-  const renderIndicators = (slides, index) => {
-    indicatorsEl.innerHTML = slides.map((_, i) =>
-      `<button type="button" class="morph-slider-dot${i === index ? ' is-active' : ''}" data-index="${i}" aria-label="Go to image ${i + 1}"></button>`
-    ).join('');
-    indicatorsEl.querySelectorAll('.morph-slider-dot').forEach((dot) => {
-      dot.addEventListener('click', () => {
-        if (!engine) return;
-        const target = parseInt(dot.dataset.index, 10);
-        if (target === engine.current) return;
-        engine.goTo(target > engine.current ? 1 : -1);
-      });
-    });
-  };
+  const ui = createSliderUI({ captionEl, indicatorsEl, getEngine: () => engine });
 
   const openLightbox = (index) => {
     const slides = buildSlides();
@@ -56,6 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
     lightbox.classList.add('is-open');
     lightbox.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
+    document.body.classList.add('lightbox-open');
     isOpen = true;
 
     if (engine) engine.destroy();
@@ -73,19 +65,11 @@ document.addEventListener('DOMContentLoaded', () => {
         drift: 0.4,
         overlayColor: '#0a0908',
         loop: true,
-        // Slides load Google's own thumbnailLink CDN, same as the grid —
-        // fast and not subject to our gallery.preview rate limit, so no
-        // need to restrict how much the slider preloads in the background
-        // (see MorphSlider's default preloadRadius).
       },
-      onIndexChange: (i) => {
-        renderCaption(slides, i);
-        renderIndicators(slides, i);
-      },
+      onIndexChange: (i) => ui.update(i),
     });
 
-    renderCaption(slides, index);
-    renderIndicators(slides, index);
+    ui.render(slides, index);
   };
 
   const closeLightbox = () => {
@@ -93,6 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
     lightbox.classList.remove('is-open');
     lightbox.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
+    document.body.classList.remove('lightbox-open');
     isOpen = false;
     if (engine) { engine.destroy(); engine = null; }
   };

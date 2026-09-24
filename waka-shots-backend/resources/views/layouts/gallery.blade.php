@@ -26,6 +26,7 @@
 <body class="gallery-shell font-sans">
     <div class="grain" aria-hidden="true"></div>
     @yield('content')
+    @include('components.whatsapp-float', ['message' => 'Hi Waka Shots! I have a question about my gallery.'])
     @stack('scripts')
 </body>
 </html>

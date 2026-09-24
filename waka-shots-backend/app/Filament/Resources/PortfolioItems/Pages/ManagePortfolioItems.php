@@ -50,7 +50,7 @@ class ManagePortfolioItems extends ManageRecords
                         ->automaticallyResizeImagesMode('contain')
                         ->imageResizeUpscale(false)
                         ->required()
-                        ->maxSize(10240),
+                        ->maxSize(25600),
                 ])
                 ->action(function (array $data): void {
                     foreach ($data['images'] as $imagePath) {

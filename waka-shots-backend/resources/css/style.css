@@ -62,6 +62,7 @@ body{ -webkit-font-smoothing:antialiased; }
 .mobile-menu a:nth-child(5){ transition-delay:.2s; }
 .mobile-menu a:nth-child(6){ transition-delay:.25s; }
 .mobile-menu a:nth-child(7){ transition-delay:.3s; }
+.mobile-menu a:nth-child(8){ transition-delay:.35s; }
 /* open: links fall in bottom-first, once the black layer has landed */
 .mobile-menu.open a{
   opacity:1; transform:translateY(0) rotate(0deg);
@@ -74,6 +75,7 @@ body{ -webkit-font-smoothing:antialiased; }
 .mobile-menu.open a:nth-child(5){ transition-delay:.95s; }
 .mobile-menu.open a:nth-child(6){ transition-delay:.9s; }
 .mobile-menu.open a:nth-child(7){ transition-delay:.85s; }
+.mobile-menu.open a:nth-child(8){ transition-delay:.8s; }
 
 /* While the menu is open, the header (which owns the burger) must sit above
    the wipe/menu overlays — the burger's own z-index is trapped inside the
@@ -130,12 +132,12 @@ body.custom-cursor-active input, body.custom-cursor-active textarea, body.custom
 .cursor-dot{
   position:fixed; top:0; left:0; width:6px; height:6px; margin:-3px 0 0 -3px;
   background:#c6a15b; border-radius:50%; pointer-events:none; z-index:9999;
-  opacity:0; transition:opacity .3s ease;
+  opacity:0; transition:opacity .3s ease; will-change:transform;
 }
 .cursor-ring{
   position:fixed; top:0; left:0; width:38px; height:38px; margin:-19px 0 0 -19px;
   border:1px solid rgba(198,161,91,0.55); border-radius:50%; pointer-events:none; z-index:9998;
-  display:flex; align-items:center; justify-content:center; opacity:0;
+  display:flex; align-items:center; justify-content:center; opacity:0; will-change:transform;
   transition:width .35s cubic-bezier(.22,.61,.36,1), height .35s cubic-bezier(.22,.61,.36,1),
              margin .35s cubic-bezier(.22,.61,.36,1), border-color .35s ease, background .35s ease, opacity .3s ease;
 }
@@ -414,7 +416,20 @@ body.custom-cursor-active input, body.custom-cursor-active textarea, body.custom
   opacity:0; transform:translateY(12px); filter:blur(6px);
   transition:opacity .5s cubic-bezier(.22,.61,.36,1), transform .5s cubic-bezier(.22,.61,.36,1), filter .5s cubic-bezier(.22,.61,.36,1);
 }
-.morph-slider-caption-text.is-active{ opacity:1; transform:translateY(0); filter:blur(0); }
+/* Only one caption element exists at a time now (see slider-ui.js), and it is
+   inserted already active, so it needs a keyframe entrance rather than a
+   transition (a transition has nothing to start from on a fresh element). */
+.morph-slider-caption-text.is-active{
+  opacity:1; transform:translateY(0); filter:blur(0);
+  animation:captionIn .5s cubic-bezier(.22,.61,.36,1);
+}
+@keyframes captionIn{ from{ opacity:0; transform:translateY(12px); } to{ opacity:1; transform:translateY(0); } }
+
+/* The film-grain overlay is a full-viewport mix-blend-mode layer that the
+   compositor has to re-blend against whatever is beneath it. While the
+   lightbox covers the page it is invisible anyway (the lightbox is 96%
+   opaque), so switch it off rather than pay for it. */
+body.lightbox-open .grain{ display:none; }
 
 .morph-slider-controls{
   position:absolute; top:50%; left:0; right:0; z-index:3;
@@ -462,6 +477,21 @@ body.custom-cursor-active input, body.custom-cursor-active textarea, body.custom
 .back-to-top:hover{ border-color:#c6a15b; background:#c6a15b; color:#0a0908; }
 .back-to-top svg{ width:18px; height:18px; }
 @media (max-width: 640px){ .back-to-top{ bottom:20px; right:20px; width:42px; height:42px; } }
+
+/* ============ WHATSAPP FLOAT ============ */
+/* Mirrors .back-to-top on the opposite corner (same inset, size and z-index)
+   so the two can never meet; always visible rather than scroll-revealed. */
+.whatsapp-float{
+  position:fixed; bottom:28px; left:28px; z-index:400;
+  width:46px; height:46px; border-radius:50%;
+  background:rgba(10,9,8,0.75); backdrop-filter:blur(6px);
+  border:1px solid rgba(198,161,91,0.4);
+  color:#e6c887; display:flex; align-items:center; justify-content:center;
+  transition:transform .3s cubic-bezier(.22,.61,.36,1), border-color .3s ease, background .3s ease, color .3s ease;
+}
+.whatsapp-float:hover{ border-color:#c6a15b; background:#c6a15b; color:#0a0908; transform:translateY(-2px); }
+.whatsapp-float svg{ width:20px; height:20px; }
+@media (max-width: 640px){ .whatsapp-float{ bottom:20px; left:20px; width:42px; height:42px; } }
 
 /* ============ SERVICES SUB-NAV PILLS ============ */
 .pkg-nav-link{

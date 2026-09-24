@@ -20,6 +20,7 @@
         @yield('content')
     </main>
     @include('components.footer')
+    @include('components.whatsapp-float', ['message' => "Hi Waka Shots! I'd love to enquire about booking a photography session with you."])
     @stack('scripts')
 </body>
 </html>
