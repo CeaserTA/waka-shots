@@ -62,7 +62,7 @@ class GalleryAccessCodeTest extends TestCase
 
         $this->get(route('gallery.show', $gallery->access_token))
             ->assertOk()
-            ->assertDontSee('This gallery is private.');
+            ->assertDontSee('Unlock gallery');
     }
 
     public function test_every_content_route_is_locked_until_unlocked(): void
@@ -82,7 +82,7 @@ class GalleryAccessCodeTest extends TestCase
         ];
 
         foreach ($urls as $url) {
-            $this->get($url)->assertForbidden()->assertSee('This gallery is private.');
+            $this->get($url)->assertForbidden()->assertSee('Unlock gallery');
         }
 
         $this->post(route('gallery.testimonial', $token), ['rating' => 5, 'quote' => 'Lovely photos, thank you!'])
@@ -92,7 +92,7 @@ class GalleryAccessCodeTest extends TestCase
         $this->post(route('gallery.unlock', $token), ['code' => $code])
             ->assertRedirect(route('gallery.show', $token));
 
-        $this->get(route('gallery.show', $token))->assertOk()->assertDontSee('This gallery is private.');
+        $this->get(route('gallery.show', $token))->assertOk()->assertDontSee('Unlock gallery');
         $this->get(route('gallery.preview', [$token, 'img']))->assertOk();
         $this->get(route('gallery.thumb', [$token, 'img']))->assertOk();
     }

@@ -32,5 +32,10 @@
         <env name="PULSE_ENABLED" value="false"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="NIGHTWATCH_ENABLED" value="false"/>
+        <env name="R2_ACCESS_KEY_ID" value="testing"/>
+        <env name="R2_SECRET_ACCESS_KEY" value="testing"/>
+        <env name="R2_BUCKET" value="testing"/>
+        <env name="R2_ENDPOINT" value="https://r2.test"/>
+        <env name="R2_URL" value="https://cdn.r2.test"/>
     </php>
 </phpunit>
