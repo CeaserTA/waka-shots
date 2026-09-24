@@ -18,10 +18,15 @@ class GalleryForm
             Section::make('Client & Event')
                 ->schema([
                     TextInput::make('client_name')->required()->maxLength(255),
+                    TextInput::make('client_email')
+                        ->email()
+                        ->required(fn (string $operation): bool => $operation === 'create')
+                        ->maxLength(255)
+                        ->helperText('The gallery link and access code are sent to this address.'),
                     TextInput::make('event_name')->required()->maxLength(255),
                     DatePicker::make('event_date')->required(),
                 ])
-                ->columns(3),
+                ->columns(2),
             Section::make('Delivery & Access')
                 ->description('Where the photos live, and how long the client can reach them.')
                 ->schema([

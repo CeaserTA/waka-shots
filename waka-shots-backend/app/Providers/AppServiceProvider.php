@@ -43,6 +43,12 @@ class AppServiceProvider extends ServiceProvider
         // the lightbox may eagerly preload most of a gallery in the
         // background — a much more generous ceiling than the full-original
         // preview/download routes above.
+        // Access-code attempts: tight enough that guessing a 6-digit code is
+        // impractical, loose enough for a client who mistypes a few times.
+        RateLimiter::for('gallery-unlock', function (Request $request) {
+            return Limit::perMinutes(10, 10)->by($request->route('token') . '|' . $request->ip());
+        });
+
         RateLimiter::for('gallery-thumbnails', function (Request $request) {
             return Limit::perMinute(120)->by($request->route('token') . '|' . $request->ip());
         });

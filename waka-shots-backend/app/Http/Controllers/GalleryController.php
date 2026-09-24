@@ -29,6 +29,10 @@ class GalleryController extends Controller
             return response()->view('galleries.unavailable', [], 200);
         }
 
+        if ($locked = $this->lockedResponse($gallery)) {
+            return $locked;
+        }
+
         try {
             $images = $this->drive->listImagesInFolder($gallery->drive_folder_id);
         } catch (Throwable $exception) {
@@ -44,12 +48,16 @@ class GalleryController extends Controller
         return response()->view('galleries.show', compact('gallery', 'images', 'testimonial'));
     }
 
-    public function submitTestimonial(Request $request, string $token): \Illuminate\Http\RedirectResponse
+    public function submitTestimonial(Request $request, string $token): \Symfony\Component\HttpFoundation\Response
     {
         $gallery = $this->findAvailableGallery($token);
 
         if (! $gallery) {
             return redirect()->route('gallery.show', $token)->with('error', 'This gallery is no longer available.');
+        }
+
+        if ($locked = $this->lockedResponse($gallery)) {
+            return $locked;
         }
 
         $validated = $request->validate([
@@ -82,6 +90,29 @@ class GalleryController extends Controller
 
         return redirect()->route('gallery.show', $token)->with('success', 'Thanks for your review.');
     }
+    public function unlock(Request $request, string $token): \Symfony\Component\HttpFoundation\Response
+    {
+        $gallery = $this->findAvailableGallery($token);
+
+        if (! $gallery) {
+            return response()->view('galleries.unavailable', [], 200);
+        }
+
+        $validated = $request->validate([
+            'code' => ['required', 'string', 'max:20'],
+        ]);
+
+        if (! $gallery->hasPassword() || $gallery->verifyPassword(trim($validated['code']))) {
+            $request->session()->put($this->unlockSessionKey($gallery), $this->unlockFingerprint($gallery));
+
+            return redirect()->route('gallery.show', $token);
+        }
+
+        $this->logAccess($request, $gallery, 'password_failed');
+
+        return back()->withErrors(['code' => 'That access code is not correct.'])->onlyInput('code');
+    }
+
     public function preview(Request $request, string $token, string $imageId): Response
     {
         return $this->serveImage($request, $token, $imageId, false);
@@ -106,6 +137,10 @@ class GalleryController extends Controller
 
         if (! $gallery) {
             return response()->view('galleries.unavailable', [], 200);
+        }
+
+        if ($locked = $this->lockedResponse($gallery)) {
+            return $locked;
         }
 
         try {
@@ -138,6 +173,10 @@ class GalleryController extends Controller
 
         if (! $gallery) {
             return response()->view('galleries.unavailable', [], 200);
+        }
+
+        if ($locked = $this->lockedResponse($gallery)) {
+            return $locked;
         }
 
         try {
@@ -174,6 +213,10 @@ class GalleryController extends Controller
 
         if (! $gallery) {
             return response()->view('galleries.unavailable', [], 200);
+        }
+
+        if ($locked = $this->lockedResponse($gallery)) {
+            return $locked;
         }
 
         $zipPath = null;
@@ -224,6 +267,39 @@ class GalleryController extends Controller
 
             return response()->view('galleries.error', [], 503);
         }
+    }
+
+    /**
+     * The code-entry page when the gallery is protected and this session
+     * hasn't unlocked it yet; null when the request may proceed.
+     */
+    private function lockedResponse(Gallery $gallery): ?Response
+    {
+        return $this->isUnlockedForSession($gallery)
+            ? null
+            : response()->view('galleries.locked', ['token' => $gallery->access_token], 403);
+    }
+
+    private function isUnlockedForSession(Gallery $gallery): bool
+    {
+        if (! $gallery->hasPassword()) {
+            return true;
+        }
+
+        $fingerprint = session()->get($this->unlockSessionKey($gallery));
+
+        // Bound to the current hash, so issuing a new code relocks existing sessions.
+        return is_string($fingerprint) && hash_equals($this->unlockFingerprint($gallery), $fingerprint);
+    }
+
+    private function unlockSessionKey(Gallery $gallery): string
+    {
+        return "gallery_unlocked_{$gallery->id}";
+    }
+
+    private function unlockFingerprint(Gallery $gallery): string
+    {
+        return hash('sha256', (string) $gallery->password_hash);
     }
 
     private function findAvailableGallery(string $token): ?Gallery

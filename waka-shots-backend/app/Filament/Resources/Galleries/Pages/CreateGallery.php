@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Galleries\Pages;
 
 use App\Filament\Resources\Galleries\GalleryResource;
 use App\Support\DriveFolderUrl;
+use App\Support\GalleryAccessCode;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateGallery extends CreateRecord
@@ -20,5 +21,10 @@ class CreateGallery extends CreateRecord
         $data['drive_folder_id'] = DriveFolderUrl::extractId($data['drive_folder_link']);
         unset($data['drive_folder_link']);
         return $data;
+    }
+
+    protected function afterCreate(): void
+    {
+        GalleryAccessCode::issue($this->record);
     }
 }

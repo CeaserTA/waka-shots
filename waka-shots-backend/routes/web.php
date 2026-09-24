@@ -39,6 +39,9 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('/gallery/{token}', [GalleryController::class, 'show'])->name('gallery.show');
+Route::post('/gallery/{token}/unlock', [GalleryController::class, 'unlock'])
+    ->middleware('throttle:gallery-unlock')
+    ->name('gallery.unlock');
 Route::post('/gallery/{token}/testimonial', [GalleryController::class, 'submitTestimonial'])
     ->middleware('throttle:gallery-testimonials')
     ->name('gallery.testimonial');
