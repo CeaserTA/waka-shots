@@ -1,5 +1,11 @@
-# Caddy obtains and renews the HTTPS certificate for $DOMAIN automatically.
+# Caddy obtains and renews HTTPS certificates for every host below automatically.
 {$DOMAIN} {
 	encode zstd gzip
 	reverse_proxy app:8080
+}
+
+# Extra hostnames (e.g. www., or an old address still in clients' emails)
+# that permanently redirect to $DOMAIN, keeping the path.
+{$REDIRECT_DOMAINS} {
+	redir https://{$DOMAIN}{uri} permanent
 }

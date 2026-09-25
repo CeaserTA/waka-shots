@@ -12,6 +12,8 @@ services:
       - "443:443/udp"
     environment:
       DOMAIN: ${DOMAIN:?Set DOMAIN in .env}
+      # Space-separated hosts redirected to DOMAIN; "localhost" is a harmless placeholder when none.
+      REDIRECT_DOMAINS: ${REDIRECT_DOMAINS:-localhost}
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
