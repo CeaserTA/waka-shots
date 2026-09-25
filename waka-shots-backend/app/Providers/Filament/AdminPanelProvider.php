@@ -10,10 +10,12 @@ use App\Filament\Pages\Auth\EditProfile;
 use App\Filament\Pages\Dashboard;
 use App\Filament\Widgets\QuickStats;
 use App\Filament\Widgets\RecentActivityWidget;
+use Filament\Actions\Action;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Enums\ThemeMode;
 use Filament\Support\Colors\Color;
+use Filament\View\PanelsRenderHook;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -33,6 +35,14 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->profile(EditProfile::class, isSimple: false)
             ->brandName('Waka Shots Photography')
+            // The public site links here in the same tab, so give admins a way back.
+            ->renderHook(PanelsRenderHook::AUTH_LOGIN_FORM_AFTER, fn () => view('filament.auth.back-to-site'))
+            ->userMenuItems([
+                'website' => Action::make('website')
+                    ->label('View website')
+                    ->icon('heroicon-o-globe-alt')
+                    ->url(fn (): string => route('home')),
+            ])
             ->darkMode(true, true)
             ->defaultThemeMode(ThemeMode::Dark)
             // Bell icon in the topbar, backed by the notifications table.
