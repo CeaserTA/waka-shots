@@ -1,5 +1,6 @@
 @extends('layouts.app')
-@section('title', 'Journal')
+@section('title', 'Journal — Waka Shots Photography')
+@section('meta_description', 'Notes from the Waka Shots studio in Kampala: stories and behind-the-scenes moments from the weddings, portraits and projects we photograph.')
 @section('content')
 <!-- PAGE HEADER -->
 <section class="relative h-[56vh] min-h-[380px] flex items-end overflow-hidden">
@@ -20,11 +21,13 @@
     @else
     <div class="reveal grid grid-cols-1 md:grid-cols-3 gap-x-9 gap-y-16">
       @foreach($posts as $post)
-        <article class="group block">
-          <div class="mb-5 aspect-[4/3] bg-charcoal flex items-center justify-center"><span class="font-mono text-xs uppercase tracking-widest text-gold">Waka Shots Journal</span></div>
-          <span class="font-mono text-[0.68rem] tracking-[0.14em] uppercase text-gold mb-3 block">{{ $post->category->name }}</span>
-          <h4 class="font-serif text-xl mb-2.5 leading-snug">{{ $post->title }}</h4>
-          <span class="text-xs text-silver-dim">From the studio</span>
+        <article class="group">
+          <a href="{{ route('journal.show', $post->slug) }}" class="block">
+            <div class="mb-5 aspect-[4/3] bg-charcoal flex items-center justify-center transition-colors duration-500 group-hover:bg-panel"><span class="font-mono text-xs uppercase tracking-widest text-gold">Waka Shots Journal</span></div>
+            <span class="font-mono text-[0.68rem] tracking-[0.14em] uppercase text-gold mb-3 block">{{ $post->category->name }}</span>
+            <h4 class="font-serif text-xl mb-2.5 leading-snug transition-colors group-hover:text-gold-bright">{{ $post->title }}</h4>
+            <span class="text-xs text-silver-dim">Read the story <span aria-hidden="true">→</span></span>
+          </a>
         </article>
       @endforeach
     </div>

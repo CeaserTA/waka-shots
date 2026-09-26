@@ -17,6 +17,7 @@ Route::get('/', [PageController::class, 'home'])->name('home');
 Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
 Route::get('/portfolio', [PortfolioController::class, 'index'])->name('portfolio');
 Route::get('/journal', [JournalController::class, 'index'])->name('journal');
+Route::get('/journal/{slug}', [JournalController::class, 'show'])->name('journal.show');
 Route::get('/films', [FilmController::class, 'index'])->name('films');
 Route::get('/services', [ServiceController::class, 'index'])->name('services');
 Route::get('/about', fn () => view('about'))->name('about');

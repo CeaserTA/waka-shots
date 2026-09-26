@@ -1,5 +1,6 @@
 @extends('layouts.app')
-@section('title', 'Films')
+@section('title', 'Films — Waka Shots Photography')
+@section('meta_description', 'Watch Waka Shots films: highlight reels, behind-the-scenes footage and full ceremony films from our YouTube channel, playable right here.')
 @section('content')
 <!-- PAGE HEADER -->
 <section class="relative h-[56vh] min-h-[380px] flex items-end overflow-hidden">

@@ -1,5 +1,6 @@
 @extends('layouts.app')
-@section('title', 'Services')
+@section('title', 'Services — Waka Shots Photography')
+@section('meta_description', 'Photography services and starting packages from Waka Shots in Kampala. Every project begins with a conversation, and scope and pricing are shaped around your story.')
 @section('content')
 <!-- PAGE HEADER -->
 <section class="relative h-[56vh] min-h-[380px] flex items-end overflow-hidden">

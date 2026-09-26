@@ -14,15 +14,26 @@ class SeoTest extends TestCase
 
     private const DEFAULT_DESCRIPTION = 'Kampala-based photography studio for weddings, introduction ceremonies, portraits, graduations and brand campaigns. Patience over performance — every session shaped around your story.';
 
-    public function test_pages_get_default_description_social_tags_and_canonical(): void
+    public function test_pages_without_their_own_description_get_the_default(): void
     {
-        $this->get(route('about'))
+        $this->get(route('home'))
             ->assertOk()
             ->assertSee('<meta name="description" content="'.e(self::DEFAULT_DESCRIPTION).'">', false)
             ->assertSee('<meta property="og:type" content="website">', false)
-            ->assertSee('<meta property="og:url" content="'.route('about').'">', false)
             ->assertSee('<meta name="twitter:card" content="summary_large_image">', false)
-            ->assertSee('<link rel="canonical" href="'.route('about').'">', false);
+            ->assertSee('<link rel="canonical" href="'.route('home').'">', false);
+    }
+
+    public function test_content_pages_have_full_titles_and_their_own_descriptions(): void
+    {
+        foreach (['about', 'services', 'portfolio', 'films', 'contact', 'journal'] as $page) {
+            $html = $this->get(route($page))->assertOk()->getContent();
+
+            $this->assertMatchesRegularExpression('#<title>\w+ — Waka Shots Photography</title>#u', $html, $page);
+            $this->assertStringNotContainsString('content="'.e(self::DEFAULT_DESCRIPTION).'"', $html, "{$page} should have its own description");
+            $this->assertStringContainsString('<link rel="canonical" href="'.route($page).'">', $html);
+            $this->assertStringContainsString('<meta property="og:url" content="'.route($page).'">', $html);
+        }
     }
 
     public function test_image_tags_are_omitted_without_a_hero_image_and_present_with_one(): void
@@ -91,6 +102,8 @@ class SeoTest extends TestCase
         foreach (['home', 'portfolio', 'services', 'films', 'about', 'contact', 'journal'] as $route) {
             $this->assertStringContainsString('<loc>'.route($route).'</loc>', $xml);
         }
+        $this->assertStringContainsString('<loc>'.route('journal.show', 'live').'</loc>', $xml);
+        $this->assertStringNotContainsString('/journal/draft', $xml);
         $this->assertStringNotContainsString('/gallery', $xml);
         $this->assertStringNotContainsString('/admin', $xml);
     }

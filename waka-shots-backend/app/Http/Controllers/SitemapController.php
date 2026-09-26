@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\JournalPost;
-use Illuminate\Support\Carbon;
 use Spatie\Sitemap\Sitemap;
 use Spatie\Sitemap\Tags\Url;
 
@@ -24,15 +23,21 @@ class SitemapController extends Controller
             ->add(Url::create(route('about')))
             ->add(Url::create(route('contact')));
 
-        // Posts have no pages of their own; they are all shown in full on /journal,
-        // so that page changes whenever a post is published or edited.
-        $journal = Url::create(route('journal'));
-        $latestPost = JournalPost::where('is_published', true)->max('updated_at');
+        $posts = JournalPost::published()->whereNotNull('slug')->latest('updated_at')->get(['slug', 'updated_at']);
 
-        if ($latestPost) {
-            $journal->setLastModificationDate(Carbon::parse($latestPost));
+        // The index lists every post, so it changes whenever the newest one does.
+        $journal = Url::create(route('journal'));
+
+        if ($posts->isNotEmpty()) {
+            $journal->setLastModificationDate($posts->first()->updated_at);
         }
 
-        return $sitemap->add($journal);
+        $sitemap->add($journal);
+
+        foreach ($posts as $post) {
+            $sitemap->add(Url::create(route('journal.show', $post->slug))->setLastModificationDate($post->updated_at));
+        }
+
+        return $sitemap;
     }
 }

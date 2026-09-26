@@ -8,6 +8,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Str;
 
 class JournalPostForm
 {
@@ -23,12 +24,26 @@ class JournalPostForm
                             ->required(),
                         TextInput::make('title')
                             ->required()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(function (string $operation, $state, callable $set): void {
+                                if ($operation === 'create') {
+                                    $set('slug', Str::slug($state));
+                                }
+                            }),
+                        TextInput::make('slug')
+                            ->label('URL slug')
+                            ->prefix('/journal/')
+                            ->required(fn (string $operation): bool => $operation === 'edit')
+                            ->alphaDash()
+                            ->maxLength(255)
+                            ->unique(ignoreRecord: true)
+                            ->helperText('Filled in from the title. Changing it on a published post breaks existing links to it.'),
                         Toggle::make('is_published')
                             ->label('Published')
                             ->default(false),
                     ])
-                    ->columns(3),
+                    ->columns(2),
                 Section::make('Content')
                     ->schema([
                         RichEditor::make('content')

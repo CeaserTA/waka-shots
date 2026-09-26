@@ -1,5 +1,6 @@
 @extends('layouts.app')
-@section('title', 'Contact')
+@section('title', 'Contact — Waka Shots Photography')
+@section('meta_description', 'Book a session or ask a question. Get in touch with Waka Shots, a Kampala photography studio. We reply to every enquiry within 24–48 hours.')
 @push('head')
 <style>
   .field label{ font-family:'Space Mono', monospace; font-size:0.68rem; letter-spacing:0.12em; text-transform:uppercase; color:#aab0b6; display:block; margin-bottom:10px; }
