@@ -57,6 +57,13 @@ class JournalPost extends Model
         return $query->where('is_published', true);
     }
 
+    public function readingMinutes(): int
+    {
+        $words = str_word_count(strip_tags((string) $this->content));
+
+        return max(1, (int) ceil($words / 200));
+    }
+
     public function thumbnailUrl(): ?string
     {
         if (blank($this->thumbnail_path)) {

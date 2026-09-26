@@ -19,7 +19,7 @@ class PageController extends Controller
             'featuredCategories' => Category::with('portfolioItems')->orderBy('name')->get(),
             'portfolioItems' => PortfolioItem::with('category')->inRandomOrder()->take(7)->get(),
             'journalPosts' => JournalPost::with('category')
-                ->where('is_published', true)
+                ->published()
                 ->latest()
                 ->take(3)
                 ->get(),

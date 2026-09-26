@@ -86,6 +86,16 @@ class JournalPostPageTest extends TestCase
             ->assertSee('Waka Shots Journal');
     }
 
+    public function test_home_page_journal_teaser_shows_thumbnails_and_links_to_posts(): void
+    {
+        $post = $this->post(['thumbnail_path' => 'https://cdn.example.test/entebbe.jpg']);
+
+        $this->get(route('home'))
+            ->assertOk()
+            ->assertSee('href="'.route('journal.show', $post->slug).'"', false)
+            ->assertSee('<img src="https://cdn.example.test/entebbe.jpg"', false);
+    }
+
     public function test_drafts_and_unknown_slugs_are_not_found(): void
     {
         $draft = $this->post(['title' => 'Draft notes', 'is_published' => false]);

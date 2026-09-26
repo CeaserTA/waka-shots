@@ -515,4 +515,28 @@ document.addEventListener('DOMContentLoaded', () => {
   backToTop.addEventListener('click', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
+
+  // ============ JOURNAL POST COVER — scroll-linked parallax ============
+  // The cover image drifts slower than the page while the title lifts and
+  // fades, like Framer Motion's useScroll/useTransform, in plain JS.
+  const postHero = document.querySelector('[data-post-hero]');
+  const postHeroMedia = postHero?.querySelector('[data-post-hero-media]');
+  const postHeroContent = postHero?.querySelector('[data-post-hero-content]');
+  if (postHero && postHeroMedia && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    let heroTicking = false;
+    const updatePostHero = () => {
+      const progress = Math.min(Math.max(window.scrollY / postHero.offsetHeight, 0), 1);
+      postHeroMedia.style.transform = `translate3d(0, ${progress * 18}%, 0)`;
+      postHeroContent.style.transform = `translate3d(0, ${progress * -60}px, 0)`;
+      postHeroContent.style.opacity = String(1 - progress * 1.4);
+      heroTicking = false;
+    };
+    window.addEventListener('scroll', () => {
+      if (!heroTicking) {
+        heroTicking = true;
+        requestAnimationFrame(updatePostHero);
+      }
+    }, { passive: true });
+    updatePostHero();
+  }
 });

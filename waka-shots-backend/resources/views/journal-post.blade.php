@@ -6,27 +6,34 @@
   @section('og_image', $post->thumbnailUrl())
 @endif
 @section('content')
-<!-- POST HEADER -->
-<section class="relative pt-44 pb-16 border-b border-line" style="background:linear-gradient(180deg, rgba(198,161,91,0.06), transparent), #0a0908;">
-  <div class="max-w-[820px] mx-auto px-[6vw] md:px-0">
-    <a href="{{ route('journal') }}" class="anim-fadeup inline-flex items-center gap-2 font-mono text-[0.7rem] tracking-[0.16em] uppercase text-silver-dim hover:text-gold-bright transition-colors">
+<!-- POST HEADER: the thumbnail is the cover; the gradient melts it into the page -->
+@php($thumbnail = $post->thumbnailUrl())
+<section data-post-hero class="relative flex items-end overflow-hidden {{ $thumbnail ? 'h-[88vh] min-h-[560px]' : 'min-h-[60vh] pt-44' }}">
+  @if($thumbnail)
+    <div data-post-hero-media class="absolute inset-x-0 -top-[6%] h-[112%] will-change-transform" aria-hidden="true">
+      <img src="{{ $thumbnail }}" alt="" class="hero-bg w-full h-full object-cover saturate-90 brightness-90">
+    </div>
+    <div class="absolute inset-0" style="background:linear-gradient(180deg, rgba(10,9,8,0.7) 0%, rgba(10,9,8,0.15) 28%, rgba(10,9,8,0.35) 55%, rgba(10,9,8,0.92) 84%, #0a0908 100%);"></div>
+  @else
+    <div class="absolute inset-0" style="background:radial-gradient(ellipse at 70% 20%, rgba(198,161,91,0.12), transparent 60%), linear-gradient(180deg, #151316 0%, #0a0908 100%);"></div>
+  @endif
+
+  <div data-post-hero-content class="relative z-[2] w-full max-w-[1000px] mx-auto px-[6vw] md:px-8 pb-14 md:pb-20 will-change-transform">
+    <a href="{{ route('journal') }}" class="anim-fadeup inline-flex items-center gap-2 font-mono text-[0.7rem] tracking-[0.16em] uppercase text-ivory-dim hover:text-gold-bright transition-colors">
       <span aria-hidden="true">←</span> Journal
     </a>
-    <span class="eyebrow anim-fadeup mt-10 font-mono text-xs tracking-[0.22em] uppercase text-gold flex items-center gap-2.5" style="animation-delay:.1s;">{{ $post->category?->name ?? 'Journal' }}</span>
-    <h1 class="anim-fadeup font-serif font-normal text-[clamp(2.2rem,5.4vw,4rem)] leading-[1.1] mt-4" style="animation-delay:.2s;">{{ $post->title }}</h1>
-    <time datetime="{{ $post->created_at->toDateString() }}" class="anim-fadeup block mt-6 text-sm text-silver-dim" style="animation-delay:.3s;">{{ $post->created_at->format('j F Y') }}</time>
+    <span class="eyebrow anim-fadeup mt-8 font-mono text-xs tracking-[0.22em] uppercase text-gold flex items-center gap-2.5" style="animation-delay:.1s;">{{ $post->category?->name ?? 'Journal' }}</span>
+    <h1 class="anim-fadeup font-serif font-normal text-[clamp(2.4rem,6vw,4.8rem)] leading-[1.05] mt-4 max-w-[16ch] [text-shadow:0_2px_30px_rgba(10,9,8,0.5)]" style="animation-delay:.2s;">{{ $post->title }}</h1>
+    <div class="anim-fadeup mt-7 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ivory-dim" style="animation-delay:.3s;">
+      <time datetime="{{ $post->created_at->toDateString() }}">{{ $post->created_at->format('j F Y') }}</time>
+      <span class="w-1 h-1 rounded-full bg-gold" aria-hidden="true"></span>
+      <span>{{ $post->readingMinutes() }} min read</span>
+    </div>
   </div>
 </section>
 
-@if($thumbnail = $post->thumbnailUrl())
-<!-- THUMBNAIL -->
-<div class="max-w-[1100px] mx-auto px-[6vw] md:px-8 pt-16">
-  <img src="{{ $thumbnail }}" alt="{{ $post->title }}" class="reveal w-full aspect-[16/9] object-cover saturate-90 brightness-95">
-</div>
-@endif
-
 <!-- POST BODY -->
-<article class="py-20">
+<article class="pt-10 pb-24 md:pt-14">
   <div class="max-w-[820px] mx-auto px-[6vw] md:px-0">
     @if(filled($post->content))
       <div class="journal-body reveal">{!! $body !!}</div>
