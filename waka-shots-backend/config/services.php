@@ -41,4 +41,9 @@ return [
         'redirect' => env('GOOGLE_REDIRECT_URI'),
     ],
 
+    'google_analytics' => [
+        // GA4 measurement ID (G-XXXXXXXXXX). The tracking snippet only renders when set.
+        'id' => env('GOOGLE_ANALYTICS_ID'),
+    ],
+
 ];

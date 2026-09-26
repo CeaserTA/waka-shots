@@ -1,2 +1,11 @@
 User-agent: *
-Disallow:
+Allow: /
+
+# Admin panel (Filament path: "admin") and its Google Drive OAuth routes.
+Disallow: /admin
+Disallow: /auth/
+
+# Private, access-code-protected client galleries.
+Disallow: /gallery/
+
+Sitemap: https://wakashots.com/sitemap.xml
