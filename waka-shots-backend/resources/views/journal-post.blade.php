@@ -1,6 +1,10 @@
 @extends('layouts.app')
 @section('title', $post->title.' — Waka Shots Photography')
 @section('meta_description', $post->excerpt() ?: $post->title.' — a note from the Waka Shots studio journal in Kampala.')
+{{-- Without a thumbnail, the layout falls back to the site's hero image. --}}
+@if($post->thumbnailUrl())
+  @section('og_image', $post->thumbnailUrl())
+@endif
 @section('content')
 <!-- POST HEADER -->
 <section class="relative pt-44 pb-16 border-b border-line" style="background:linear-gradient(180deg, rgba(198,161,91,0.06), transparent), #0a0908;">
@@ -13,6 +17,13 @@
     <time datetime="{{ $post->created_at->toDateString() }}" class="anim-fadeup block mt-6 text-sm text-silver-dim" style="animation-delay:.3s;">{{ $post->created_at->format('j F Y') }}</time>
   </div>
 </section>
+
+@if($thumbnail = $post->thumbnailUrl())
+<!-- THUMBNAIL -->
+<div class="max-w-[1100px] mx-auto px-[6vw] md:px-8 pt-16">
+  <img src="{{ $thumbnail }}" alt="{{ $post->title }}" class="reveal w-full aspect-[16/9] object-cover saturate-90 brightness-95">
+</div>
+@endif
 
 <!-- POST BODY -->
 <article class="py-20">

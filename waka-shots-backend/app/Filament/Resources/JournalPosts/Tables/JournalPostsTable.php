@@ -5,6 +5,7 @@ namespace App\Filament\Resources\JournalPosts\Tables;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -16,6 +17,11 @@ class JournalPostsTable
     {
         return $table
             ->columns([
+                ImageColumn::make('thumbnail_path')
+                    ->label('Thumbnail')
+                    ->disk('r2')
+                    ->checkFileExistence(false)
+                    ->size(64),
                 TextColumn::make('title')
                     ->searchable()
                     ->sortable(),

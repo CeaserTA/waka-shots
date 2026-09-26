@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class JournalPost extends Model
@@ -13,6 +14,7 @@ class JournalPost extends Model
         'category_id',
         'title',
         'slug',
+        'thumbnail_path',
         'is_published',
         'content',
     ];
@@ -53,6 +55,17 @@ class JournalPost extends Model
     public function scopePublished(Builder $query): Builder
     {
         return $query->where('is_published', true);
+    }
+
+    public function thumbnailUrl(): ?string
+    {
+        if (blank($this->thumbnail_path)) {
+            return null;
+        }
+
+        return Str::startsWith($this->thumbnail_path, ['http://', 'https://'])
+            ? $this->thumbnail_path
+            : Storage::disk('r2')->url($this->thumbnail_path);
     }
 
     public function category(): BelongsTo

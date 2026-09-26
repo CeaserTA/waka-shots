@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Category;
 use App\Models\JournalPost;
+use App\Models\SiteSetting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
@@ -62,6 +63,27 @@ class JournalPostPageTest extends TestCase
         $this->get(route('journal.show', $other->slug))
             ->assertSee('<title>Graduation Day — Waka Shots Photography</title>', false)
             ->assertSee('<meta name="description" content="Caps in the air.">', false);
+    }
+
+    public function test_thumbnail_is_shown_and_used_as_the_share_image(): void
+    {
+        SiteSetting::current()->update(['home_hero_image' => 'https://cdn.example.test/hero.jpg']);
+        $withThumb = $this->post(['thumbnail_path' => 'https://cdn.example.test/entebbe.jpg']);
+        $withoutThumb = $this->post(['title' => 'No Picture Yet']);
+
+        $this->get(route('journal.show', $withThumb->slug))
+            ->assertOk()
+            ->assertSee('<img src="https://cdn.example.test/entebbe.jpg"', false)
+            ->assertSee('<meta property="og:image" content="https://cdn.example.test/entebbe.jpg">', false)
+            ->assertSee('<meta name="twitter:image" content="https://cdn.example.test/entebbe.jpg">', false);
+
+        $this->get(route('journal.show', $withoutThumb->slug))
+            ->assertOk()
+            ->assertSee('<meta property="og:image" content="https://cdn.example.test/hero.jpg">', false);
+
+        $this->get(route('journal'))
+            ->assertSee('<img src="https://cdn.example.test/entebbe.jpg"', false)
+            ->assertSee('Waka Shots Journal');
     }
 
     public function test_drafts_and_unknown_slugs_are_not_found(): void

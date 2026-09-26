@@ -23,7 +23,13 @@
       @foreach($posts as $post)
         <article class="group">
           <a href="{{ route('journal.show', $post->slug) }}" class="block">
-            <div class="mb-5 aspect-[4/3] bg-charcoal flex items-center justify-center transition-colors duration-500 group-hover:bg-panel"><span class="font-mono text-xs uppercase tracking-widest text-gold">Waka Shots Journal</span></div>
+            @if($thumbnail = $post->thumbnailUrl())
+              <div class="mb-5 aspect-[4/3] overflow-hidden bg-charcoal">
+                <img src="{{ $thumbnail }}" alt="{{ $post->title }}" loading="lazy" class="w-full h-full object-cover saturate-90 brightness-95 transition-transform duration-700 group-hover:scale-105">
+              </div>
+            @else
+              <div class="mb-5 aspect-[4/3] bg-charcoal flex items-center justify-center transition-colors duration-500 group-hover:bg-panel"><span class="font-mono text-xs uppercase tracking-widest text-gold">Waka Shots Journal</span></div>
+            @endif
             <span class="font-mono text-[0.68rem] tracking-[0.14em] uppercase text-gold mb-3 block">{{ $post->category->name }}</span>
             <h4 class="font-serif text-xl mb-2.5 leading-snug transition-colors group-hover:text-gold-bright">{{ $post->title }}</h4>
             <span class="text-xs text-silver-dim">Read the story <span aria-hidden="true">→</span></span>
