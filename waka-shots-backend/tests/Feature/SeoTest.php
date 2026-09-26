@@ -36,7 +36,9 @@ class SeoTest extends TestCase
         }
     }
 
-    public function test_image_tags_are_omitted_without_a_hero_image_and_present_with_one(): void
+    // One request per test: the view composer memoises SiteSetting with once(),
+    // which persists across requests inside a single test.
+    public function test_image_tags_are_omitted_without_a_hero_image(): void
     {
         SiteSetting::current()->update(['home_hero_image' => null]);
 
@@ -44,10 +46,14 @@ class SeoTest extends TestCase
             ->assertOk()
             ->assertDontSee('og:image', false)
             ->assertDontSee('twitter:image', false);
+    }
 
+    public function test_image_tags_use_the_hero_image_when_set(): void
+    {
         SiteSetting::current()->update(['home_hero_image' => 'https://cdn.example.test/hero.jpg']);
 
         $this->get(route('home'))
+            ->assertOk()
             ->assertSee('<meta property="og:image" content="https://cdn.example.test/hero.jpg">', false)
             ->assertSee('<meta name="twitter:image" content="https://cdn.example.test/hero.jpg">', false);
     }
