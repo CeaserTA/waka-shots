@@ -23,7 +23,7 @@
       <span aria-hidden="true">←</span> Journal
     </a>
     <span class="eyebrow anim-fadeup mt-8 font-mono text-xs tracking-[0.22em] uppercase text-gold flex items-center gap-2.5" style="animation-delay:.1s;">{{ $post->category?->name ?? 'Journal' }}</span>
-    <h1 class="anim-fadeup font-serif font-normal text-[clamp(2.4rem,6vw,4.8rem)] leading-[1.05] mt-4 max-w-[16ch] [text-shadow:0_2px_30px_rgba(10,9,8,0.5)]" style="animation-delay:.2s;">{{ $post->title }}</h1>
+    <h1 class="anim-fadeup font-serif font-normal text-[clamp(2.1rem,5vw,4rem)] leading-[1.08] mt-4 max-w-[18ch] [text-shadow:0_2px_30px_rgba(10,9,8,0.5)]" style="animation-delay:.2s;">{{ $post->title }}</h1>
     <div class="anim-fadeup mt-7 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ivory-dim" style="animation-delay:.3s;">
       <time datetime="{{ $post->created_at->toDateString() }}">{{ $post->created_at->format('j F Y') }}</time>
       <span class="w-1 h-1 rounded-full bg-gold" aria-hidden="true"></span>
