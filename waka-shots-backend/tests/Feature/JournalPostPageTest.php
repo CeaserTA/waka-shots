@@ -13,7 +13,7 @@ class JournalPostPageTest extends TestCase
 {
     use RefreshDatabase;
 
-    private function post(array $attributes = []): JournalPost
+    private function makePost(array $attributes = []): JournalPost
     {
         $category = Category::firstOrCreate(['slug' => 'weddings'], ['name' => 'Weddings']);
 
@@ -27,9 +27,9 @@ class JournalPostPageTest extends TestCase
 
     public function test_new_posts_get_a_unique_slug_from_their_title(): void
     {
-        $first = $this->post();
-        $second = $this->post();
-        $custom = $this->post(['title' => 'Anything', 'slug' => 'my-own-slug']);
+        $first = $this->makePost();
+        $second = $this->makePost();
+        $custom = $this->makePost(['title' => 'Anything', 'slug' => 'my-own-slug']);
 
         $this->assertSame('a-quiet-morning-in-entebbe', $first->slug);
         $this->assertSame('a-quiet-morning-in-entebbe-2', $second->slug);
@@ -38,7 +38,7 @@ class JournalPostPageTest extends TestCase
 
     public function test_editing_the_title_keeps_the_existing_slug(): void
     {
-        $post = $this->post();
+        $post = $this->makePost();
         $post->update(['title' => 'A Renamed Story']);
 
         $this->assertSame('a-quiet-morning-in-entebbe', $post->fresh()->slug);
@@ -46,8 +46,8 @@ class JournalPostPageTest extends TestCase
 
     public function test_post_page_shows_the_post_with_its_own_meta_tags(): void
     {
-        $post = $this->post(['content' => '<h2>Before the vows</h2><p>First light over the lake, <a href="https://example.com/venue">the venue</a>.</p><script>alert(1)</script>']);
-        $other = $this->post(['title' => 'Graduation Day', 'content' => '<p>Caps in the air.</p>']);
+        $post = $this->makePost(['content' => '<h2>Before the vows</h2><p>First light over the lake, <a href="https://example.com/venue">the venue</a>.</p><script>alert(1)</script>']);
+        $other = $this->makePost(['title' => 'Graduation Day', 'content' => '<p>Caps in the air.</p>']);
 
         $html = $this->get(route('journal.show', $post->slug))->assertOk()->getContent();
 
@@ -68,8 +68,8 @@ class JournalPostPageTest extends TestCase
     public function test_thumbnail_is_shown_and_used_as_the_share_image(): void
     {
         SiteSetting::current()->update(['home_hero_image' => 'https://cdn.example.test/hero.jpg']);
-        $withThumb = $this->post(['thumbnail_path' => 'https://cdn.example.test/entebbe.jpg']);
-        $withoutThumb = $this->post(['title' => 'No Picture Yet']);
+        $withThumb = $this->makePost(['thumbnail_path' => 'https://cdn.example.test/entebbe.jpg']);
+        $withoutThumb = $this->makePost(['title' => 'No Picture Yet']);
 
         $this->get(route('journal.show', $withThumb->slug))
             ->assertOk()
@@ -88,7 +88,7 @@ class JournalPostPageTest extends TestCase
 
     public function test_home_page_journal_teaser_shows_thumbnails_and_links_to_posts(): void
     {
-        $post = $this->post(['thumbnail_path' => 'https://cdn.example.test/entebbe.jpg']);
+        $post = $this->makePost(['thumbnail_path' => 'https://cdn.example.test/entebbe.jpg']);
 
         $this->get(route('home'))
             ->assertOk()
@@ -98,7 +98,7 @@ class JournalPostPageTest extends TestCase
 
     public function test_drafts_and_unknown_slugs_are_not_found(): void
     {
-        $draft = $this->post(['title' => 'Draft notes', 'is_published' => false]);
+        $draft = $this->makePost(['title' => 'Draft notes', 'is_published' => false]);
 
         $this->get(route('journal.show', $draft->slug))->assertNotFound();
         $this->get(route('journal.show', 'does-not-exist'))->assertNotFound();
@@ -106,7 +106,7 @@ class JournalPostPageTest extends TestCase
 
     public function test_journal_index_links_to_each_post(): void
     {
-        $post = $this->post();
+        $post = $this->makePost();
 
         $this->get(route('journal'))
             ->assertOk()
