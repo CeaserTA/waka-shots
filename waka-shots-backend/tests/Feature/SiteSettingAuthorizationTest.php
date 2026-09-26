@@ -20,12 +20,14 @@ class SiteSettingAuthorizationTest extends TestCase
             'studio_name' => 'Waka Shots',
             'contact_email' => 'hello@example.com',
             'hero_tagline' => 'Stories worth remembering.',
+            'x_url' => 'https://x.com/wakashots',
         ]);
 
         $this->assertDatabaseHas('site_settings', [
             'id' => $setting->id,
             'studio_name' => 'Waka Shots',
             'contact_email' => 'hello@example.com',
+            'x_url' => 'https://x.com/wakashots',
         ]);
     }
 

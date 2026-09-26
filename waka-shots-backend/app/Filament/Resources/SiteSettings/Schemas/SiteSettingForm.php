@@ -52,8 +52,11 @@ class SiteSettingForm
                         TextInput::make('tiktok_url')
                             ->url()
                             ->label('TikTok URL'),
+                        TextInput::make('x_url')
+                            ->url()
+                            ->label('X (Twitter) URL'),
                     ])
-                    ->columns(4),
+                    ->columns(3),
                 Section::make('Homepage')
                     ->description('The hero banner and "Trusted By" partners band.')
                     ->schema([
