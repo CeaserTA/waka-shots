@@ -20,6 +20,7 @@ class SiteSetting extends Model
         'facebook_url',
         'tiktok_url',
         'x_url',
+        'google_review_url',
         'hero_tagline',
         'home_hero_image',
         'home_partners_image',

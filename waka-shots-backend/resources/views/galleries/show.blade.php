@@ -108,9 +108,22 @@
 </div>
 
 @if (session('success'))
-    <div id="review-success-toast" class="fixed inset-x-5 top-5 z-40 mx-auto flex max-w-md items-center justify-between gap-5 border border-gold/60 bg-[#151316] px-5 py-4 text-sm text-ivory shadow-2xl sm:inset-x-auto sm:right-6 sm:left-auto" role="status" aria-live="polite">
-        <span>{{ session('success') }}</span>
-        <button type="button" class="text-xl leading-none text-silver transition hover:text-gold" aria-label="Dismiss message">×</button>
+    {{-- Shown to every client right after submitting, whatever rating they gave:
+         Google's policies forbid asking only happy customers for reviews. --}}
+    @php($googleReviewUrl = $siteSetting->google_review_url)
+    <div id="review-success-toast" @if (filled($googleReviewUrl)) data-keep-open @endif class="fixed inset-x-5 top-5 z-40 mx-auto max-w-md border border-gold/60 bg-[#151316] px-5 py-4 text-sm text-ivory shadow-2xl sm:inset-x-auto sm:right-6 sm:left-auto" role="status" aria-live="polite">
+        <div class="flex items-center justify-between gap-5">
+            <span>{{ session('success') }}</span>
+            <button type="button" class="text-xl leading-none text-silver transition hover:text-gold" aria-label="Dismiss message">×</button>
+        </div>
+        @if (filled($googleReviewUrl))
+            <div class="mt-4 border-t border-line pt-4">
+                <p class="leading-6 text-silver">Loved your photos? A quick Google review helps other clients find us too.</p>
+                <a href="{{ $googleReviewUrl }}" target="_blank" rel="noopener" data-google-review class="mt-3 inline-flex items-center gap-2 rounded-sm border border-gold bg-gold px-4 py-2.5 font-mono text-[0.7rem] uppercase tracking-[0.12em] text-black transition hover:bg-gold-bright">
+                    Review us on Google <span aria-hidden="true">↗</span>
+                </a>
+            </div>
+        @endif
     </div>
 @endif
 
@@ -141,7 +154,10 @@
         if (reviewToast) {
             const dismissReviewToast = () => reviewToast.remove();
             reviewToast.querySelector('button').addEventListener('click', dismissReviewToast);
-            window.setTimeout(dismissReviewToast, 5000);
+            // With the Google review link inside, leave it up until the client closes it.
+            if (! reviewToast.hasAttribute('data-keep-open')) {
+                window.setTimeout(dismissReviewToast, 5000);
+            }
         }
     })();
 </script>

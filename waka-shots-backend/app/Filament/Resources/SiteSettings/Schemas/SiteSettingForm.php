@@ -55,6 +55,10 @@ class SiteSettingForm
                         TextInput::make('x_url')
                             ->url()
                             ->label('X (Twitter) URL'),
+                        TextInput::make('google_review_url')
+                            ->url()
+                            ->label('Google Review Link')
+                            ->helperText('Direct link to leave a Google review. Shown to gallery clients right after they submit a testimonial.'),
                     ])
                     ->columns(3),
                 Section::make('Homepage')
