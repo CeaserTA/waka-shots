@@ -125,12 +125,13 @@
     <div id="filmstripTrack" class="filmstrip-track pl-[6vw]">
       @foreach($portfolioItems as $item)
         <div class="filmstrip-item relative w-[78vw] md:w-[34vw] aspect-[4/3] rounded-sm overflow-hidden border border-line-strong">
-          <img src="{{ \Illuminate\Support\Str::startsWith($item->image_path, ['http://', 'https://']) ? $item->image_path : \Illuminate\Support\Facades\Storage::disk('r2')->url($item->image_path) }}" alt="{{ $item->title }}">
+          <img src="{{ \Illuminate\Support\Str::startsWith($item->image_path, ['http://', 'https://']) ? $item->image_path : \Illuminate\Support\Facades\Storage::disk('r2')->url($item->image_path) }}" alt="{{ $item->displayAlt() }}">
           <div class="absolute inset-0 flex flex-col justify-end p-5" style="background:linear-gradient(0deg, rgba(10,9,8,0.8) 0%, rgba(10,9,8,0) 45%);">
-            @if($item->category)
+            {{-- Untitled items caption with the category name, so skip the label to avoid repeating it. --}}
+            @if($item->category && $item->hasTitle())
               <span class="font-mono text-[0.62rem] tracking-[0.16em] uppercase text-gold-bright mb-1">{{ $item->category->name }}</span>
             @endif
-            <div class="font-serif text-lg text-ivory">{{ $item->title }}</div>
+            <div class="font-serif text-lg text-ivory">{{ $item->displayCaption() }}</div>
           </div>
         </div>
       @endforeach

@@ -20,6 +20,10 @@ class PortfolioItemForm
                     ->preload(),
                 TextInput::make('title')
                     ->maxLength(255),
+                TextInput::make('alt_text')
+                    ->label('Alt text')
+                    ->maxLength(255)
+                    ->helperText('Describe what is actually in the photo, e.g. "Bride laughing during the first dance". Used by screen readers and image search. The title above is the short caption shown on the site.'),
                 FileUpload::make('image_path')
                     ->label('Portfolio Image')
                     ->disk('r2')
