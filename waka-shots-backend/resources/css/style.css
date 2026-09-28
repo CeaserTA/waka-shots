@@ -355,7 +355,9 @@ body.custom-cursor-active input, body.custom-cursor-active textarea, body.custom
   display:flex; align-items:center; justify-content:center; padding:8vh 6vw;
   opacity:0; visibility:hidden; transition:opacity .4s ease, visibility .4s ease;
 }
-.lightbox.is-open{ opacity:1; visibility:visible; }
+/* Visible at once on open (only the fade animates), so focus can move into
+   the dialog immediately; closing still keeps it visible through the fade. */
+.lightbox.is-open{ opacity:1; visibility:visible; transition:opacity .4s ease, visibility 0s; }
 .lightbox-content{ max-width:1100px; width:100%; height:74vh; margin:0 auto; }
 .lightbox-close{
   position:fixed; top:28px; right:6vw; width:44px; height:44px; font-size:1.6rem;

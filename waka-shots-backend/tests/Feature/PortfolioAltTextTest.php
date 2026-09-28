@@ -60,10 +60,10 @@ class PortfolioAltTextTest extends TestCase
             $this->assertStringNotContainsString('alt=""', $html, $url);
 
             // Captions: the title where there is one, the category name where not.
-            $this->assertMatchesRegularExpression('#<div class="font-serif text-lg[^"]*">First Dance</div>#', $html, $url);
-            $this->assertMatchesRegularExpression('#<div class="font-serif text-lg[^"]*">Golden Hour Portrait</div>#', $html, $url);
-            $this->assertMatchesRegularExpression('#<div class="font-serif text-lg[^"]*">Weddings</div>#', $html, $url);
-            $this->assertDoesNotMatchRegularExpression('#<div class="font-serif text-lg[^"]*">\s*</div>#', $html, $url);
+            $this->assertMatchesRegularExpression('#<(?:div|span) class="(?:block )?font-serif text-lg[^"]*">First Dance</(?:div|span)>#', $html, $url);
+            $this->assertMatchesRegularExpression('#<(?:div|span) class="(?:block )?font-serif text-lg[^"]*">Golden Hour Portrait</(?:div|span)>#', $html, $url);
+            $this->assertMatchesRegularExpression('#<(?:div|span) class="(?:block )?font-serif text-lg[^"]*">Weddings</(?:div|span)>#', $html, $url);
+            $this->assertDoesNotMatchRegularExpression('#<(?:div|span) class="(?:block )?font-serif text-lg[^"]*">\s*</(?:div|span)>#', $html, $url);
         }
     }
 

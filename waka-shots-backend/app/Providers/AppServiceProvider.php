@@ -3,9 +3,11 @@
 namespace App\Providers;
 
 use App\Models\Enquiry;
+use App\Models\PortfolioItem;
 use App\Models\SiteSetting;
 use App\Models\Testimonial;
 use App\Observers\EnquiryObserver;
+use App\Observers\PortfolioItemObserver;
 use App\Observers\TestimonialObserver;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
@@ -34,6 +36,7 @@ class AppServiceProvider extends ServiceProvider
 
         Enquiry::observe(EnquiryObserver::class);
         Testimonial::observe(TestimonialObserver::class);
+        PortfolioItem::observe(PortfolioItemObserver::class);
 
         RateLimiter::for('gallery-downloads', function (Request $request) {
             return Limit::perMinutes(10, 60)->by($request->route('token') . '|' . $request->ip());

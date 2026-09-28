@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Category;
 use App\Models\PortfolioItem;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class PortfolioItemTest extends TestCase
@@ -13,6 +14,9 @@ class PortfolioItemTest extends TestCase
 
     public function test_portfolio_items_can_be_created_with_expected_fields(): void
     {
+        // Saving an item queues image processing, which reads from r2.
+        Storage::fake('r2');
+
         $category = Category::create([
             'name' => 'Branding',
             'slug' => 'branding',

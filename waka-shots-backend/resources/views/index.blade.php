@@ -125,7 +125,8 @@
     <div id="filmstripTrack" class="filmstrip-track pl-[6vw]">
       @foreach($portfolioItems as $item)
         <div class="filmstrip-item relative w-[78vw] md:w-[34vw] aspect-[4/3] rounded-sm overflow-hidden border border-line-strong">
-          <img src="{{ \Illuminate\Support\Str::startsWith($item->image_path, ['http://', 'https://']) ? $item->image_path : \Illuminate\Support\Facades\Storage::disk('r2')->url($item->image_path) }}" alt="{{ $item->displayAlt() }}">
+          {{-- The whole filmstrip sits below the full-screen hero, so every frame can load lazily. --}}
+          <x-portfolio-image :item="$item" sizes="(min-width: 768px) 34vw, 78vw" picture-class="block w-full h-full" />
           <div class="absolute inset-0 flex flex-col justify-end p-5" style="background:linear-gradient(0deg, rgba(10,9,8,0.8) 0%, rgba(10,9,8,0) 45%);">
             {{-- Untitled items caption with the category name, so skip the label to avoid repeating it. --}}
             @if($item->category && $item->hasTitle())

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
 use App\Models\JournalPost;
 use App\Models\Partner;
 use App\Models\PortfolioItem;
@@ -16,7 +15,6 @@ class PageController extends Controller
     public function home(): View
     {
         return view('index', [
-            'featuredCategories' => Category::with('portfolioItems')->orderBy('name')->get(),
             'portfolioItems' => PortfolioItem::with('category')->inRandomOrder()->take(7)->get(),
             'journalPosts' => JournalPost::with('category')
                 ->published()

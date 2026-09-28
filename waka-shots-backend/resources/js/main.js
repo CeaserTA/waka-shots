@@ -119,8 +119,12 @@ document.addEventListener('DOMContentLoaded', () => {
   if (filterBtns.length && galleryItems.length) {
     filterBtns.forEach(btn => {
       btn.addEventListener('click', () => {
-        filterBtns.forEach(b => b.classList.remove('active'));
+        filterBtns.forEach(b => {
+          b.classList.remove('active');
+          b.setAttribute('aria-pressed', 'false');
+        });
         btn.classList.add('active');
+        btn.setAttribute('aria-pressed', 'true');
         const cat = btn.dataset.filter;
         galleryItems.forEach(item => {
           const match = cat === 'all' || item.dataset.category === cat;
@@ -414,22 +418,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const getVisibleItems = () =>
       Array.from(document.querySelectorAll('.gallery-item')).filter(el => !el.classList.contains('hidden-item'));
 
-    const slideImageUrl = (img) => img.src.replace(/w=\d+/, 'w=1800');
+    // data-full is a ~1800px WebP copy when the server has generated one
+    // (or the master until then); the grid itself shows much smaller copies.
+    const slideImageUrl = (item) => item.dataset.full || item.querySelector('img')?.src || '';
 
-    const buildSlides = () => getVisibleItems().map((el) => {
-      const img = el.querySelector('img');
-      const overlay = el.querySelector('.absolute');
-      const caption = overlay?.children[1]?.textContent?.trim() || img.alt || '';
-      return { image: slideImageUrl(img), caption };
-    });
+    const buildSlides = () => getVisibleItems().map((el) => ({
+      image: slideImageUrl(el),
+      caption: el.dataset.caption || el.querySelector('img')?.alt || '',
+    }));
 
     let engine = null;
     let isOpen = false;
+    let returnFocusTo = null;
     const ui = createSliderUI({ captionEl, indicatorsEl, getEngine: () => engine });
 
-    const openLightbox = (index) => {
+    const openLightbox = (index, trigger) => {
       const slides = buildSlides();
       if (!slides.length) return;
+      returnFocusTo = trigger || document.activeElement;
 
       lightbox.classList.add('is-open');
       lightbox.setAttribute('aria-hidden', 'false');
@@ -457,6 +463,8 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       ui.render(slides, index);
+      // Next frame: the dialog has to be visible before it can take focus.
+      requestAnimationFrame(() => closeBtn.focus({ preventScroll: true }));
     };
 
     const closeLightbox = () => {
@@ -469,11 +477,13 @@ document.addEventListener('DOMContentLoaded', () => {
       document.body.classList.remove('lightbox-open');
       isOpen = false;
       if (engine) { engine.destroy(); engine = null; }
+      returnFocusTo?.focus({ preventScroll: true });
+      returnFocusTo = null;
     };
 
     document.querySelectorAll('.gallery-item').forEach((item) => {
       item.addEventListener('click', () => {
-        openLightbox(getVisibleItems().indexOf(item));
+        openLightbox(getVisibleItems().indexOf(item), item);
       });
 
       // Start fetching the full image once the pointer has rested on a
@@ -482,8 +492,7 @@ document.addEventListener('DOMContentLoaded', () => {
       let warmTimer = 0;
       item.addEventListener('pointerenter', () => {
         warmTimer = window.setTimeout(() => {
-          const img = item.querySelector('img');
-          if (img) MorphSlider.prefetch(slideImageUrl(img));
+          MorphSlider.prefetch(slideImageUrl(item));
         }, 150);
       });
       item.addEventListener('pointerleave', () => window.clearTimeout(warmTimer));
@@ -499,6 +508,22 @@ document.addEventListener('DOMContentLoaded', () => {
       if (e.key === 'Escape') closeLightbox();
       if (e.key === 'ArrowLeft') engine?.prev();
       if (e.key === 'ArrowRight') engine?.next();
+      if (e.key === 'Tab') {
+        // Keep focus inside the open dialog (aria-modal promises as much).
+        const focusable = Array.from(lightbox.querySelectorAll('button, [tabindex="0"]'));
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (!lightbox.contains(document.activeElement)) {
+          e.preventDefault();
+          first?.focus();
+        } else if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last?.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first?.focus();
+        }
+      }
     });
   }
 

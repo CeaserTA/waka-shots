@@ -722,7 +722,22 @@ export class MorphSlider {
       const raw = this.current + dir;
       if (raw < 0 || raw > this.items.length - 1) return;
     }
-    const target = this.prepareNext(dir);
+    this.transitionTo(this.prepareNext(dir));
+  }
+
+  // Straight to any slide (the dot indicators), with the same transition a
+  // single step uses. Loads the target first like any other navigation.
+  jumpTo(index) {
+    if (this.animating || this.dragging || this.items.length < 2) return;
+    const target = this.wrap(index);
+    if (target === this.current) return;
+    this.nextIndex = target;
+    this.dir = target > this.current ? 1 : -1;
+    this.prioritizeLoad(target);
+    this.transitionTo(target);
+  }
+
+  transitionTo(target) {
     this.animating = true;
     this.announce(target);
 

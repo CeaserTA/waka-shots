@@ -65,6 +65,9 @@
     <link rel="preload" href="/fonts/AmericansClassy.ttf" as="font" type="font/ttf" crossorigin>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    {{-- Two preconnects: browsers keep separate connections for CORS requests
+         (the WebGL lightbox) and plain ones (every ordinary <img>). --}}
+    <link rel="preconnect" href="{{ config('filesystems.disks.r2.url') }}">
     <link rel="preconnect" href="{{ config('filesystems.disks.r2.url') }}" crossorigin>
     <link rel="dns-prefetch" href="{{ config('filesystems.disks.r2.url') }}">
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=Manrope:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&family=Alex+Brush&display=swap" rel="stylesheet">

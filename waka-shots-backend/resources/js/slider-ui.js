@@ -22,7 +22,12 @@ export function createSliderUI({ captionEl, indicatorsEl, getEngine }) {
   };
 
   const setActiveDot = (index) => {
-    dots.forEach((dot, i) => dot.classList.toggle('is-active', i === index));
+    dots.forEach((dot, i) => {
+      const active = i === index;
+      dot.classList.toggle('is-active', active);
+      if (active) dot.setAttribute('aria-current', 'true');
+      else dot.removeAttribute('aria-current');
+    });
   };
 
   // One delegated listener instead of one per dot.
@@ -31,8 +36,7 @@ export function createSliderUI({ captionEl, indicatorsEl, getEngine }) {
     const engine = getEngine();
     if (!dot || !engine) return;
     const target = parseInt(dot.dataset.index, 10);
-    if (target === engine.current) return;
-    engine.goTo(target > engine.current ? 1 : -1);
+    engine.jumpTo(target);
   });
 
   return {
