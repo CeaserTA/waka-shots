@@ -115,4 +115,16 @@ return [
         'name' => env('MAIL_FROM_NAME', env('APP_NAME', 'Laravel')),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Enquiry Notification Address
+    |--------------------------------------------------------------------------
+    |
+    | Every enquiry submitted on the site is emailed here in addition to
+    | appearing in the admin dashboard. Leave empty to disable the email.
+    |
+    */
+
+    'enquiry_recipient' => env('MAIL_ENQUIRY_RECIPIENT', 'hello@wakashots.com'),
+
 ];
