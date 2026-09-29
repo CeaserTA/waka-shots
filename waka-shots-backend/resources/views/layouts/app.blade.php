@@ -36,6 +36,12 @@
     <meta name="description" content="@yield('meta_description', $defaultDescription)">
     <link rel="canonical" href="{{ url()->current() }}">
 
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <meta name="theme-color" content="#0a0908">
+
     <meta property="og:type" content="website">
     <meta property="og:title" content="{!! $metaTitle !!}">
     <meta property="og:description" content="{!! $metaDescription !!}">
