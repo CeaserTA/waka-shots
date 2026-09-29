@@ -1,6 +1,6 @@
 @extends('layouts.app')
-@section('title', 'Contact — Waka Shots Photography')
-@section('meta_description', 'Book a session or ask a question. Get in touch with Waka Shots, a Kampala photography studio. We reply to every enquiry within 24–48 hours.')
+@section('title', $siteSetting->pageTitle('Contact'))
+@section('meta_description', $siteSetting->content('contact.meta_description'))
 @push('head')
 <style>
   .field label{ font-family:'Space Mono', monospace; font-size:0.68rem; letter-spacing:0.12em; text-transform:uppercase; color:#aab0b6; display:block; margin-bottom:10px; }
@@ -30,11 +30,11 @@
 @section('content')
 <!-- PAGE HEADER -->
 <section class="relative h-[46vh] min-h-[320px] flex items-end overflow-hidden">
-  <div class="hero-bg absolute inset-0 bg-cover" style="background-image:url('https://images.unsplash.com/photo-1708170236215-b6edcad7f49a?auto=format&fit=crop&w=1800&q=80'); background-position:center 30%;">
+  <div class="hero-bg absolute inset-0 bg-cover" style="background-image:url('{{ $siteSetting->contentImageUrl('contact.hero_image') }}'); background-position:center 30%;">
     <div class="absolute inset-0" style="background:linear-gradient(180deg, rgba(10,9,8,0.5) 0%, rgba(10,9,8,0.4) 40%, rgba(10,9,8,0.96) 100%);"></div>
   </div>
   <div class="relative z-[2] w-full px-[6vw] pb-16">
-    <span class="eyebrow anim-fadeup font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center gap-2.5">Let's Talk</span>
+    <span class="eyebrow anim-fadeup font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center gap-2.5">{{ $siteSetting->content('contact.hero_eyebrow') }}</span>
     <h1 class="anim-fadeup font-serif font-normal text-[clamp(2.4rem,6vw,4.6rem)] leading-[1.08] mt-4" style="animation-delay:.15s;">{{ $siteSetting->contact_tagline ?: "Let's create something unforgettable." }}</h1>
   </div>
 </section>
@@ -109,7 +109,7 @@
           @endif
           <div>
             <span class="font-mono text-[0.65rem] tracking-[0.14em] uppercase text-gold block mb-1">Response Time</span>
-            <span class="text-ivory-dim font-light">Within 24–48 hours</span>
+            <span class="text-ivory-dim font-light">{{ $siteSetting->content('site.response_time') }}</span>
           </div>
         </div>
       </div>

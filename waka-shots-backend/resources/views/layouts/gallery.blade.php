@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
-    <title>@yield('title', 'Private Gallery') · Waka Shots Photography</title>
+    <title>@yield('title', 'Private Gallery') · {{ $siteSetting->pageTitle() }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('head')
     <style>
@@ -26,7 +26,7 @@
 <body class="gallery-shell font-sans">
     <div class="grain" aria-hidden="true"></div>
     @yield('content')
-    @include('components.whatsapp-float', ['message' => 'Hi Waka Shots! I have a question about my gallery.'])
+    @include('components.whatsapp-float', ['message' => $siteSetting->content('site.gallery_whatsapp_message')])
     @stack('scripts')
 </body>
 </html>

@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', $post->title.' — Waka Shots Photography')
+@section('title', $siteSetting->pageTitle($post->title))
 @section('meta_description', $post->excerpt() ?: $post->title.' — a note from the Waka Shots studio journal in Kampala.')
 {{-- Without a thumbnail, the layout falls back to the site's hero image. --}}
 @if($post->thumbnailUrl())
@@ -47,7 +47,7 @@
 <section class="text-center py-[130px] border-t border-b border-line" style="background:linear-gradient(180deg, rgba(198,161,91,0.06), transparent), #151316;">
   <div class="max-w-[1320px] mx-auto px-[6vw]">
     <span class="eyebrow font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center justify-center gap-2.5">Enjoyed This?</span>
-    <h2 class="font-serif text-[clamp(2rem,3.6vw,3.1rem)] mt-4 mb-10 mx-auto text-center">Let's write your story next.</h2>
+    <h2 class="font-serif text-[clamp(2rem,3.6vw,3.1rem)] mt-4 mb-10 mx-auto text-center">{{ $siteSetting->content('journal.cta_heading') }}</h2>
     <div class="flex flex-wrap justify-center gap-4">
       <a href="{{ route('contact') }}" class="text-xs tracking-[0.14em] uppercase px-7 py-4 rounded-sm bg-gold text-black border border-gold hover:bg-gold-bright hover:-translate-y-0.5 transition-all duration-400 inline-block">Book a Session</a>
       <a href="{{ route('journal') }}" class="text-xs tracking-[0.14em] uppercase px-7 py-4 rounded-sm border border-line-strong text-ivory hover:border-gold hover:text-gold-bright transition-all duration-400 inline-block">More From the Journal</a>

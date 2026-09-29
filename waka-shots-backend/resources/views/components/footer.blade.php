@@ -55,7 +55,7 @@
     </div>
     <div class="flex justify-between items-center text-xs text-silver-dim flex-wrap gap-3.5 pt-5">
       <span>© {{ date('Y') }} {{ $siteSetting->studio_name ?? 'Waka Shots' }} Photography. All rights reserved.</span>
-      <span>Photography · Weddings · Portraits · Events · Brands</span>
+      <span>{{ $siteSetting->content('site.footer_tagline') }}</span>
     </div>
   </div>
 </footer>

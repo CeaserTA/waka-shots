@@ -3,15 +3,15 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>@yield('title', 'Waka Shots Photography')</title>
+    <title>@yield('title', $siteSetting->pageTitle())</title>
     @php
-        $defaultDescription = 'Kampala-based photography studio for weddings, introduction ceremonies, portraits, graduations and brand campaigns. Patience over performance — every session shaped around your story.';
+        $defaultDescription = $siteSetting->content('site.description');
         $defaultImage = $siteSetting->imageUrl($siteSetting->home_hero_image);
 
         // Same yields as <title> and the description tag, read once so the
         // social tags below always match them. yieldContent() returns
         // escaped text, hence the {!! !!} output further down.
-        $metaTitle = trim($__env->yieldContent('title', 'Waka Shots Photography'));
+        $metaTitle = trim($__env->yieldContent('title', $siteSetting->pageTitle()));
         $metaDescription = trim($__env->yieldContent('meta_description', $defaultDescription));
         $metaImage = trim($__env->yieldContent('og_image', $defaultImage ?? ''));
 
@@ -81,7 +81,7 @@
         @yield('content')
     </main>
     @include('components.footer')
-    @include('components.whatsapp-float', ['message' => "Hi Waka Shots! I'd love to enquire about booking a photography session with you."])
+    @include('components.whatsapp-float', ['message' => $siteSetting->content('site.whatsapp_message')])
     @stack('scripts')
 </body>
 </html>

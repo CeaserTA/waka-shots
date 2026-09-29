@@ -1,22 +1,22 @@
 @extends('layouts.app')
-@section('title', 'Services — Waka Shots Photography')
-@section('meta_description', 'Photography services and starting packages from Waka Shots in Kampala. Every project begins with a conversation, and scope and pricing are shaped around your story.')
+@section('title', $siteSetting->pageTitle('Services'))
+@section('meta_description', $siteSetting->content('services.meta_description'))
 @section('content')
 <!-- PAGE HEADER -->
 <section class="relative h-[56vh] min-h-[380px] flex items-end overflow-hidden">
-  <div class="hero-bg absolute inset-0 bg-cover" style="background-image:url('https://images.unsplash.com/photo-1565884280295-98eb83e41c65?auto=format&fit=crop&w=1800&q=80'); background-position:center 25%;">
+  <div class="hero-bg absolute inset-0 bg-cover" style="background-image:url('{{ $siteSetting->contentImageUrl('services.hero_image') }}'); background-position:center 25%;">
     <div class="absolute inset-0" style="background:linear-gradient(180deg, rgba(10,9,8,0.45) 0%, rgba(10,9,8,0.35) 40%, rgba(10,9,8,0.95) 100%);"></div>
   </div>
   <div class="relative z-[2] w-full px-[6vw] pb-16">
-    <span class="eyebrow anim-fadeup font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center gap-2.5">What We Offer</span>
-    <h1 class="anim-fadeup font-serif font-normal text-[clamp(2.4rem,6vw,4.6rem)] leading-[1.08] mt-4" style="animation-delay:.15s;">Services</h1>
+    <span class="eyebrow anim-fadeup font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center gap-2.5">{{ $siteSetting->content('services.hero_eyebrow') }}</span>
+    <h1 class="anim-fadeup font-serif font-normal text-[clamp(2.4rem,6vw,4.6rem)] leading-[1.08] mt-4" style="animation-delay:.15s;">{{ $siteSetting->content('services.hero_heading') }}</h1>
   </div>
 </section>
 
 <!-- INTRO -->
 <section class="pt-24 pb-10">
   <div class="max-w-[1320px] mx-auto px-[6vw]">
-    <p class="reveal text-ivory-dim font-light text-lg max-w-[640px]">Every project starts as a conversation, not a package. The tiers below are starting points — the scope, timeline and pricing are always shaped around what your story actually needs.</p>
+    <p class="reveal text-ivory-dim font-light text-lg max-w-[640px]">{{ $siteSetting->content('services.intro') }}</p>
   </div>
 </section>
 
@@ -90,30 +90,17 @@
 <section class="bg-charcoal py-32">
   <div class="max-w-[1320px] mx-auto px-[6vw]">
     <div class="reveal mb-16">
-      <span class="eyebrow font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center gap-2.5">How We Work</span>
-      <h2 class="font-serif text-[clamp(2rem,3.6vw,3.1rem)] mt-3.5 max-w-[640px]">Four steps, in order, every time.</h2>
+      <span class="eyebrow font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center gap-2.5">{{ $siteSetting->content('services.process_eyebrow') }}</span>
+      <h2 class="font-serif text-[clamp(2rem,3.6vw,3.1rem)] mt-3.5 max-w-[640px]">{{ $siteSetting->content('services.process_heading') }}</h2>
     </div>
     <div class="reveal border-t border-line">
-      <div class="grid grid-cols-[50px_1fr] md:grid-cols-[90px_1fr_1.4fr] gap-6 md:gap-10 py-9 border-b border-line items-center">
-        <span class="font-mono text-gold-dim text-sm">01</span>
-        <h4 class="font-serif text-2xl font-normal">Discover</h4>
-        <p class="col-span-2 md:col-span-1 text-ivory-dim font-light text-sm max-w-[480px]">A conversation — in person or on a call — to understand your story, your day and what matters most to capture.</p>
-      </div>
-      <div class="grid grid-cols-[50px_1fr] md:grid-cols-[90px_1fr_1.4fr] gap-6 md:gap-10 py-9 border-b border-line items-center">
-        <span class="font-mono text-gold-dim text-sm">02</span>
-        <h4 class="font-serif text-2xl font-normal">Plan</h4>
-        <p class="col-span-2 md:col-span-1 text-ivory-dim font-light text-sm max-w-[480px]">We map locations, light and timing, so the day runs smoothly and nothing important is left to chance.</p>
-      </div>
-      <div class="grid grid-cols-[50px_1fr] md:grid-cols-[90px_1fr_1.4fr] gap-6 md:gap-10 py-9 border-b border-line items-center">
-        <span class="font-mono text-gold-dim text-sm">03</span>
-        <h4 class="font-serif text-2xl font-normal">Create</h4>
-        <p class="col-span-2 md:col-span-1 text-ivory-dim font-light text-sm max-w-[480px]">On the day, we work quietly and attentively — present enough to catch what actually happens.</p>
-      </div>
-      <div class="grid grid-cols-[50px_1fr] md:grid-cols-[90px_1fr_1.4fr] gap-6 md:gap-10 py-9 border-b border-line items-center">
-        <span class="font-mono text-gold-dim text-sm">04</span>
-        <h4 class="font-serif text-2xl font-normal">Deliver</h4>
-        <p class="col-span-2 md:col-span-1 text-ivory-dim font-light text-sm max-w-[480px]">A curated, edited gallery delivered within two to four weeks, ready to keep and share.</p>
-      </div>
+      @foreach($siteSetting->content('services.process') as $step)
+        <div class="grid grid-cols-[50px_1fr] md:grid-cols-[90px_1fr_1.4fr] gap-6 md:gap-10 py-9 border-b border-line items-center">
+          <span class="font-mono text-gold-dim text-sm">{{ str_pad($loop->iteration, 2, '0', STR_PAD_LEFT) }}</span>
+          <h4 class="font-serif text-2xl font-normal">{{ $step['title'] ?? '' }}</h4>
+          <p class="col-span-2 md:col-span-1 text-ivory-dim font-light text-sm max-w-[480px]">{{ $step['description'] ?? '' }}</p>
+        </div>
+      @endforeach
     </div>
   </div>
 </section>
@@ -121,8 +108,8 @@
 <!-- CTA -->
 <section class="text-center py-[130px] border-t border-b border-line" style="background:linear-gradient(180deg, rgba(198,161,91,0.06), transparent), #0a0908;">
   <div class="max-w-[1320px] mx-auto px-[6vw]">
-    <span class="eyebrow font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center justify-center gap-2.5">Not Sure Which Fits?</span>
-    <h2 class="font-serif text-[clamp(2rem,3.6vw,3.1rem)] mt-4 mb-10 mx-auto text-center">Tell us about your project — we'll guide you from there.</h2>
+    <span class="eyebrow font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center justify-center gap-2.5">{{ $siteSetting->content('services.cta_eyebrow') }}</span>
+    <h2 class="font-serif text-[clamp(2rem,3.6vw,3.1rem)] mt-4 mb-10 mx-auto text-center">{{ $siteSetting->content('services.cta_heading') }}</h2>
     <a href="{{ route('contact') }}" class="text-xs tracking-[0.14em] uppercase px-7 py-4 rounded-sm bg-gold text-black border border-gold hover:bg-gold-bright hover:-translate-y-0.5 transition-all duration-400 inline-block">Start Your Enquiry</a>
   </div>
 </section>

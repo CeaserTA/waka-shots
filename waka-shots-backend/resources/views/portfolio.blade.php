@@ -1,6 +1,6 @@
 @extends('layouts.app')
-@section('title', 'Portfolio — Waka Shots Photography')
-@section('meta_description', 'Selected work from Waka Shots: weddings, introduction ceremonies, portraits, graduations and brand campaigns photographed in Kampala and across Uganda.')
+@section('title', $siteSetting->pageTitle('Portfolio'))
+@section('meta_description', $siteSetting->content('portfolio.meta_description'))
 @section('content')
 <!-- PAGE HEADER -->
 <section class="relative h-[56vh] min-h-[380px] flex items-end overflow-hidden">
@@ -61,8 +61,8 @@
 <!-- CTA -->
 <section class="text-center py-[130px] border-t border-b border-line" style="background:linear-gradient(180deg, rgba(198,161,91,0.06), transparent), #151316;">
   <div class="max-w-[1320px] mx-auto px-[6vw]">
-    <span class="eyebrow font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center justify-center gap-2.5">Like What You See?</span>
-    <h2 class="font-serif text-[clamp(2rem,3.6vw,3.1rem)] mt-4 mb-10 mx-auto text-center">Let's plan your own session.</h2>
+    <span class="eyebrow font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center justify-center gap-2.5">{{ $siteSetting->content('portfolio.cta_eyebrow') }}</span>
+    <h2 class="font-serif text-[clamp(2rem,3.6vw,3.1rem)] mt-4 mb-10 mx-auto text-center">{{ $siteSetting->content('portfolio.cta_heading') }}</h2>
     <a href="{{ route('contact') }}" class="text-xs tracking-[0.14em] uppercase px-7 py-4 rounded-sm bg-gold text-black border border-gold hover:bg-gold-bright hover:-translate-y-0.5 transition-all duration-400 inline-block">Book a Session</a>
   </div>
 </section>

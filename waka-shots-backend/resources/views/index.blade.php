@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Waka Shots Photography — Stories, Beautifully Captured')
+@section('title', $siteSetting->pageTitle().' — Stories, Beautifully Captured')
 @section('content')
 <!-- PAGE LOADER -->
 <div class="page-loader" id="pageLoader">
@@ -15,14 +15,16 @@
   <div class="hero-bg absolute inset-0 bg-cover" style="background-image:url('{{ $siteSetting->imageUrl($siteSetting->home_hero_image) ?? 'https://images.unsplash.com/photo-1631131426242-0abfa7f209c2?auto=format&fit=crop&w=1800&q=80' }}'); background-position:center 30%;">
     <div class="absolute inset-0" style="background:linear-gradient(180deg, rgba(10,9,8,0.35) 0%, rgba(10,9,8,0.25) 40%, rgba(10,9,8,0.92) 100%), linear-gradient(90deg, rgba(10,9,8,0.55) 0%, rgba(10,9,8,0) 40%);"></div>
   </div>
-  <span class="float-tag" style="top:16%; left:8%; animation-delay:0s;">f/1.8</span>
-  <span class="float-tag" style="top:28%; right:10%; animation-delay:1.4s;">85mm</span>
-  <span class="float-tag" style="top:52%; left:5%; animation-delay:2.6s;">Kampala, UG</span>
-  <span class="float-tag" style="top:65%; right:6%; animation-delay:0.8s;">Golden Hour</span>
-  <span class="float-tag" style="top:12%; right:32%; animation-delay:3.4s;">35mm</span>
+  @php
+    // Fixed slots around the hero; tags beyond the fifth are ignored.
+    $floatTagSlots = ['top:16%; left:8%; animation-delay:0s;', 'top:28%; right:10%; animation-delay:1.4s;', 'top:52%; left:5%; animation-delay:2.6s;', 'top:65%; right:6%; animation-delay:0.8s;', 'top:12%; right:32%; animation-delay:3.4s;'];
+  @endphp
+  @foreach(array_slice($siteSetting->content('home.hero_tags'), 0, count($floatTagSlots)) as $tag)
+    <span class="float-tag" style="{{ $floatTagSlots[$loop->index] }}">{{ $tag }}</span>
+  @endforeach
   <div class="relative z-[2] w-full px-[6vw] pb-[7vw] flex flex-col md:flex-row justify-between items-start md:items-end gap-10">
     <div class="max-w-[760px]">
-      <span class="eyebrow anim-fadeup font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center gap-2.5" style="animation-delay:.4s;">Waka Shots Photography — Kampala, Uganda</span>
+      <span class="eyebrow anim-fadeup font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center gap-2.5" style="animation-delay:.4s;">{{ $siteSetting->content('home.hero_eyebrow') }}</span>
       <h1 class="anim-fadeup font-serif font-normal text-[clamp(2.6rem,7vw,6rem)] leading-[1.08] my-4" style="animation-delay:.6s;">
         @if($siteSetting?->hero_tagline)
           {{ $siteSetting->hero_tagline }}
@@ -30,7 +32,9 @@
           Stories,<br><em class="italic text-gold-bright font-light">beautifully</em> captured.
         @endif
       </h1>
-      <p class="anim-fadeup text-ivory-dim max-w-[440px] font-light" style="animation-delay:.85s;">We make timeless, intentional imagery for <span class="tagline-rotator text-gold-bright"><span class="tagline-active">weddings</span><span>portraits</span><span>graduations</span><span>brand stories</span></span> across East Africa — one honest frame at a time.</p>
+      {{-- "{words}" in the admin text marks where the rotating words go. --}}
+      @php([$heroTextBefore, $heroTextAfter] = array_pad(explode('{words}', $siteSetting->content('home.hero_text'), 2), 2, null))
+      <p class="anim-fadeup text-ivory-dim max-w-[440px] font-light" style="animation-delay:.85s;">{{ $heroTextBefore }}@if($heroTextAfter !== null)<span class="tagline-rotator text-gold-bright">@foreach($siteSetting->content('home.hero_words') as $word)<span @class(['tagline-active' => $loop->first])>{{ $word }}</span>@endforeach</span>{{ $heroTextAfter }}@endif</p>
     </div>
     <div class="anim-fadeup flex flex-row md:flex-col gap-3.5" style="animation-delay:1.05s;">
       <a href="{{ route('portfolio') }}" class="text-xs tracking-[0.14em] uppercase px-7 py-4 rounded-sm text-center bg-gold text-black border border-gold hover:bg-gold-bright hover:-translate-y-0.5 transition-all duration-400 whitespace-nowrap">View Portfolio</a>
@@ -119,8 +123,8 @@
 <section id="filmstripWrapper" class="relative h-[190vh] md:h-[280vh]">
   <div class="orbit-stage sticky top-0 h-[78vh] md:h-screen overflow-hidden flex flex-col justify-center">
     <div class="max-w-[1320px] mx-auto px-[6vw] w-full mb-5 md:mb-10 relative z-10">
-      <span class="eyebrow font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center gap-2.5">Selected Work</span>
-      <h2 class="mask-reveal font-serif text-[clamp(1.8rem,3.2vw,2.7rem)] mt-3.5"><span class="mask-inner">A closer look at recent frames.</span></h2>
+      <span class="eyebrow font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center gap-2.5">{{ $siteSetting->content('home.work_eyebrow') }}</span>
+      <h2 class="mask-reveal font-serif text-[clamp(1.8rem,3.2vw,2.7rem)] mt-3.5"><span class="mask-inner">{{ $siteSetting->content('home.work_heading') }}</span></h2>
     </div>
     <div id="filmstripTrack" class="filmstrip-track pl-[6vw]">
       @foreach($portfolioItems as $item)
@@ -151,18 +155,19 @@
     <div class="reveal relative aspect-[4/5] overflow-hidden rounded-sm">
       <div class="absolute -top-3.5 -left-3.5 w-[70px] h-[70px] border-t border-l border-gold z-[2]"></div>
       <div class="absolute -bottom-3.5 -right-3.5 w-[70px] h-[70px] border-b border-r border-gold z-[2]"></div>
-      <img src="https://images.unsplash.com/photo-1649532349871-b5b10b5ab9c4?auto=format&fit=crop&w=900&q=80" alt="Waka Shots photographer at work" class="w-full h-full object-cover saturate-90 brightness-95">
+      <img src="{{ $siteSetting->imageUrl($siteSetting->story_image) ?? 'https://images.unsplash.com/photo-1649532349871-b5b10b5ab9c4?auto=format&fit=crop&w=900&q=80' }}" alt="{{ $siteSetting->studio_name ?? 'Waka Shots' }} photographer at work" class="w-full h-full object-cover saturate-90 brightness-95">
     </div>
     <div class="reveal">
-      <span class="eyebrow font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center gap-2.5">About Waka Shots</span>
-      <h2 class="font-serif text-[clamp(1.9rem,3.2vw,2.7rem)] my-4 mb-6">More than photographs.<br>Moments with meaning.</h2>
-      <p class="text-ivory-dim font-light max-w-[520px] mb-6">Waka Shots is a Kampala-based photography studio built around one idea: that the best images come from patience, not performance. We spend more time watching than directing, so what we deliver feels like memory, not a photoshoot.</p>
+      <span class="eyebrow font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center gap-2.5">{{ $siteSetting->content('home.about_eyebrow') }}</span>
+      {{-- A teaser for the About page story: same image and heading, first paragraph only. --}}
+      @if($siteSetting->story_heading)
+        <h2 class="font-serif text-[clamp(1.9rem,3.2vw,2.7rem)] my-4 mb-6">{{ $siteSetting->story_heading }}</h2>
+      @else
+        <h2 class="font-serif text-[clamp(1.9rem,3.2vw,2.7rem)] my-4 mb-6">More than photographs.<br>Moments with meaning.</h2>
+      @endif
+      <p class="text-ivory-dim font-light max-w-[520px] mb-6">{{ \App\Models\SiteSetting::paragraphs($siteSetting->story_text)[0] ?? 'Waka Shots is a Kampala-based photography studio built around one idea: that the best images come from patience, not performance. We spend more time watching than directing, so what we deliver feels like memory, not a photoshoot.' }}</p>
       <a href="{{ route('about') }}" class="inline-block text-xs tracking-[0.14em] uppercase px-7 py-4 rounded-sm border border-line-strong text-ivory hover:border-gold hover:text-gold-bright hover:-translate-y-0.5 transition-all duration-400">Our Story →</a>
-      <div class="flex gap-12 mt-10 pt-8 border-t border-line">
-        <div><strong class="block font-serif text-3xl text-gold-bright font-normal">120+</strong><span class="text-xs tracking-wide uppercase text-silver-dim">Stories Told</span></div>
-        <div><strong class="block font-serif text-3xl text-gold-bright font-normal">7</strong><span class="text-xs tracking-wide uppercase text-silver-dim">Years Behind the Lens</span></div>
-        <div><strong class="block font-serif text-3xl text-gold-bright font-normal">5</strong><span class="text-xs tracking-wide uppercase text-silver-dim">Countries Shot In</span></div>
-      </div>
+      @include('components.stats')
     </div>
   </div>
 </section>
@@ -172,8 +177,8 @@
   <div class="max-w-[1320px] mx-auto px-[6vw]">
     <div class="reveal flex justify-between items-end gap-10 flex-wrap mb-10">
       <div>
-        <span class="eyebrow font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center gap-2.5">Services</span>
-        <h2 class="font-serif text-[clamp(2rem,3.6vw,3.1rem)] mt-3.5 max-w-[640px]">Ways to work with us.</h2>
+        <span class="eyebrow font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center gap-2.5">{{ $siteSetting->content('home.services_eyebrow') }}</span>
+        <h2 class="font-serif text-[clamp(2rem,3.6vw,3.1rem)] mt-3.5 max-w-[640px]">{{ $siteSetting->content('home.services_heading') }}</h2>
       </div>
       <a href="{{ route('services') }}" class="text-xs tracking-[0.14em] uppercase text-gold hover:text-gold-bright transition-colors pb-1.5">See All Services →</a>
     </div>
@@ -206,9 +211,9 @@
   <div class="partners-band-bg" style="background-image:url('{{ $siteSetting->imageUrl($siteSetting->home_partners_image) ?? 'https://images.unsplash.com/photo-1660675133902-acd1b057f75d?auto=format&fit=crop&w=1800&q=80' }}');"></div>
   <div class="partners-band-overlay"></div>
   <div class="reveal relative z-10 text-center px-[6vw]">
-    <span class="eyebrow font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center justify-center gap-2.5">Trusted By</span>
+    <span class="eyebrow font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center justify-center gap-2.5">{{ $siteSetting->content('home.partners_eyebrow') }}</span>
     <a href="{{ route('contact') }}" data-cursor="Partner" class="group mt-5 inline-flex items-center gap-4 font-serif text-[clamp(2.2rem,5vw,4rem)] text-ivory hover:text-gold-bright transition-colors duration-500">
-      Our Partners
+      {{ $siteSetting->content('home.partners_heading') }}
       <span class="text-gold-bright text-3xl transition-transform duration-500 group-hover:translate-x-2">→</span>
     </a>
   </div>
@@ -227,8 +232,8 @@
 <section class="py-20" style="background:radial-gradient(ellipse at top right, rgba(198,161,91,0.08), transparent 55%), #0a0908;">
   <div class="max-w-[420px] mx-auto px-[6vw]">
     <div class="reveal mb-10">
-      <span class="eyebrow font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center gap-2.5">Client Stories</span>
-      <h2 class="font-serif text-[clamp(2rem,3.6vw,3.1rem)] mt-3.5 max-w-[640px]">Told in their own words.</h2>
+      <span class="eyebrow font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center gap-2.5">{{ $siteSetting->content('home.testimonials_eyebrow') }}</span>
+      <h2 class="font-serif text-[clamp(2rem,3.6vw,3.1rem)] mt-3.5 max-w-[640px]">{{ $siteSetting->content('home.testimonials_heading') }}</h2>
     </div>
     <div class="relative">
       <div id="testimonial-carousel" class="reveal overflow-hidden">
@@ -287,8 +292,8 @@
   <div class="max-w-[1320px] mx-auto px-[6vw]">
     <div class="reveal flex justify-between items-end gap-10 flex-wrap mb-10">
       <div>
-        <span class="eyebrow font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center gap-2.5">Journal</span>
-        <h2 class="font-serif text-[clamp(2rem,3.6vw,3.1rem)] mt-3.5 max-w-[640px]">Notes from behind the lens.</h2>
+        <span class="eyebrow font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center gap-2.5">{{ $siteSetting->content('home.journal_eyebrow') }}</span>
+        <h2 class="font-serif text-[clamp(2rem,3.6vw,3.1rem)] mt-3.5 max-w-[640px]">{{ $siteSetting->content('home.journal_heading') }}</h2>
       </div>
       <a href="{{ route('journal') }}" class="text-xs tracking-[0.14em] uppercase text-gold hover:text-gold-bright transition-colors pb-1.5">Read the Journal →</a>
     </div>
@@ -315,8 +320,8 @@
 <!-- CTA -->
 <section class="text-center py-[150px] border-t border-b border-line" style="background:linear-gradient(180deg, rgba(198,161,91,0.06), transparent), #151316;">
   <div class="max-w-[1320px] mx-auto px-[6vw]">
-    <span class="eyebrow font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center justify-center gap-2.5">Let's Talk</span>
-    <h2 class="font-serif text-[clamp(2rem,3.6vw,3.1rem)] mt-4 mb-10 mx-auto text-center">Ready to create something unforgettable?</h2>
+    <span class="eyebrow font-mono text-xs tracking-[0.22em] uppercase text-gold inline-flex items-center justify-center gap-2.5">{{ $siteSetting->content('home.cta_eyebrow') }}</span>
+    <h2 class="font-serif text-[clamp(2rem,3.6vw,3.1rem)] mt-4 mb-10 mx-auto text-center">{{ $siteSetting->content('home.cta_heading') }}</h2>
     <div class="flex gap-4.5 justify-center flex-wrap">
       <a href="{{ route('contact') }}" class="text-xs tracking-[0.14em] uppercase px-7 py-4 rounded-sm bg-gold text-black border border-gold hover:bg-gold-bright hover:-translate-y-0.5 transition-all duration-400">Start Your Enquiry</a>
       @if($siteSetting?->contact_phone)
